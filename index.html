@@ -1,154 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Pillars Coffee</title>
-
-<meta name="description" content="Thoughtfully sourced specialty coffee in the heart of one-north.">
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
+<title>Pillars Coffee — Coffee that supports your day.</title>
+<meta name="description" content="Thoughtfully sourced espresso and filter coffee served from Solaris at Fusionopolis. Open Mon–Fri 8am–4pm.">
+<meta property="og:title" content="Pillars Coffee">
+<meta property="og:description" content="Coffee that supports your day. Solaris, Fusionopolis.">
+<meta property="og:image" content="images/hero.jpg">
 <link rel="stylesheet" href="styles.css">
-
 </head>
-
 <body>
 
 <header>
-
-<div class="container nav">
-
-<a href="index.html">
-
-<img src="images/logo-white.png" class="logo" alt="Pillars Coffee">
-
-</a>
-
-<nav class="nav-links">
-
-<a href="about.html">About</a>
-
-<a href="beans.html">Coffee</a>
-
-<a href="visit.html">Visit</a>
-
-<a href="contact.html">Contact</a>
-
-<a href="preorder.html" class="button">Order Ahead</a>
-
-</nav>
-
-<div class="menu-toggle">
-
-☰
-
-</div>
-
-</div>
-
+  <div class="container">
+    <nav class="nav">
+      <a href="index.html" class="nav-logo"><span class="bar"></span>PILLARS</a>
+      <div class="nav-links">
+        <a href="about.html">About</a>
+        <a href="beans.html">Shop Coffee</a>
+        <a href="visit.html">Visit Us</a>
+        <a href="contact.html">Contact</a>
+        <a href="preorder.html" class="btn-nav">Pre-Order</a>
+      </div>
+      <button class="menu-toggle" id="menuToggle" aria-label="Open menu">☰</button>
+    </nav>
+  </div>
 </header>
 
-<section class="hero">
-
-<div class="container hero-content reveal">
-
-<h1>
-
-Thoughtfully<br>
-
-sourced.<br><br>
-
-Carefully<br>
-
-brewed.
-
-</h1>
-
-<p>
-
-Specialty coffee, pastries and retail beans in the heart of one-north.
-
-Built around everyday rituals, thoughtful sourcing and consistent brewing.
-
-</p>
-
-<div class="hero-buttons">
-
-<a href="beans.html" class="button button-light">
-
-Explore Coffee →
-
-</a>
-
+<div class="mobile-overlay" id="mobileOverlay"></div>
+<div class="mobile-menu" id="mobileMenu">
+  <button class="close-toggle" id="closeToggle" aria-label="Close menu">×</button>
+  <a href="index.html">Home</a>
+  <a href="about.html">About</a>
+  <a href="beans.html">Shop Coffee</a>
+  <a href="visit.html">Visit Us</a>
+  <a href="contact.html">Contact</a>
+  <a href="preorder.html" class="btn-nav-mobile">Pre-Order</a>
 </div>
 
-</div>
-
+<section class="hero-full">
+  <div class="hero-bg" style="background-image:url('images/hero.jpg');"></div>
+  <div class="container">
+    <div class="eyebrow-light"><span class="bar"></span>SOLARIS, FUSIONOPOLIS</div>
+    <h1>Coffee that supports<br>your day.</h1>
+    <p>Thoughtfully sourced espresso and filter coffee, served with consistency for the people who work and create around us.</p>
+    <div class="hero-buttons">
+      <a href="preorder.html" class="btn btn-light">Pre-Order</a>
+      <a href="beans.html" class="btn btn-outline-light">Shop Coffee</a>
+    </div>
+  </div>
 </section>
 
-<section class="about-preview reveal">
-
-<div class="container">
-
-<div class="grid grid-2">
-
-<div>
-
-<img src="images/counter.jpg" alt="Pillars Counter">
-
-</div>
-
-<div class="card-body">
-
-<h2 class="section-title">
-
-Coffee should feel effortless.
-
-</h2>
-
-<p class="section-sub">
-
-At Pillars, we believe great coffee doesn't need to be intimidating.
-
-Whether you're stopping by for a quick espresso before work,
-
-sharing a filter over conversation,
-
-or bringing home a bag of beans,
-
-our focus remains the same—
-
-thoughtfully sourced coffee,
-
-served with consistency.
-
-</p>
-
-<br>
-
-<a href="about.html" class="button">
-
-Learn More →
-
-</a>
-
-</div>
-
-</div>
-
-</div>
-
+<section class="section">
+  <div class="container two-col">
+    <img src="images/counter.jpg" alt="The Pillars Coffee espresso bar at Solaris, Fusionopolis" class="photo-full">
+    <div>
+      <div class="eyebrow"><span class="bar"></span>OUR STORY</div>
+      <h2>Built around the daily ritual.</h2>
+      <p>Pillars was built around a simple belief — great coffee should be something people can rely on every day.</p>
+      <p>Located within Solaris at Fusionopolis, we focus on approachable coffees, thoughtful sourcing and a consistent experience for the people who visit us daily.</p>
+      <a href="about.html" class="btn btn-line mt-40">Read Our Story</a>
+    </div>
+  </div>
 </section>
+
+<section class="section" style="padding-top:0;">
+  <div class="container">
+    <div class="two-col" style="margin-bottom:56px; align-items:flex-end;">
+      <div>
+        <div class="eyebrow"><span class="bar"></span>ON THE MENU</div>
+        <h2>Featured Coffee</h2>
+        <p>Two roasts on rotation right now — espresso and filter, both sourced for balance and approachability.</p>
+      </div>
+      <img src="images/cups.jpg" alt="Two cups of coffee served at Pillars Coffee" class="photo-half">
+    </div>
+    <div class="coffee-list">
+      <div class="coffee-row">
+        <div>
+          <div class="c-name">Espresso — Brazil</div>
+          <div class="c-origin">Sitio Yamava</div>
+          <div class="c-notes">Chocolate · Hazelnut · Brown Sugar</div>
+        </div>
+        <div class="c-right">
+          <div class="c-price">$22 · 200g</div>
+          <a href="beans.html" class="c-link">Shop →</a>
+        </div>
+      </div>
+      <div class="coffee-row">
+        <div>
+          <div class="c-name">Filter — Mexico</div>
+          <div class="c-origin">Citrus Sweetness</div>
+          <div class="c-notes">Orange · Caramel · Tea-like</div>
+        </div>
+        <div class="c-right">
+          <div class="c-price">$24 · 200g</div>
+          <a href="beans.html" class="c-link">Shop →</a>
+        </div>
+      </div>
+    </div>
+    <a href="beans.html" class="btn btn-line mt-32">View All Coffee</a>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container two-col">
+    <div>
+      <div class="eyebrow"><span class="bar"></span>FIND US</div>
+      <h2>Visit Us</h2>
+      <dl class="address-block">
+        <dt>Address</dt>
+        <dd>1 Fusionopolis Walk, #01-K1<br>Singapore 138628</dd>
+        <dt>Hours</dt>
+        <dd>Mon–Fri · 8am – 4pm</dd>
+        <dt>Weekends</dt>
+        <dd>Closed</dd>
+      </dl>
+      <a href="https://www.google.com/maps/search/?api=1&query=1+Fusionopolis+Walk+%2301-K1+Singapore+138628" target="_blank" class="btn btn-line mt-40">Get Directions</a>
+    </div>
+    <img src="images/crowd.jpg" alt="Customers visiting Pillars Coffee at Solaris" class="photo-full">
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-top">
+      <a href="index.html" class="nav-logo"><span class="bar"></span>PILLARS</a>
+      <div class="footer-links">
+        <a href="https://instagram.com/pillars.sg" target="_blank">Instagram</a>
+        <a href="mailto:hello@pillarscoffee.sg">General Enquiries</a>
+        <a href="mailto:joinus@pillarscoffee.sg">Join The Team</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Pillars Coffee · Solaris, Fusionopolis</span>
+      <span>hello@pillarscoffee.sg</span>
+    </div>
+  </div>
+</footer>
 
 <script src="script.js"></script>
-
 </body>
-
 </html>

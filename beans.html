@@ -3,225 +3,125 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shop Coffee | Pillars Coffee</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-<style>
-
-*{margin:0;padding:0;box-sizing:border-box;}
-
-body{
-font-family:'Inter',sans-serif;
-background:#f7f5f2;
-color:#1a1a1a;
-line-height:1.7;
-}
-
-a{
-text-decoration:none;
-color:inherit;
-}
-
-nav{
-position:sticky;
-top:0;
-background:white;
-padding:18px 8%;
-display:flex;
-justify-content:space-between;
-align-items:center;
-border-bottom:1px solid #eee;
-z-index:100;
-}
-
-.logo{
-height:36px;
-}
-
-.nav-links{
-display:flex;
-gap:28px;
-align-items:center;
-font-size:14px;
-}
-
-.preorder{
-background:#111;
-color:white;
-padding:10px 18px;
-border-radius:999px;
-}
-
-.hero{
-padding:120px 8% 80px;
-text-align:center;
-}
-
-.hero h1{
-font-size:3.5rem;
-margin-bottom:15px;
-}
-
-.hero p{
-color:#666;
-}
-
-.section{
-max-width:1200px;
-margin:auto;
-padding:0 8% 100px;
-}
-
-.section-title{
-font-size:2rem;
-margin-bottom:30px;
-}
-
-.beans-grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-gap:25px;
-}
-
-.bean-card{
-background:white;
-padding:30px;
-border-radius:20px;
-box-shadow:0 8px 20px rgba(0,0,0,0.05);
-}
-
-.bean-card h3{
-margin-bottom:8px;
-}
-
-.origin{
-color:#666;
-margin-bottom:20px;
-}
-
-.price{
-font-weight:600;
-margin-top:20px;
-}
-
-.note{
-max-width:900px;
-margin:60px auto 0;
-text-align:center;
-color:#666;
-}
-
-footer{
-background:#111;
-color:white;
-text-align:center;
-padding:60px 20px;
-}
-
-@media(max-width:900px){
-
-.nav-links{
-gap:14px;
-font-size:12px;
-}
-
-.hero h1{
-font-size:2.5rem;
-}
-
-}
-
-</style>
+<title>Shop Coffee — Pillars Coffee</title>
+<meta name="description" content="Shop espresso and filter coffee from Pillars Coffee. Available in-store and for self pick-up at Solaris, Fusionopolis.">
+<link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
 
-<nav>
+<header>
+  <div class="container">
+    <nav class="nav">
+      <a href="index.html" class="nav-logo"><span class="bar"></span>PILLARS</a>
+      <div class="nav-links">
+        <a href="about.html">About</a>
+        <a href="beans.html">Shop Coffee</a>
+        <a href="visit.html">Visit Us</a>
+        <a href="contact.html">Contact</a>
+        <a href="preorder.html" class="btn-nav">Pre-Order</a>
+      </div>
+      <button class="menu-toggle" id="menuToggle" aria-label="Open menu">☰</button>
+    </nav>
+  </div>
+</header>
 
-<a href="index.html">
-<img src="logo-black.png" class="logo">
-</a>
-
-<div class="nav-links">
-<a href="index.html">Home</a>
-<a href="about.html">About</a>
-<a href="beans.html">Shop Coffee</a>
-<a href="visit.html">Visit Us</a>
-<a href="contact.html">Contact</a>
-<a href="preorder.html" class="preorder">Pre-Order</a>
+<div class="mobile-overlay" id="mobileOverlay"></div>
+<div class="mobile-menu" id="mobileMenu">
+  <button class="close-toggle" id="closeToggle" aria-label="Close menu">×</button>
+  <a href="index.html">Home</a>
+  <a href="about.html">About</a>
+  <a href="beans.html">Shop Coffee</a>
+  <a href="visit.html">Visit Us</a>
+  <a href="contact.html">Contact</a>
+  <a href="preorder.html" class="btn-nav-mobile">Pre-Order</a>
 </div>
 
-</nav>
-
-<section class="hero">
-
-<h1>Shop Coffee</h1>
-
-<p>
-Available in-store and for self pick-up.
-</p>
-
-</section>
-
-<section class="section">
-
-<h2 class="section-title">Espresso</h2>
-
-<div class="beans-grid">
-
-<div class="bean-card">
-<h3>Brazil</h3>
-<p class="origin">Sitio Yamava</p>
-<p>Chocolate · Hazelnut · Brown Sugar</p>
-<p class="price">$22 · 200g</p>
+<div class="page-header">
+  <div class="container">
+    <div class="eyebrow"><span class="bar"></span>SHOP COFFEE</div>
+    <h1>Current Offerings</h1>
+    <p>Available in-store and for self pick-up. Coffees rotate as the seasons change.</p>
+  </div>
 </div>
 
-<div class="bean-card">
-<h3>Ethiopia</h3>
-<p class="origin">Koke Shalaye Yirgacheffe</p>
-<p>Peach · Floral · Honey</p>
-<p class="price">$24 · 200g</p>
-</div>
+<div class="container">
+
+  <div class="list-section">
+    <p class="list-label">Espresso</p>
+    <div class="coffee-list mt-24">
+      <div class="coffee-row">
+        <div>
+          <div class="c-name">Brazil — Sitio Yamava</div>
+          <div class="c-origin">Natural Process</div>
+          <div class="c-notes">Chocolate · Hazelnut · Brown Sugar</div>
+        </div>
+        <div class="c-right">
+          <div class="c-price">$22 · 200g</div>
+          <a href="preorder.html" class="c-link">Order →</a>
+        </div>
+      </div>
+      <div class="coffee-row">
+        <div>
+          <div class="c-name">Ethiopia — Koke Shalaye</div>
+          <div class="c-origin">Yirgacheffe · Washed</div>
+          <div class="c-notes">Peach · Floral · Honey</div>
+        </div>
+        <div class="c-right">
+          <div class="c-price">$24 · 200g</div>
+          <a href="preorder.html" class="c-link">Order →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="list-section">
+    <p class="list-label">Filter</p>
+    <div class="coffee-list mt-24">
+      <div class="coffee-row">
+        <div>
+          <div class="c-name">Mexico — Citrus Sweetness</div>
+          <div class="c-origin">Washed</div>
+          <div class="c-notes">Orange · Caramel · Tea-like</div>
+        </div>
+        <div class="c-right">
+          <div class="c-price">$24 · 200g</div>
+          <a href="preorder.html" class="c-link">Order →</a>
+        </div>
+      </div>
+      <div class="coffee-row">
+        <div>
+          <div class="c-name">Ethiopia — Koke Shalaye</div>
+          <div class="c-origin">Yirgacheffe · Washed</div>
+          <div class="c-notes">Peach · Floral · Honey</div>
+        </div>
+        <div class="c-right">
+          <div class="c-price">$24 · 200g</div>
+          <a href="preorder.html" class="c-link">Order →</a>
+        </div>
+      </div>
+    </div>
+    <p style="margin-top:32px; font-size:0.88rem; color:var(--stone);">Coffees and pricing may change as seasonal offerings rotate.</p>
+  </div>
 
 </div>
-
-</section>
-
-<section class="section">
-
-<h2 class="section-title">Filter</h2>
-
-<div class="beans-grid">
-
-<div class="bean-card">
-<h3>Mexico</h3>
-<p class="origin">Citrus Sweetness</p>
-<p>Orange · Caramel · Tea-like</p>
-<p class="price">$24 · 200g</p>
-</div>
-
-<div class="bean-card">
-<h3>Ethiopia</h3>
-<p class="origin">Koke Shalaye Yirgacheffe</p>
-<p>Peach · Floral · Honey</p>
-<p class="price">$24 · 200g</p>
-</div>
-
-</div>
-
-<p class="note">
-Coffees and pricing may change as seasonal offerings rotate.
-</p>
-
-</section>
 
 <footer>
-
-<p>hello@pillarscoffee.sg</p>
-<p>@pillars.sg</p>
-
+  <div class="container">
+    <div class="footer-top">
+      <a href="index.html" class="nav-logo"><span class="bar"></span>PILLARS</a>
+      <div class="footer-links">
+        <a href="https://instagram.com/pillars.sg" target="_blank">Instagram</a>
+        <a href="mailto:hello@pillarscoffee.sg">General Enquiries</a>
+        <a href="mailto:joinus@pillarscoffee.sg">Join The Team</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Pillars Coffee · Solaris, Fusionopolis</span>
+      <span>hello@pillarscoffee.sg</span>
+    </div>
+  </div>
 </footer>
 
+<script src="script.js"></script>
 </body>
 </html>
