@@ -92,15 +92,10 @@ header.scrolled{ border-bottom-color:var(--line); }
 }
 
 .nav-logo{
-  font-family:'Space Grotesk', sans-serif;
-  font-weight:600;
-  font-size:17px;
-  letter-spacing:-0.02em;
   display:flex;
   align-items:center;
-  gap:10px;
 }
-.nav-logo .bar{ width:2px; height:18px; background:var(--ink); }
+.nav-logo .logo-img{ height:42px; width:auto; display:block; }
 
 .nav-links{
   display:flex;
