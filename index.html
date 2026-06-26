@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pillars Coffee</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:'Inter',sans-serif;
+background:#f7f5f2;
+color:#1a1a1a;
+line-height:1.7;
+overflow-x:hidden;
+}
+
+a{
+text-decoration:none;
+color:inherit;
+}
+
+img{
+display:block;
+max-width:100%;
+}
+
+nav{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+padding:18px 8%;
+background:rgba(255,255,255,0.95);
+backdrop-filter:blur(12px);
+display:flex;
+justify-content:space-between;
+align-items:center;
+border-bottom:1px solid #ececec;
+z-index:1000;
+}
+
+.logo{
+height:58px;
+}
+
+.desktop-nav{
+display:flex;
+align-items:center;
+gap:28px;
+font-size:14px;
+font-weight:500;
+}
+
+.preorder-btn{
+background:#A97A50;
+color:white;
+padding:10px 18px;
+border-radius:999px;
+}
+
+.menu-btn{
+display:none;
+font-size:28px;
+cursor:pointer;
+}
+
+.mobile-menu{
+position:fixed;
+top:0;
+right:-100%;
+width:280px;
+height:100vh;
+background:white;
+padding:100px 40px;
+transition:0.3s;
+z-index:2000;
+box-shadow:-10px 0 30px rgba(0,0,0,0.1);
+}
+
+.mobile-menu.active{
+right:0;
+}
+
+.mobile-menu a{
+display:block;
+margin-bottom:25px;
+font-size:18px;
+}
+
+.close-btn{
+position:absolute;
+top:25px;
+right:30px;
+font-size:32px;
+cursor:pointer;
+}
+
+.hero{
+height:100vh;
+background:
+linear-gradient(rgba(0,0,0,0.35),rgba(0,0,0,0.35)),
+url('hero.JPG');
+background-size:cover;
+background-position:center;
+display:flex;
+justify-content:center;
+align-items:center;
+text-align:center;
+padding:20px;
+color:white;
+}
+
+.hero-content{
+max-width:900px;
+}
+
+.hero-logo{
+width:340px;
+margin:0 auto 30px;
+}
+
+.hero h1{
+font-size:4rem;
+margin-bottom:20px;
+}
+
+.hero p{
+font-size:1.2rem;
+opacity:0.95;
+}
+
+.hero-buttons{
+margin-top:40px;
+display:flex;
+justify-content:center;
+gap:15px;
+flex-wrap:wrap;
+}
+
+.btn{
+padding:14px 28px;
+border-radius:999px;
+font-weight:600;
+}
+
+.btn-light{
+background:white;
+color:black;
+}
+
+.btn-outline{
+border:1px solid white;
+color:white;
+}
+
+.section{
+padding:110px 8%;
+}
+
+.container{
+max-width:1200px;
+margin:auto;
+}
+
+.two-col{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:70px;
+align-items:center;
+}
+
+.section h2{
+font-size:2.4rem;
+margin-bottom:25px;
+}
+
+.section p{
+color:#555;
+}
+
+.feature-card{
+background:white;
+padding:30px;
+border-radius:18px;
+margin-top:20px;
+box-shadow:0 8px 20px rgba(0,0,0,0.05);
+}
+
+.footer{
+background:white;
+padding:80px 20px;
+text-align:center;
+border-top:1px solid #ececec;
+}
+
+.footer h3{
+margin-bottom:25px;
+}
+
+.footer-links{
+display:flex;
+justify-content:center;
+gap:15px;
+flex-wrap:wrap;
+}
+
+.footer-links a{
+background:#f5f3ef;
+padding:12px 22px;
+border-radius:999px;
+}
+
+@media(max-width:900px){
+
+.desktop-nav{
+display:none;
+}
+
+.menu-btn{
+display:block;
+}
+
+.hero{
+padding-top:100px;
+}
+
+.hero-logo{
+width:220px;
+}
+
+.hero h1{
+font-size:2.6rem;
+}
+
+.two-col{
+grid-template-columns:1fr;
+}
+
+.section{
+padding:80px 24px;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<nav>
+
+<a href="index.html">
+<img src="logo-black.png" class="logo">
+</a>
+
+<div class="desktop-nav">
+<a href="about.html">About</a>
+<a href="beans.html">Shop Coffee</a>
+<a href="visit.html">Visit Us</a>
+<a href="contact.html">Contact</a>
+<a href="preorder.html" class="preorder-btn">Pre-Order</a>
+</div>
+
+<div class="menu-btn" onclick="openMenu()">☰</div>
+
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+
+<div class="close-btn" onclick="closeMenu()">×</div>
+
+<a href="about.html">About</a>
+<a href="beans.html">Shop Coffee</a>
+<a href="visit.html">Visit Us</a>
+<a href="contact.html">Contact</a>
+<a href="preorder.html">Pre-Order</a>
+
+</div>
+
+<section class="hero">
+
+<div class="hero-content">
+
+<img src="logo-white.png" class="hero-logo">
+
+<h1>Coffee that supports your day.</h1>
+
+<p>
+Thoughtfully sourced coffee served from Solaris.
+</p>
+
+<div class="hero-buttons">
+
+<a href="beans.html" class="btn btn-light">
+Shop Coffee
+</a>
+
+<a href="visit.html" class="btn btn-outline">
+Visit Us
+</a>
+
+</div>
+
+</div>
+
+</section>
+
+<section class="section">
+
+<div class="container two-col">
+
+<div>
+<img src="counter.jpg" style="border-radius:24px;">
+</div>
+
+<div>
+
+<h2>About Pillars</h2>
+
+<p>
+Pillars was built around a simple belief — great coffee should be something people can rely on every day.
+</p>
+
+<br>
+
+<p>
+Located within Solaris at Fusionopolis, we focus on approachable coffees, thoughtful sourcing and a consistent experience for the people who visit us daily.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+<section class="section">
+
+<div class="container two-col">
+
+<div>
+
+<h2>Featured Coffee</h2>
+
+<div class="feature-card">
+<strong>Espresso</strong><br>
+Brazil — Sitio Yamava
+</div>
+
+<div class="feature-card">
+<strong>Filter</strong><br>
+Mexico — Citrus Sweetness
+</div>
+
+<br>
+
+<a href="beans.html" class="preorder-btn">
+Shop Coffee
+</a>
+
+</div>
+
+<div>
+<img src="cups.jpeg" style="border-radius:24px;">
+</div>
+
+</div>
+
+</section>
+
+<section class="section">
+
+<div class="container two-col">
+
+<div>
+<img src="crowd.jpg" style="border-radius:24px;">
+</div>
+
+<div>
+
+<h2>Visit Us</h2>
+
+<p>
+1 Fusionopolis Walk<br>
+#01-K1<br>
+Singapore 138628
+</p>
+
+<br>
+
+<p>
+Mon–Fri: 8am – 4pm<br>
+Sat–Sun: Closed
+</p>
+
+<br>
+
+<a href="visit.html" class="preorder-btn">
+Plan Your Visit
+</a>
+
+</div>
+
+</div>
+
+</section>
+
+<div class="footer">
+
+<h3>Stay Connected</h3>
+
+<div class="footer-links">
+
+<a href="https://instagram.com/pillars.sg" target="_blank">
+Instagram →
+</a>
+
+<a href="mailto:hello@pillarscoffee.sg">
+General Enquiries →
+</a>
+
+<a href="mailto:joinus@pillarscoffee.sg">
+Join The Team →
+</a>
+
+</div>
+
+</div>
+
+<script>
+
+function openMenu(){
+document.getElementById('mobileMenu').classList.add('active');
+}
+
+function closeMenu(){
+document.getElementById('mobileMenu').classList.remove('active');
+}
+
+</script>
+
+</body>
+</html>

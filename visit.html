@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Visit Us | Pillars Coffee</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+font-family:'Inter',sans-serif;
+background:#f7f5f2;
+color:#1a1a1a;
+line-height:1.7;
+}
+
+a{
+text-decoration:none;
+color:inherit;
+}
+
+nav{
+position:sticky;
+top:0;
+background:white;
+padding:18px 8%;
+display:flex;
+justify-content:space-between;
+align-items:center;
+border-bottom:1px solid #eee;
+z-index:100;
+}
+
+.logo{
+height:36px;
+}
+
+.nav-links{
+display:flex;
+gap:28px;
+align-items:center;
+font-size:14px;
+}
+
+.preorder{
+background:#111;
+color:white;
+padding:10px 18px;
+border-radius:999px;
+}
+
+.hero{
+height:70vh;
+background:url('hero.JPG');
+background-size:cover;
+background-position:center;
+display:flex;
+align-items:center;
+justify-content:center;
+text-align:center;
+color:white;
+}
+
+.hero h1{
+font-size:4rem;
+background:rgba(0,0,0,0.35);
+padding:20px 40px;
+}
+
+.section{
+max-width:1200px;
+margin:auto;
+padding:100px 8%;
+}
+
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:60px;
+align-items:center;
+}
+
+img{
+width:100%;
+display:block;
+border-radius:20px;
+}
+
+h2{
+font-size:2rem;
+margin-bottom:20px;
+}
+
+.address-card{
+background:#111;
+color:white;
+padding:40px;
+border-radius:24px;
+margin-top:40px;
+}
+
+.address-card p{
+color:#ddd;
+}
+
+.button{
+display:inline-block;
+margin-top:20px;
+padding:14px 28px;
+background:white;
+color:black;
+border-radius:999px;
+font-weight:600;
+}
+
+.community{
+text-align:center;
+max-width:900px;
+margin:auto;
+}
+
+footer{
+background:#111;
+color:white;
+text-align:center;
+padding:60px 20px;
+}
+
+@media(max-width:900px){
+
+.grid{
+grid-template-columns:1fr;
+}
+
+.hero h1{
+font-size:2.5rem;
+}
+
+.nav-links{
+gap:14px;
+font-size:12px;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<nav>
+
+<a href="index.html">
+<img src="logo-black.png" class="logo">
+</a>
+
+<div class="nav-links">
+<a href="index.html">Home</a>
+<a href="about.html">About</a>
+<a href="beans.html">Shop Coffee</a>
+<a href="visit.html">Visit Us</a>
+<a href="contact.html">Contact</a>
+<a href="preorder.html" class="preorder">Pre-Order</a>
+</div>
+
+</nav>
+
+<section class="hero">
+
+<h1>Visit Us</h1>
+
+</section>
+
+<section class="section">
+
+<div class="grid">
+
+<div>
+
+<h2>Solaris</h2>
+
+<p>
+Located within Solaris at Fusionopolis, Pillars serves coffee, pastries and everyday favourites for the people who work, build and create around us.
+</p>
+
+<div class="address-card">
+
+<h3>Pillars Coffee</h3>
+
+<br>
+
+<p>
+1 Fusionopolis Walk<br>
+#01-K1<br>
+Singapore 138628
+</p>
+
+<br>
+
+<p>
+Monday – Friday<br>
+8:00am – 4:00pm
+</p>
+
+<br>
+
+<p>
+Saturday – Sunday<br>
+Closed
+</p>
+
+<a
+class="button"
+href="https://maps.google.com"
+target="_blank">
+
+Get Directions
+
+</a>
+
+</div>
+
+</div>
+
+<div>
+
+<img src="counter.jpg">
+
+</div>
+
+</div>
+
+</section>
+
+<section class="section">
+
+<div class="community">
+
+<h2>Part Of The Daily Routine</h2>
+
+<p>
+Built for the people who pass through Solaris every day.
+Whether it's a morning coffee before work, an afternoon reset, or a quick catch-up between meetings, Pillars exists to be part of the rhythm of everyday life.
+</p>
+
+<br><br>
+
+<img src="crowd.jpg">
+
+</div>
+
+</section>
+
+<footer>
+
+<p>hello@pillarscoffee.sg</p>
+<p>@pillars.sg</p>
+
+</footer>
+
+</body>
+</html>

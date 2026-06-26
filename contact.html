@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact | Pillars Coffee</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+font-family:'Inter',sans-serif;
+background:#f7f5f2;
+color:#1a1a1a;
+line-height:1.7;
+}
+
+a{
+text-decoration:none;
+color:inherit;
+}
+
+nav{
+position:sticky;
+top:0;
+background:white;
+padding:18px 8%;
+display:flex;
+justify-content:space-between;
+align-items:center;
+border-bottom:1px solid #eee;
+z-index:100;
+}
+
+.logo{
+height:36px;
+}
+
+.nav-links{
+display:flex;
+gap:28px;
+align-items:center;
+font-size:14px;
+}
+
+.preorder{
+background:#111;
+color:white;
+padding:10px 18px;
+border-radius:999px;
+}
+
+.hero{
+padding:120px 8% 80px;
+text-align:center;
+}
+
+.hero h1{
+font-size:3.5rem;
+margin-bottom:15px;
+}
+
+.hero p{
+color:#666;
+}
+
+.section{
+max-width:1100px;
+margin:auto;
+padding:0 8% 100px;
+}
+
+.cards{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+gap:30px;
+}
+
+.card{
+background:white;
+padding:40px;
+border-radius:24px;
+box-shadow:0 8px 20px rgba(0,0,0,0.05);
+}
+
+.card h2{
+margin-bottom:15px;
+}
+
+.email-link{
+display:inline-block;
+margin-top:20px;
+font-weight:600;
+}
+
+.instagram{
+text-align:center;
+margin-top:80px;
+}
+
+.instagram-btn{
+display:inline-block;
+margin-top:20px;
+padding:14px 28px;
+background:#111;
+color:white;
+border-radius:999px;
+}
+
+footer{
+background:#111;
+color:white;
+text-align:center;
+padding:60px 20px;
+}
+
+@media(max-width:900px){
+
+.nav-links{
+gap:14px;
+font-size:12px;
+}
+
+.hero h1{
+font-size:2.5rem;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<nav>
+
+<a href="index.html">
+<img src="logo-black.png" class="logo">
+</a>
+
+<div class="nav-links">
+<a href="index.html">Home</a>
+<a href="about.html">About</a>
+<a href="beans.html">Shop Coffee</a>
+<a href="visit.html">Visit Us</a>
+<a href="contact.html">Contact</a>
+<a href="preorder.html" class="preorder">Pre-Order</a>
+</div>
+
+</nav>
+
+<section class="hero">
+
+<h1>Contact</h1>
+
+<p>
+Get in touch with us.
+</p>
+
+</section>
+
+<section class="section">
+
+<div class="cards">
+
+<div class="card">
+
+<h2>General Enquiries</h2>
+
+<p>
+Questions, collaborations, partnerships or anything Pillars.
+</p>
+
+<a
+class="email-link"
+href="mailto:hello@pillarscoffee.sg">
+
+hello@pillarscoffee.sg
+
+</a>
+
+</div>
+
+<div class="card">
+
+<h2>Join The Team</h2>
+
+<p>
+Interested in working with us?
+
+Send us your resume and a short introduction.
+</p>
+
+<a
+class="email-link"
+href="mailto:joinus@pillarscoffee.sg">
+
+joinus@pillarscoffee.sg
+
+</a>
+
+</div>
+
+</div>
+
+<div class="instagram">
+
+<h2>Follow Along</h2>
+
+<p>
+Daily updates, coffee releases and life at Pillars.
+</p>
+
+<a
+class="instagram-btn"
+href="https://instagram.com/pillars.sg"
+target="_blank">
+
+@pillars.sg
+
+</a>
+
+</div>
+
+</section>
+
+<footer>
+
+<p>hello@pillarscoffee.sg</p>
+<p>@pillars.sg</p>
+
+</footer>
+
+</body>
+</html>
