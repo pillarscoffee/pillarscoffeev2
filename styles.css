@@ -1,1 +1,508 @@
+/* ==========================================================
+   PILLARS COFFEE V2
+========================================================== */
 
+:root{
+
+    --bg:#f7f5f1;
+    --bg2:#efebe5;
+    --text:#1d1d1d;
+    --muted:#6d6d6d;
+    --line:#e4dfd7;
+
+    --radius:22px;
+    --shadow:0 18px 50px rgba(0,0,0,.08);
+
+    --container:1200px;
+
+    --transition:.35s ease;
+
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+
+    background:var(--bg);
+
+    color:var(--text);
+
+    font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    sans-serif;
+
+    line-height:1.6;
+
+    -webkit-font-smoothing:antialiased;
+
+}
+
+img{
+
+    max-width:100%;
+    display:block;
+
+}
+
+a{
+
+    color:inherit;
+    text-decoration:none;
+
+}
+
+.container{
+
+    width:min(92%,var(--container));
+    margin:auto;
+
+}
+
+/* ==========================================================
+NAVBAR
+========================================================== */
+
+header{
+
+    position:fixed;
+
+    top:0;
+    left:0;
+
+    width:100%;
+
+    z-index:999;
+
+    transition:.3s;
+
+    backdrop-filter:blur(12px);
+
+    background:rgba(247,245,241,.82);
+
+    border-bottom:1px solid transparent;
+
+}
+
+header.scrolled{
+
+    border-bottom:1px solid var(--line);
+
+}
+
+.nav{
+
+    height:78px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+}
+
+.logo{
+
+    height:42px;
+
+}
+
+.nav-links{
+
+    display:flex;
+
+    gap:36px;
+
+    align-items:center;
+
+}
+
+.nav-links a{
+
+    font-size:.95rem;
+
+    color:var(--muted);
+
+    transition:.25s;
+
+}
+
+.nav-links a:hover{
+
+    color:black;
+
+}
+
+.button{
+
+    background:black;
+
+    color:white;
+
+    padding:14px 24px;
+
+    border-radius:999px;
+
+    transition:var(--transition);
+
+    font-weight:600;
+
+}
+
+.button:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:0 14px 30px rgba(0,0,0,.18);
+
+}
+
+/* ==========================================================
+MOBILE MENU
+========================================================== */
+
+.menu-toggle{
+
+    display:none;
+
+    font-size:28px;
+
+    cursor:pointer;
+
+}
+
+@media(max-width:860px){
+
+.nav-links{
+
+display:none;
+
+position:absolute;
+
+left:0;
+
+top:78px;
+
+width:100%;
+
+background:white;
+
+padding:30px;
+
+flex-direction:column;
+
+align-items:flex-start;
+
+border-bottom:1px solid var(--line);
+
+}
+
+.nav-links.active{
+
+display:flex;
+
+}
+
+.menu-toggle{
+
+display:block;
+
+}
+
+}
+
+/* ==========================================================
+HERO
+========================================================== */
+
+.hero{
+
+    min-height:100vh;
+
+    display:flex;
+
+    align-items:center;
+
+    position:relative;
+
+    overflow:hidden;
+
+}
+
+.hero::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    background:
+
+    linear-gradient(rgba(0,0,0,.28),rgba(0,0,0,.35)),
+    url(hero.JPG);
+
+    background-size:cover;
+
+    background-position:center;
+
+    z-index:-1;
+
+}
+
+.hero-content{
+
+    color:white;
+
+    max-width:760px;
+
+}
+
+.hero h1{
+
+    font-size:clamp(3.8rem,8vw,7rem);
+
+    line-height:.92;
+
+    margin-bottom:28px;
+
+    font-weight:700;
+
+}
+
+.hero p{
+
+    font-size:1.2rem;
+
+    max-width:620px;
+
+    color:rgba(255,255,255,.88);
+
+    margin-bottom:42px;
+
+}
+
+.hero-buttons{
+
+    display:flex;
+
+    gap:18px;
+
+    flex-wrap:wrap;
+
+}
+
+.button-light{
+
+    background:white;
+
+    color:black;
+
+}
+
+.button-outline{
+
+    border:1px solid rgba(255,255,255,.6);
+
+    color:white;
+
+    background:transparent;
+
+}
+
+.button-outline:hover{
+
+    background:white;
+
+    color:black;
+
+}
+
+/* ==========================================================
+SECTION
+========================================================== */
+
+section{
+
+    padding:120px 0;
+
+}
+
+.section-title{
+
+    font-size:3rem;
+
+    margin-bottom:18px;
+
+    line-height:1.05;
+
+}
+
+.section-sub{
+
+    color:var(--muted);
+
+    max-width:700px;
+
+}
+
+/* ==========================================================
+CARDS
+========================================================== */
+
+.grid{
+
+display:grid;
+
+gap:30px;
+
+}
+
+.grid-2{
+
+grid-template-columns:repeat(2,1fr);
+
+}
+
+.grid-3{
+
+grid-template-columns:repeat(3,1fr);
+
+}
+
+.card{
+
+background:white;
+
+border-radius:var(--radius);
+
+overflow:hidden;
+
+box-shadow:var(--shadow);
+
+transition:var(--transition);
+
+}
+
+.card:hover{
+
+transform:translateY(-8px);
+
+}
+
+.card img{
+
+height:320px;
+
+width:100%;
+
+object-fit:cover;
+
+}
+
+.card-body{
+
+padding:34px;
+
+}
+
+.card h3{
+
+font-size:1.7rem;
+
+margin-bottom:10px;
+
+}
+
+.card p{
+
+color:var(--muted);
+
+}
+
+/* ==========================================================
+FOOTER
+========================================================== */
+
+footer{
+
+background:#111;
+
+color:white;
+
+padding:70px 0;
+
+}
+
+footer p{
+
+opacity:.7;
+
+margin-top:10px;
+
+}
+
+/* ==========================================================
+RESPONSIVE
+========================================================== */
+
+@media(max-width:960px){
+
+.grid-2,
+.grid-3{
+
+grid-template-columns:1fr;
+
+}
+
+.hero{
+
+text-align:center;
+
+}
+
+.hero-buttons{
+
+justify-content:center;
+
+}
+
+.hero h1{
+
+font-size:4rem;
+
+}
+
+}
+
+@media(max-width:600px){
+
+section{
+
+padding:80px 0;
+
+}
+
+.hero h1{
+
+font-size:3rem;
+
+}
+
+.section-title{
+
+font-size:2.2rem;
+
+}
+
+}
