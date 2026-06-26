@@ -1,451 +1,388 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pillars Coffee</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Pillars Coffee Singapore</title>
 
-<style>
+    <meta name="description"
+        content="Thoughtfully sourced coffee, served with consistency, for the people who work and create around us.">
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-body{
-font-family:'Inter',sans-serif;
-background:#f7f5f2;
-color:#1a1a1a;
-line-height:1.7;
-overflow-x:hidden;
-}
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
 
-a{
-text-decoration:none;
-color:inherit;
-}
+    <link rel="stylesheet" href="styles.css">
 
-img{
-display:block;
-max-width:100%;
-}
-
-nav{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-padding:18px 8%;
-background:rgba(255,255,255,0.95);
-backdrop-filter:blur(12px);
-display:flex;
-justify-content:space-between;
-align-items:center;
-border-bottom:1px solid #ececec;
-z-index:1000;
-}
-
-.logo{
-height:58px;
-}
-
-.desktop-nav{
-display:flex;
-align-items:center;
-gap:28px;
-font-size:14px;
-font-weight:500;
-}
-
-.preorder-btn{
-background:#A97A50;
-color:white;
-padding:10px 18px;
-border-radius:999px;
-}
-
-.menu-btn{
-display:none;
-font-size:28px;
-cursor:pointer;
-}
-
-.mobile-menu{
-position:fixed;
-top:0;
-right:-100%;
-width:280px;
-height:100vh;
-background:white;
-padding:100px 40px;
-transition:0.3s;
-z-index:2000;
-box-shadow:-10px 0 30px rgba(0,0,0,0.1);
-}
-
-.mobile-menu.active{
-right:0;
-}
-
-.mobile-menu a{
-display:block;
-margin-bottom:25px;
-font-size:18px;
-}
-
-.close-btn{
-position:absolute;
-top:25px;
-right:30px;
-font-size:32px;
-cursor:pointer;
-}
-
-.hero{
-height:100vh;
-background:
-linear-gradient(rgba(0,0,0,0.35),rgba(0,0,0,0.35)),
-url('hero.JPG');
-background-size:cover;
-background-position:center;
-display:flex;
-justify-content:center;
-align-items:center;
-text-align:center;
-padding:20px;
-color:white;
-}
-
-.hero-content{
-max-width:900px;
-}
-
-.hero-logo{
-width:340px;
-margin:0 auto 30px;
-}
-
-.hero h1{
-font-size:4rem;
-margin-bottom:20px;
-}
-
-.hero p{
-font-size:1.2rem;
-opacity:0.95;
-}
-
-.hero-buttons{
-margin-top:40px;
-display:flex;
-justify-content:center;
-gap:15px;
-flex-wrap:wrap;
-}
-
-.btn{
-padding:14px 28px;
-border-radius:999px;
-font-weight:600;
-}
-
-.btn-light{
-background:white;
-color:black;
-}
-
-.btn-outline{
-border:1px solid white;
-color:white;
-}
-
-.section{
-padding:110px 8%;
-}
-
-.container{
-max-width:1200px;
-margin:auto;
-}
-
-.two-col{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:70px;
-align-items:center;
-}
-
-.section h2{
-font-size:2.4rem;
-margin-bottom:25px;
-}
-
-.section p{
-color:#555;
-}
-
-.feature-card{
-background:white;
-padding:30px;
-border-radius:18px;
-margin-top:20px;
-box-shadow:0 8px 20px rgba(0,0,0,0.05);
-}
-
-.footer{
-background:white;
-padding:80px 20px;
-text-align:center;
-border-top:1px solid #ececec;
-}
-
-.footer h3{
-margin-bottom:25px;
-}
-
-.footer-links{
-display:flex;
-justify-content:center;
-gap:15px;
-flex-wrap:wrap;
-}
-
-.footer-links a{
-background:#f5f3ef;
-padding:12px 22px;
-border-radius:999px;
-}
-
-@media(max-width:900px){
-
-.desktop-nav{
-display:none;
-}
-
-.menu-btn{
-display:block;
-}
-
-.hero{
-padding-top:100px;
-}
-
-.hero-logo{
-width:220px;
-}
-
-.hero h1{
-font-size:2.6rem;
-}
-
-.two-col{
-grid-template-columns:1fr;
-}
-
-.section{
-padding:80px 24px;
-}
-
-}
-
-</style>
 </head>
 
 <body>
 
-<nav>
+    <!-- Navigation -->
 
-<a href="index.html">
-<img src="logo-black.png" class="logo">
-</a>
+    <header class="navbar">
 
-<div class="desktop-nav">
-<a href="about.html">About</a>
-<a href="beans.html">Shop Coffee</a>
-<a href="visit.html">Visit Us</a>
-<a href="contact.html">Contact</a>
-<a href="preorder.html" class="preorder-btn">Pre-Order</a>
-</div>
+        <div class="nav-container">
 
-<div class="menu-btn" onclick="openMenu()">☰</div>
+            <a href="index.html" class="logo">
+                <img src="logo-black.png" alt="Pillars Coffee">
+            </a>
 
-</nav>
+            <nav>
 
-<div class="mobile-menu" id="mobileMenu">
+                <ul class="nav-links">
 
-<div class="close-btn" onclick="closeMenu()">×</div>
+                    <li><a href="index.html" class="active">Home</a></li>
 
-<a href="about.html">About</a>
-<a href="beans.html">Shop Coffee</a>
-<a href="visit.html">Visit Us</a>
-<a href="contact.html">Contact</a>
-<a href="preorder.html">Pre-Order</a>
+                    <li><a href="about.html">About</a></li>
 
-</div>
+                    <li><a href="beans.html">Coffee</a></li>
 
-<section class="hero">
+                    <li><a href="visit.html">Visit</a></li>
 
-<div class="hero-content">
+                    <li><a href="contact.html">Contact</a></li>
 
-<img src="logo-white.png" class="hero-logo">
+                </ul>
 
-<h1>Coffee that supports your day.</h1>
+            </nav>
 
-<p>
-Thoughtfully sourced coffee served from Solaris.
-</p>
+            <a href="preorder.html" class="order-btn">
+                Order Ahead
+            </a>
 
-<div class="hero-buttons">
+            <div class="hamburger">
 
-<a href="beans.html" class="btn btn-light">
-Shop Coffee
-</a>
+                <span></span>
+                <span></span>
+                <span></span>
 
-<a href="visit.html" class="btn btn-outline">
-Visit Us
-</a>
+            </div>
 
-</div>
+        </div>
 
-</div>
+    </header>
 
-</section>
 
-<section class="section">
 
-<div class="container two-col">
 
-<div>
-<img src="counter.jpg" style="border-radius:24px;">
-</div>
 
-<div>
+    <!-- Hero -->
 
-<h2>About Pillars</h2>
+    <section class="hero">
 
-<p>
-Pillars was built around a simple belief — great coffee should be something people can rely on every day.
-</p>
+        <img src="hero.JPG" class="hero-image">
 
-<br>
+        <div class="hero-overlay"></div>
 
-<p>
-Located within Solaris at Fusionopolis, we focus on approachable coffees, thoughtful sourcing and a consistent experience for the people who visit us daily.
-</p>
+        <div class="hero-content">
 
-</div>
+            <img src="logo-white.png" class="hero-logo">
 
-</div>
+            <h1>
 
-</section>
+                Coffee that supports your day.
 
-<section class="section">
+            </h1>
 
-<div class="container two-col">
+            <p>
 
-<div>
+                Thoughtfully sourced coffee,
+                served with consistency,
+                for the people who work and create around us.
 
-<h2>Featured Coffee</h2>
+            </p>
 
-<div class="feature-card">
-<strong>Espresso</strong><br>
-Brazil — Sitio Yamava
-</div>
+            <a href="beans.html" class="primary-button">
 
-<div class="feature-card">
-<strong>Filter</strong><br>
-Mexico — Citrus Sweetness
-</div>
+                Shop Coffee
 
-<br>
+            </a>
 
-<a href="beans.html" class="preorder-btn">
-Shop Coffee
-</a>
+        </div>
 
-</div>
+    </section>
 
-<div>
-<img src="cups.jpeg" style="border-radius:24px;">
-</div>
 
-</div>
 
-</section>
 
-<section class="section">
 
-<div class="container two-col">
+    <!-- About -->
 
-<div>
-<img src="crowd.jpg" style="border-radius:24px;">
-</div>
+    <section class="about-preview">
 
-<div>
+        <div class="container">
 
-<h2>Visit Us</h2>
+            <p class="section-label">
 
-<p>
-1 Fusionopolis Walk<br>
-#01-K1<br>
-Singapore 138628
-</p>
+                ABOUT
 
-<br>
+            </p>
 
-<p>
-Mon–Fri: 8am – 4pm<br>
-Sat–Sun: Closed
-</p>
+            <h2>
 
-<br>
+                Built around everyday rituals.
 
-<a href="visit.html" class="preorder-btn">
-Plan Your Visit
-</a>
+            </h2>
 
-</div>
+            <p class="section-text">
 
-</div>
+                Pillars began with a simple belief —
+                great coffee shouldn't feel intimidating.
 
-</section>
+                Whether you're heading into a meeting,
+                catching up with friends,
+                or simply taking a break,
+                we're here to serve coffee you'll look forward to every day.
 
-<div class="footer">
+            </p>
 
-<h3>Stay Connected</h3>
+            <a href="about.html" class="text-link">
 
-<div class="footer-links">
+                Read Our Story →
 
-<a href="https://instagram.com/pillars.sg" target="_blank">
-Instagram →
-</a>
+            </a>
 
-<a href="mailto:hello@pillarscoffee.sg">
-General Enquiries →
-</a>
+        </div>
 
-<a href="mailto:joinus@pillarscoffee.sg">
-Join The Team →
-</a>
+    </section>
 
-</div>
 
-</div>
 
-<script>
 
-function openMenu(){
-document.getElementById('mobileMenu').classList.add('active');
-}
 
-function closeMenu(){
-document.getElementById('mobileMenu').classList.remove('active');
-}
+    <!-- Featured Coffee -->
 
-</script>
+    <section class="featured">
+
+        <div class="container">
+
+            <p class="section-label">
+
+                FEATURED COFFEE
+
+            </p>
+
+            <div class="featured-grid">
+
+                <div class="coffee-card">
+
+                    <div class="coffee-image">
+
+                        <!-- Product Image -->
+
+                    </div>
+
+                    <div class="coffee-info">
+
+                        <p class="coffee-type">
+
+                            ESPRESSO
+
+                        </p>
+
+                        <h3>
+
+                            Fazenda Sertão
+
+                        </h3>
+
+                        <p>
+
+                            Hazelnut · Red Plum · Molasses
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+
+
+                <div class="coffee-card">
+
+                    <div class="coffee-image">
+
+                    </div>
+
+                    <div class="coffee-info">
+
+                        <p class="coffee-type">
+
+                            FILTER
+
+                        </p>
+
+                        <h3>
+
+                            Alo Village
+
+                        </h3>
+
+                        <p>
+
+                            Blueberry · Bergamot · Lavender
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <a href="beans.html" class="primary-button">
+
+                View Coffee Collection
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+
+
+
+    <!-- Visit -->
+
+    <section class="visit-home">
+
+        <div class="visit-image">
+
+            <img src="counter.jpg">
+
+        </div>
+
+        <div class="visit-content">
+
+            <p class="section-label">
+
+                VISIT US
+
+            </p>
+
+            <h2>
+
+                Brewed daily at Solaris.
+
+            </h2>
+
+            <p>
+
+                Grab a coffee before work,
+                meet a colleague,
+                or slow down for a moment.
+
+                We're located inside Solaris,
+                one of Singapore's leading innovation districts.
+
+            </p>
+
+            <a href="visit.html" class="text-link">
+
+                Plan Your Visit →
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+
+
+
+    <!-- Footer -->
+
+    <footer>
+
+        <div class="footer-grid">
+
+            <div>
+
+                <img src="logo-black.png" class="footer-logo">
+
+            </div>
+
+            <div>
+
+                <h4>
+
+                    Visit
+
+                </h4>
+
+                <p>
+
+                    Solaris @ one-north
+
+                </p>
+
+                <p>
+
+                    Mon–Fri
+
+                </p>
+
+                <p>
+
+                    8AM–4PM
+
+                </p>
+
+            </div>
+
+            <div>
+
+                <h4>
+
+                    Contact
+
+                </h4>
+
+                <p>
+
+                    hello@pillarscoffee.sg
+
+                </p>
+
+                <p>
+
+                    joinus@pillarscoffee.sg
+
+                </p>
+
+            </div>
+
+            <div>
+
+                <h4>
+
+                    Follow
+
+                </h4>
+
+                <p>
+
+                    @pillars.sg
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+    <script src="script.js"></script>
 
 </body>
+
 </html>
