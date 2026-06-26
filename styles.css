@@ -95,7 +95,37 @@ header.scrolled{ border-bottom-color:var(--line); }
   display:flex;
   align-items:center;
 }
-.nav-logo .logo-img{ height:42px; width:auto; display:block; }
+.nav-logo .logo-img{ height:64px; width:auto; display:block; }
+
+/* footer logo */
+footer .nav-logo .logo-img{ height:56px; }
+
+/* visit strip — horizontal layout replacing two-col with photo */
+.visit-strip{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:80px;
+  align-items:start;
+  padding:60px 0;
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+}
+.address-inline{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:40px;
+  margin-top:0;
+}
+.address-inline dt{ margin-top:0; }
+
+/* about page — fix mobile photo crop (show top of image where logo is) */
+.photo-about-mobile{ object-position:center; }
+
+@media(max-width:900px){
+  .photo-about-mobile{ object-position:top; }
+  .visit-strip{ grid-template-columns:1fr; gap:32px; padding:40px 0; }
+  .address-inline{ grid-template-columns:1fr 1fr; gap:24px; }
+}
 
 .nav-links{
   display:flex;
