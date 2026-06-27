@@ -118,11 +118,11 @@ footer .nav-logo .logo-img{ height:56px; }
 }
 .address-inline dt{ margin-top:0; }
 
-/* counter photo — show bottom where PILLARS branding is carved */
-.photo-about-mobile{ object-position:center bottom; }
+/* counter photo — show PILLARS branding, avoid brown bottom edge */
+.photo-about-mobile{ object-position:center 72%; }
 
 @media(max-width:900px){
-  .photo-about-mobile{ object-position:center bottom; }
+  .photo-about-mobile{ object-position:center 72%; }
   .visit-strip{ grid-template-columns:1fr; gap:32px; padding:40px 0; }
   .address-inline{ grid-template-columns:1fr 1fr; gap:24px; }
 }
@@ -541,5 +541,8 @@ footer{
   .btn{ width:100%; text-align:center; }
 
   .pickup-info{ padding:24px 20px; }
+
+  /* featured coffee cards on homepage stack on mobile */
+  .featured-cards{ grid-template-columns:1fr !important; }
 
 }
