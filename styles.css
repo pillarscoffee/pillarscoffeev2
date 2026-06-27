@@ -118,11 +118,11 @@ footer .nav-logo .logo-img{ height:56px; }
 }
 .address-inline dt{ margin-top:0; }
 
-/* about page — fix mobile photo crop (show top of image where logo is) */
-.photo-about-mobile{ object-position:center; }
+/* counter photo — show bottom where PILLARS branding is carved */
+.photo-about-mobile{ object-position:center bottom; }
 
 @media(max-width:900px){
-  .photo-about-mobile{ object-position:top; }
+  .photo-about-mobile{ object-position:center bottom; }
   .visit-strip{ grid-template-columns:1fr; gap:32px; padding:40px 0; }
   .address-inline{ grid-template-columns:1fr 1fr; gap:24px; }
 }
@@ -505,7 +505,7 @@ footer{
   .two-col{ grid-template-columns:1fr; gap:40px; }
 
   .photo-full,
-  .photo-half{ height:300px; }
+  .photo-half{ height:380px; }
 
   .section{ padding:90px 0; }
   .section-sm{ padding:60px 0; }
@@ -513,6 +513,7 @@ footer{
   .page-header{ padding:120px 0 60px; }
 
   .hero-full{ align-items:center; padding:100px 0 60px; }
+  .hero-bg{ background-position:center 65%; }
 
   .coffee-row{ flex-direction:column; gap:14px; }
   .coffee-row .c-right{ text-align:left; }
