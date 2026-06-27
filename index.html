@@ -9,6 +9,16 @@
 <meta property="og:description" content="Coffee that supports your day. Thoughtfully sourced espresso and filter, served daily.">
 <meta property="og:image" content="images/hero.jpg">
 <link rel="stylesheet" href="styles.css">
+<style>
+.featured-bean-img{
+  width:100%; height:300px; object-fit:cover; object-position:center 35%; display:block;
+}
+@media(max-width:600px){
+  .featured-bean-img{
+    height:auto; max-height:90vw; object-fit:contain; background:#F5F4F2;
+  }
+}
+</style>
 </head>
 <body>
 
@@ -46,7 +56,10 @@
     <h1>Coffee that supports<br>your day.</h1>
     <p>Thoughtfully sourced espresso and filter coffee, served with consistency for the people who work and create around us.</p>
     <div class="hero-buttons">
+      <div>
       <a href="preorder.html" class="btn btn-light">Pre-Order</a>
+      <p style="font-size:11px; color:rgba(251,250,248,0.7); margin-top:9px; letter-spacing:0.06em; text-transform:uppercase;">For Solaris self pick-up</p>
+    </div>
       <a href="beans.html" class="btn btn-outline-light">Shop Coffee</a>
     </div>
   </div>
@@ -73,7 +86,7 @@
     <div class="featured-cards" style="display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--line); border:1px solid var(--line);">
 
       <div style="background:var(--paper);">
-        <img src="images/beans/fazendasertao.jpg" alt="Fazenda Sertão espresso — Brazil" style="width:100%; height:300px; object-fit:cover; object-position:center 35%; display:block;">
+        <img src="images/beans/fazendasertao.jpg" alt="Fazenda Sertão espresso — Brazil" class="featured-bean-img">
         <div style="padding:24px 28px 28px;">
           <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.12em; font-weight:600; color:var(--stone); margin-bottom:8px;">Espresso</div>
           <div style="font-family:'Space Grotesk',sans-serif; font-size:1.15rem; font-weight:600; margin-bottom:6px;">Fazenda Sertão</div>
@@ -90,7 +103,7 @@
       </div>
 
       <div style="background:var(--paper);">
-        <img src="images/beans/csweetness.jpg" alt="Citrus Sweetness filter — Mexico" style="width:100%; height:300px; object-fit:cover; object-position:center 35%; display:block;">
+        <img src="images/beans/csweetness.jpg" alt="Citrus Sweetness filter — Mexico" class="featured-bean-img">
         <div style="padding:24px 28px 28px;">
           <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.12em; font-weight:600; color:var(--stone); margin-bottom:8px;">Filter</div>
           <div style="font-family:'Space Grotesk',sans-serif; font-size:1.15rem; font-weight:600; margin-bottom:6px;">Citrus Sweetness</div>
