@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El Alcanfor — Pillars Coffee</title>
+<meta name="description" content="Filter · Yellow Plums · Dried Fig · Red Tea · San Ignacio, Cajamarca · Peru">
+<link rel="stylesheet" href="../styles.css">
+<style>
+.bean-detail-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:0;
+  min-height:70vh;
+  align-items:start;
+}
+.bean-detail-photo{
+  position:sticky;
+  top:76px;
+}
+.bean-detail-photo img{
+  width:100%;
+  height:calc(100vh - 76px);
+  object-fit:cover;
+  object-position:center 35%;
+  display:block;
+}
+.bean-detail-info{
+  padding:70px 64px 90px;
+}
+.bean-back{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-size:13px;
+  font-weight:500;
+  color:var(--stone);
+  margin-bottom:48px;
+  transition:color .2s;
+}
+.bean-back:hover{color:var(--ink);}
+.bean-detail-name{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:clamp(2rem,4vw,3rem);
+  font-weight:600;
+  letter-spacing:-0.02em;
+  line-height:1.05;
+  margin-bottom:10px;
+}
+.bean-detail-notes{
+  font-size:1rem;
+  color:var(--stone);
+  margin-bottom:40px;
+  letter-spacing:0.02em;
+}
+.bean-spec-table{
+  border-top:1px solid var(--line);
+  margin-bottom:40px;
+}
+.bean-spec-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  padding:14px 0;
+  border-bottom:1px solid var(--line);
+  gap:20px;
+}
+.bean-spec-label{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:0.12em;
+  font-weight:600;
+  color:var(--stone);
+  flex-shrink:0;
+}
+.bean-spec-value{
+  font-size:0.92rem;
+  text-align:right;
+}
+.bean-description{
+  margin-bottom:40px;
+}
+.bean-description p{
+  font-size:0.97rem;
+  color:var(--stone);
+  line-height:1.75;
+  max-width:480px;
+}
+.bean-description p + p{
+  margin-top:14px;
+}
+.bean-order-block{
+  padding:32px;
+  border:1px solid var(--line);
+}
+.bean-order-price{
+  display:flex;
+  align-items:baseline;
+  gap:10px;
+  margin-bottom:20px;
+}
+.bean-order-price .price{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:1.8rem;
+  font-weight:600;
+}
+.bean-order-price .weight{
+  font-size:0.9rem;
+  color:var(--stone);
+}
+.btn-wa-order{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  width:100%;
+  padding:16px 24px;
+  background:var(--ink);
+  color:var(--paper);
+  font-size:15px;
+  font-weight:600;
+  border-radius:2px;
+  transition:background .2s;
+}
+.btn-wa-order:hover{background:#25D366;}
+.bean-order-note{
+  margin-top:14px;
+  font-size:0.8rem;
+  color:var(--stone);
+  text-align:center;
+}
+@media(max-width:900px){
+  .bean-detail-grid{grid-template-columns:1fr;}
+  .bean-detail-photo{position:static;}
+  .bean-detail-photo img{height:70vw; min-height:280px; max-height:420px;}
+  .bean-detail-info{padding:40px 0 70px;}
+  .bean-back{margin-bottom:32px;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <nav class="nav">
+      <a href="../index.html" class="nav-logo"><img src="../images/logo-black.png" alt="Pillars Coffee" class="logo-img"></a>
+      <div class="nav-links">
+        <a href="../about.html">About</a>
+        <a href="../beans.html">Shop Coffee</a>
+        <a href="../visit.html">Visit Us</a>
+        <a href="../contact.html">Contact</a>
+        <a href="../preorder.html" class="btn-nav">Pre-Order</a>
+      </div>
+      <button class="menu-toggle" id="menuToggle" aria-label="Open menu">☰</button>
+    </nav>
+  </div>
+</header>
+
+<div class="mobile-overlay" id="mobileOverlay"></div>
+<div class="mobile-menu" id="mobileMenu">
+  <button class="close-toggle" id="closeToggle" aria-label="Close menu">×</button>
+  <a href="../index.html">Home</a>
+  <a href="../about.html">About</a>
+  <a href="../beans.html">Shop Coffee</a>
+  <a href="../visit.html">Visit Us</a>
+  <a href="../contact.html">Contact</a>
+  <a href="../preorder.html" class="btn-nav-mobile">Pre-Order</a>
+</div>
+
+<div style="padding-top:76px;">
+  <div class="bean-detail-grid">
+
+    <div class="bean-detail-photo">
+      <img src="../images/beans/alcanfor.jpg" alt="El Alcanfor — Pillars Coffee">
+    </div>
+
+    <div class="bean-detail-info">
+      <div class="container" style="max-width:none; width:100%; margin:0; padding:0;">
+
+        <a href="../beans.html" class="bean-back">← Back to Coffee</a>
+
+        <div class="eyebrow" style="margin-bottom:12px;"><span class="bar"></span>Filter</div>
+        <h1 class="bean-detail-name">El Alcanfor</h1>
+        <p class="bean-detail-notes">Yellow Plums · Dried Fig · Red Tea</p>
+
+        <div class="bean-spec-table">
+          <div class="bean-spec-row">
+            <span class="bean-spec-label">Origin</span>
+            <span class="bean-spec-value">San Ignacio, Cajamarca · Peru</span>
+          </div>
+          <div class="bean-spec-row">
+            <span class="bean-spec-label">Variety</span>
+            <span class="bean-spec-value">Caturra</span>
+          </div>
+          <div class="bean-spec-row">
+            <span class="bean-spec-label">Process</span>
+            <span class="bean-spec-value">Fully Washed</span>
+          </div>
+          <div class="bean-spec-row">
+            <span class="bean-spec-label">Format</span>
+            <span class="bean-spec-value">200g · Whole Bean</span>
+          </div>
+        </div>
+
+        <div class="bean-description">
+          <p>[Describe what makes this coffee unique — the farm, the producer, what drew you to it. A couple of sentences is enough. Kevin will fill this in.]</p>
+          <p>[Optional: add a brewing tip or tasting note here.]</p>
+        </div>
+
+        <div class="bean-order-block">
+          <div class="bean-order-price">
+            <span class="price">$26</span>
+            <span class="weight">200g</span>
+          </div>
+          <a href="https://wa.me/6584482201?text=Hi%20Kevin%2C%20I%27d%20like%20to%20order%20El%20Alcanfor%20(Filter%2C%20200g)." target="_blank" class="btn-wa-order">
+            <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:currentColor;flex-shrink:0;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Order via WhatsApp
+          </a>
+          <p class="bean-order-note">Pick-up at Pillars Coffee, Solaris · Mon–Fri 8am–4pm</p>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <div class="footer-top">
+      <a href="../index.html" class="nav-logo"><img src="../images/logo-black.png" alt="Pillars Coffee" class="logo-img"></a>
+      <div class="footer-links">
+        <a href="https://instagram.com/pillars.sg" target="_blank">Instagram</a>
+        <a href="mailto:hello@pillarscoffee.sg">General Enquiries</a>
+        <a href="mailto:joinus@pillarscoffee.sg">Join The Team</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Pillars Coffee</span>
+      <span>hello@pillarscoffee.sg</span>
+    </div>
+  </div>
+</footer>
+
+<script src="../script.js"></script>
+</body>
+</html>
