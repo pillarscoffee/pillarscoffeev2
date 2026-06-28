@@ -255,7 +255,7 @@ footer .nav-logo .logo-img{ height:56px; }
 .hero-bg{
   position:absolute; inset:0; z-index:0;
   background-size:cover;
-  background-position:center;
+  background-position:center 72%;
 }
 .hero-bg::after{
   content:'';
@@ -545,4 +545,10 @@ footer{
   /* featured coffee cards on homepage stack on mobile */
   .featured-cards{ grid-template-columns:1fr !important; }
 
+}
+
+/* Solaris tag: hidden on desktop, visible on mobile only */
+.solaris-tag{ display:none; }
+@media(max-width:900px){
+  .solaris-tag{ display:block; }
 }
