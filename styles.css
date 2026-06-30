@@ -255,7 +255,7 @@ footer .nav-logo .logo-img{ height:56px; }
 .hero-bg{
   position:absolute; inset:0; z-index:0;
   background-size:cover;
-  background-position:center 72%;
+  background-position:center 70%;
 }
 .hero-bg::after{
   content:'';
@@ -513,7 +513,7 @@ footer{
   .page-header{ padding:120px 0 60px; }
 
   .hero-full{ align-items:center; padding:100px 0 60px; }
-  .hero-bg{ background-position:center 65%; }
+  .hero-bg{ background-position:center 88%; }
 
   .coffee-row{ flex-direction:column; gap:14px; }
   .coffee-row .c-right{ text-align:left; }
