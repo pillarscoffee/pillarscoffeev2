@@ -4,7 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>About — Pillars Coffee</title>
-<meta name="description" content="Pillars was built around a simple belief — great coffee should be something people can rely on every day. Located at Solaris, Fusionopolis.">
+<meta name="description" content="Pillars Coffee was built around a simple belief: great coffee should be something people can rely on every day.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -12,86 +15,94 @@
 <header>
   <div class="container">
     <nav class="nav">
-      <a href="index.html" class="nav-logo"><img src="images/logo-black.png" alt="Pillars Coffee" class="logo-img"></a>
+      <a href="index.html" class="nav-logo"><img src="images/logo-black.png" alt="Pillars Coffee"></a>
       <div class="nav-links">
         <a href="about.html">About</a>
-        <a href="beans.html">Shop Coffee</a>
-        <a href="visit.html">Visit Us</a>
+        <a href="beans.html">Coffee</a>
+        <a href="visit.html">Visit</a>
         <a href="contact.html">Contact</a>
-        <a href="preorder.html" class="btn-nav">Pre-Order</a>
+        <a href="preorder.html" class="btn-nav">Order Ahead</a>
       </div>
       <button class="menu-toggle" id="menuToggle" aria-label="Open menu">☰</button>
     </nav>
   </div>
 </header>
-
 <div class="mobile-overlay" id="mobileOverlay"></div>
 <div class="mobile-menu" id="mobileMenu">
-  <button class="close-toggle" id="closeToggle" aria-label="Close menu">×</button>
+  <button class="close-toggle" id="closeToggle">×</button>
   <a href="index.html">Home</a>
   <a href="about.html">About</a>
-  <a href="beans.html">Shop Coffee</a>
-  <a href="visit.html">Visit Us</a>
+  <a href="beans.html">Coffee</a>
+  <a href="visit.html">Visit</a>
   <a href="contact.html">Contact</a>
-  <a href="preorder.html" class="btn-nav-mobile">Pre-Order</a>
+  <a href="preorder.html" class="btn-mob">Order Ahead</a>
 </div>
 
 <div class="page-header">
   <div class="container">
-    <div class="eyebrow"><span class="bar"></span>ABOUT</div>
-    <h1>Built around<br>the daily ritual.</h1>
-    <p>Great coffee should feel dependable, welcoming and easy to return to.</p>
+    <div class="eyebrow reveal"><span class="bar"></span>About</div>
+    <h1 class="reveal delay-1">Built around<br>the daily ritual.</h1>
+    <p class="reveal delay-2">Great coffee should feel dependable, welcoming and easy to return to.</p>
   </div>
 </div>
 
 <section class="section">
-  <div class="container two-col">
-    <img src="images/counter.jpg" alt="The Pillars Coffee counter at Solaris, Fusionopolis" class="photo-full photo-about-mobile">
-    <div>
-      <div class="eyebrow"><span class="bar"></span>OUR STORY</div>
-      <h2>A place for the people around us.</h2>
-      <p>Pillars was created to serve the people who work, build and create within Solaris at Fusionopolis.</p>
-      <p>Whether it is the first coffee of the morning or a quick afternoon reset, we believe great coffee should feel dependable, welcoming and easy to return to.</p>
+  <div class="container">
+    <div class="two-col">
+      <div class="reveal-left">
+        <img src="images/counter.jpg" alt="The Pillars Coffee kiosk at Solaris, Fusionopolis" class="photo-counter">
+      </div>
+      <div class="reveal-right">
+        <div class="eyebrow"><span class="bar"></span>Our Story</div>
+        <h2 class="display-xl" style="margin-bottom:24px;">A place for the people around us.</h2>
+        <p class="body-lead" style="margin-bottom:16px;">Pillars was created to serve the people who work, build and create within Solaris at Fusionopolis.</p>
+        <p class="body-lead">Whether it is the first coffee of the morning or a quick afternoon reset, we believe great coffee should feel dependable, welcoming and easy to return to.</p>
+      </div>
     </div>
   </div>
 </section>
 
 <section class="section" style="padding-top:0;">
-  <div class="container two-col">
-    <div>
-      <div class="eyebrow"><span class="bar"></span>COFFEE FIRST</div>
-      <h2>Consistent, clean and approachable.</h2>
-      <p>Our menu changes throughout the year as coffees rotate, but our approach remains the same — clean, balanced and approachable coffees prepared with consistency and care.</p>
-      <p>We focus on coffees that are enjoyable daily while still showcasing the character of their origin.</p>
-      <a href="beans.html" class="btn btn-line mt-40">Shop Coffee</a>
+  <div class="container">
+    <div class="two-col two-col-rev">
+      <div class="reveal-right">
+        <div class="eyebrow"><span class="bar"></span>Coffee First</div>
+        <h2 class="display-xl" style="margin-bottom:24px;">Consistent, clean and approachable.</h2>
+        <p class="body-lead" style="margin-bottom:16px;">Our menu changes throughout the year as coffees rotate, but our approach stays the same: clean, balanced and approachable coffees prepared with consistency and care.</p>
+        <p class="body-lead" style="margin-bottom:40px;">We focus on coffees that are enjoyable daily while still showcasing the character of their origin.</p>
+        <a href="beans.html" class="btn btn-outline">Shop Coffee</a>
+      </div>
+      <div class="reveal-left">
+        <img src="images/modbar.jpg" alt="The Modbar espresso system at Pillars Coffee" class="photo-counter">
+      </div>
     </div>
-    <img src="images/modbar.jpg" alt="The Modbar espresso system at Pillars Coffee" class="photo-full">
   </div>
 </section>
 
-<div class="pull-quote">
+<div style="padding:120px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line);">
   <div class="container">
-    <blockquote>Coffee that supports your day.</blockquote>
+    <div class="reveal" style="text-align:center; max-width:700px; margin:auto;">
+      <p class="pull-quote">"Coffee that supports your day."</p>
+    </div>
   </div>
 </div>
 
 <footer>
   <div class="container">
     <div class="footer-top">
-      <a href="index.html" class="nav-logo"><img src="images/logo-black.png" alt="Pillars Coffee" class="logo-img"></a>
+      <a href="index.html" class="footer-logo"><img src="images/logo-black.png" alt="Pillars Coffee"></a>
       <div class="footer-links">
-        <a href="https://instagram.com/pillars.sg" target="_blank">Instagram</a>
-        <a href="mailto:hello@pillarscoffee.sg">General Enquiries</a>
-        <a href="mailto:joinus@pillarscoffee.sg">Join The Team</a>
+        <a href="https://instagram.com/pillars.sg" target="_blank">@pillars.sg</a>
+        <a href="mailto:hello@pillarscoffee.sg">hello@pillarscoffee.sg</a>
+        <a href="mailto:joinus@pillarscoffee.sg">Join the Team</a>
       </div>
     </div>
     <div class="footer-bottom">
       <span>© 2026 Pillars Coffee</span>
-      <span>hello@pillarscoffee.sg</span>
+      <span>Solaris, Fusionopolis, Singapore</span>
     </div>
   </div>
 </footer>
-
 <script src="script.js"></script>
 </body>
 </html>

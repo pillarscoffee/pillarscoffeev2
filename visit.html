@@ -1,98 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Visit Us — Pillars Coffee</title>
-<meta name="description" content="Pillars Coffee is at 1 Fusionopolis Walk #01-K1, Singapore 138628. Open Mon–Fri 8am–4pm.">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Visit — Pillars Coffee</title>
+<meta name="description" content="Pillars Coffee is at 1 Fusionopolis Walk #01-K1, Singapore. Open Monday to Friday, 8am to 4pm.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-
-<header>
-  <div class="container">
-    <nav class="nav">
-      <a href="index.html" class="nav-logo"><img src="images/logo-black.png" alt="Pillars Coffee" class="logo-img"></a>
-      <div class="nav-links">
-        <a href="about.html">About</a>
-        <a href="beans.html">Shop Coffee</a>
-        <a href="visit.html">Visit Us</a>
-        <a href="contact.html">Contact</a>
-        <a href="preorder.html" class="btn-nav">Pre-Order</a>
-      </div>
-      <button class="menu-toggle" id="menuToggle" aria-label="Open menu">☰</button>
-    </nav>
-  </div>
-</header>
-
+</head><body>
+<header><div class="container"><nav class="nav">
+  <a href="index.html" class="nav-logo"><img src="images/logo-black.png" alt="Pillars Coffee"></a>
+  <div class="nav-links"><a href="about.html">About</a><a href="beans.html">Coffee</a><a href="visit.html">Visit</a><a href="contact.html">Contact</a><a href="preorder.html" class="btn-nav">Order Ahead</a></div>
+  <button class="menu-toggle" id="menuToggle">☰</button>
+</nav></div></header>
 <div class="mobile-overlay" id="mobileOverlay"></div>
-<div class="mobile-menu" id="mobileMenu">
-  <button class="close-toggle" id="closeToggle" aria-label="Close menu">×</button>
-  <a href="index.html">Home</a>
-  <a href="about.html">About</a>
-  <a href="beans.html">Shop Coffee</a>
-  <a href="visit.html">Visit Us</a>
-  <a href="contact.html">Contact</a>
-  <a href="preorder.html" class="btn-nav-mobile">Pre-Order</a>
+<div class="mobile-menu" id="mobileMenu"><button class="close-toggle" id="closeToggle">×</button>
+  <a href="index.html">Home</a><a href="about.html">About</a><a href="beans.html">Coffee</a><a href="visit.html">Visit</a><a href="contact.html">Contact</a><a href="preorder.html" class="btn-mob">Order Ahead</a>
 </div>
 
 <div class="page-header">
   <div class="container">
-    <div class="eyebrow"><span class="bar"></span>FIND US</div>
-    <h1>Visit Us</h1>
-    <p>Five days a week, for the people who work and create around us.</p>
+    <div class="eyebrow reveal"><span class="bar"></span>Find Us</div>
+    <h1 class="reveal delay-1">Visit Us</h1>
+    <p class="reveal delay-2">Five days a week, for the people who work and create around us.</p>
   </div>
 </div>
 
 <section class="section">
-  <div class="container two-col">
-    <div>
-      <div class="eyebrow"><span class="bar"></span>LOCATION</div>
-      <h2>Fusionopolis, Singapore</h2>
-      <p>Located on the ground floor of Solaris, Pillars serves the daily coffee needs of the Fusionopolis community — from morning espresso to afternoon filter.</p>
-      <dl class="address-block">
-        <dt>Address</dt>
-        <dd>1 Fusionopolis Walk<br>#01-K1, Singapore 138628</dd>
-        <dt>Opening Hours</dt>
-        <dd>Monday – Friday · 8:00am – 4:00pm</dd>
-        <dt>Weekends</dt>
-        <dd>Closed</dd>
-      </dl>
-      <a href="https://www.google.com/maps/search/?api=1&query=Pillars+Coffee+Singapore" target="_blank" class="btn btn-line mt-40">Get Directions</a>
+  <div class="container">
+    <div class="two-col">
+      <div class="reveal-left">
+        <div class="eyebrow"><span class="bar"></span>Location</div>
+        <h2 class="display-xl" style="margin-bottom:32px;">Fusionopolis, Singapore</h2>
+        <p class="body-lead" style="margin-bottom:32px;">Located on the ground floor of Solaris, Pillars serves the daily coffee needs of the Fusionopolis community, from morning espresso to afternoon filter.</p>
+        <dl class="address-block">
+          <dt>Address</dt>
+          <dd>1 Fusionopolis Walk, #01-K1<br>Singapore 138628</dd>
+          <dt>Opening Hours</dt>
+          <dd>Monday to Friday, 8am to 4pm</dd>
+          <dt>Weekends</dt>
+          <dd>Closed</dd>
+        </dl>
+        <a href="https://www.google.com/maps/search/?api=1&query=Pillars+Coffee+Singapore" target="_blank" class="btn btn-outline mt-48">Get Directions</a>
+      </div>
+      <div class="reveal-right">
+        <img src="images/counter.jpg" alt="The Pillars Coffee kiosk at Solaris" class="photo-counter">
+      </div>
     </div>
-    <img src="images/counter.jpg" alt="The Pillars Coffee kiosk at Solaris, Fusionopolis" class="photo-full photo-about-mobile">
   </div>
 </section>
 
 <section class="section" style="padding-top:0;">
-  <div class="container two-col">
-    <img src="images/modbar.jpg" alt="The Modbar espresso system at Pillars Coffee" class="photo-full">
-    <div>
-      <div class="eyebrow"><span class="bar"></span>ORDER AHEAD</div>
-      <h2>Ready when you arrive.</h2>
-      <p>Skip the wait by ordering ahead online. Your coffee is prepared fresh and ready for collection during opening hours.</p>
-      <a href="preorder.html" class="btn btn-solid mt-40">Pre-Order Now</a>
+  <div class="container">
+    <div class="two-col two-col-rev">
+      <div class="reveal-right">
+        <div class="eyebrow"><span class="bar"></span>Order Ahead</div>
+        <h2 class="display-xl" style="margin-bottom:24px;">Ready when you arrive.</h2>
+        <p class="body-lead" style="margin-bottom:40px;">Place your order online and collect from Pillars Coffee at Solaris. Fresh and ready for you when you walk in.</p>
+        <a href="preorder.html" class="btn btn-solid">Order Ahead</a>
+      </div>
+      <div class="reveal-left">
+        <img src="images/modbar.jpg" alt="The Modbar espresso system at Pillars Coffee" class="photo-counter">
+      </div>
     </div>
   </div>
 </section>
 
-<footer>
-  <div class="container">
-    <div class="footer-top">
-      <a href="index.html" class="nav-logo"><img src="images/logo-black.png" alt="Pillars Coffee" class="logo-img"></a>
-      <div class="footer-links">
-        <a href="https://instagram.com/pillars.sg" target="_blank">Instagram</a>
-        <a href="mailto:hello@pillarscoffee.sg">General Enquiries</a>
-        <a href="mailto:joinus@pillarscoffee.sg">Join The Team</a>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <span>© 2026 Pillars Coffee</span>
-      <span>hello@pillarscoffee.sg</span>
-    </div>
+<footer><div class="container">
+  <div class="footer-top">
+    <a href="index.html" class="footer-logo"><img src="images/logo-black.png" alt="Pillars Coffee"></a>
+    <div class="footer-links"><a href="https://instagram.com/pillars.sg" target="_blank">@pillars.sg</a><a href="mailto:hello@pillarscoffee.sg">hello@pillarscoffee.sg</a><a href="mailto:joinus@pillarscoffee.sg">Join the Team</a></div>
   </div>
-</footer>
-
-<script src="script.js"></script>
-</body>
-</html>
+  <div class="footer-bottom"><span>© 2026 Pillars Coffee</span><span>Solaris, Fusionopolis, Singapore</span></div>
+</div></footer>
+<script src="script.js"></script></body></html>

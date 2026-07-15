@@ -1,14 +1,26 @@
-/* Pillars Coffee V2 — shared JS */
+/* Pillars Coffee V2 — JS */
 
-// Nav scroll border
+// ── Nav state ──────────────────────────────
 const header = document.querySelector('header');
+function updateNav(){
+  if(!header) return;
+  const isTop = window.scrollY < 60;
+  header.classList.toggle('hero-top', isTop);
+  header.classList.toggle('scrolled', !isTop);
+}
 if(header){
-  const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 20);
-  window.addEventListener('scroll', onScroll, { passive:true });
-  onScroll();
+  window.addEventListener('scroll', updateNav, { passive:true });
+  updateNav();
 }
 
-// Mobile menu
+// ── Hero entrance ──────────────────────────
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.querySelector('.hero-inner')?.classList.add('loaded');
+  }, 100);
+});
+
+// ── Mobile menu ────────────────────────────
 function openMenu(){
   document.getElementById('mobileMenu')?.classList.add('active');
   document.getElementById('mobileOverlay')?.classList.add('active');
@@ -19,7 +31,19 @@ function closeMenu(){
   document.getElementById('mobileOverlay')?.classList.remove('active');
   document.body.style.overflow = '';
 }
-
 document.getElementById('menuToggle')?.addEventListener('click', openMenu);
 document.getElementById('closeToggle')?.addEventListener('click', closeMenu);
 document.getElementById('mobileOverlay')?.addEventListener('click', closeMenu);
+
+// ── Scroll reveal ──────────────────────────
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if(e.isIntersecting){
+      e.target.classList.add('visible');
+      revealObserver.unobserve(e.target);
+    }
+  });
+}, { threshold:0.08 });
+
+document.querySelectorAll('.reveal, .reveal-left, .reveal-right')
+  .forEach(el => revealObserver.observe(el));
