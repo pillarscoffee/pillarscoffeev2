@@ -223,7 +223,7 @@ h1,h2,h3,h4{ font-weight:700; letter-spacing:-0.02em; line-height:1.06; }
    FOOTER
 ============================================================ */
 .foot{ padding:64px 0 32px; border-top:1px solid var(--line); }
-.foot__grid{ display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:48px; padding-bottom:44px; align-items:start; }
+.foot__grid{ display:flex; justify-content:space-between; align-items:flex-start; gap:48px; padding-bottom:44px; }
 .foot__logo img{ height:52px; width:auto; display:block; margin-bottom:16px; }
 .foot__brand .foot__logo img{ height:52px; width:auto; margin-bottom:16px; }
 .foot__tag{ font-size:0.92rem; color:var(--stone); line-height:1.6; max-width:30ch; }
@@ -266,7 +266,7 @@ h1,h2,h3,h4{ font-weight:700; letter-spacing:-0.02em; line-height:1.06; }
   .bean__media{ position:static; height:auto; padding:32px; }
   .bean__media img{ width:auto; max-width:78%; height:auto; }
   .bean__panel{ padding:52px 26px 84px; }
-  .foot__grid{ grid-template-columns:1fr; gap:36px; }
+  .foot__grid{ flex-direction:column; gap:32px; }
 }
 @media(max-width:560px){
   .wrap{ padding-inline:22px; }
