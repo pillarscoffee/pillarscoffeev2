@@ -4,181 +4,136 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Coffee — Pillars Coffee</title>
-<meta name="description" content="Shop espresso and filter coffee from Pillars Coffee. Available for self pick-up at Solaris, Fusionopolis.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<meta name="description" content="Shop espresso and filter coffee from Pillars Coffee. Self pick-up at Solaris, Fusionopolis.">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-<header>
-  <div class="container">
-    <nav class="nav">
-      <a href="index.html" class="nav-logo"><img src="images/logo-black.png" alt="Pillars Coffee"></a>
-      <div class="nav-links">
-        <a href="about.html">About</a>
-        <a href="beans.html">Coffee</a>
-        <a href="visit.html">Visit</a>
-        <a href="contact.html">Contact</a>
-        <a href="preorder.html" class="btn-nav">Order Ahead</a>
-      </div>
-      <button class="menu-toggle" id="menuToggle" aria-label="Open menu">☰</button>
-    </nav>
+<nav class="nav" data-hero="false">
+  <div class="nav__row">
+    <a href="index.html" class="nav__logo"><img src="images/logo-black.png" alt="Pillars Coffee"></a>
+    <div class="nav__links">
+      <a href="about.html">About</a>
+      <a href="beans.html">Coffee</a>
+      <a href="visit.html">Visit</a>
+      <a href="contact.html">Contact</a>
+      <a href="preorder.html" class="nav__cta">Order Ahead</a>
+    </div>
+    <button class="nav__burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
   </div>
-</header>
-<div class="mobile-overlay" id="mobileOverlay"></div>
-<div class="mobile-menu" id="mobileMenu">
-  <button class="close-toggle" id="closeToggle">×</button>
+</nav>
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer">
+  <button class="drawer__close" id="drawerClose" aria-label="Close">&times;</button>
   <a href="index.html">Home</a>
   <a href="about.html">About</a>
   <a href="beans.html">Coffee</a>
   <a href="visit.html">Visit</a>
   <a href="contact.html">Contact</a>
-  <a href="preorder.html" class="btn-mob">Order Ahead</a>
-</div>
-
-<div class="page-header">
-  <div class="container">
-    <div class="eyebrow reveal"><span class="bar"></span>Shop Coffee</div>
-    <h1 class="reveal delay-1">Current Offerings</h1>
-    <p class="reveal delay-2">Available in-store and for self pick-up. Coffees rotate as the seasons change.</p>
+  <a href="preorder.html" class="drawer__cta">Order Ahead</a>
+</aside>
+<div class="phead">
+  <div class="wrap">
+    <div class="eyebrow reveal">Shop Coffee</div>
+    <h1 class="reveal d1">Current Offerings</h1>
+    <p class="reveal d2">Available in-store and for self pick-up. Coffees rotate as the seasons change.</p>
   </div>
 </div>
 
-<div class="container">
-
-  <div class="coffee-section reveal">
-    <p class="coffee-section-label">Espresso</p>
-    <div class="coffee-grid">
-
-      <div class="coffee-card">
-        <img src="images/beans/fazendasertao.jpg" alt="Fazenda Sertao — Brazil" class="coffee-card-img">
-        <div class="coffee-card-body">
-          <div class="coffee-card-type">Espresso</div>
-          <div class="coffee-card-name">Fazenda Sertao</div>
-          <div class="coffee-card-origin">Carmo de Minas, Minas Gerais · Brazil<br>Red Catuai · Natural</div>
-          <div class="coffee-card-notes">Hazelnut · Red Plums · Molasses</div>
-          <div class="coffee-card-footer">
-            <div>
-              <div class="coffee-card-price">$19</div>
-              <div class="coffee-card-weight">200g</div>
-            </div>
-            <a href="beans/fazenda-sertao.html" class="btn-card">Find out more</a>
-          </div>
+<section class="section">
+  <div class="wrap">
+    <p class="rowlabel reveal">Espresso</p>
+    <div class="pgrid reveal">
+      <a href="beans/fazenda-sertao.html" class="pcard">
+        <div class="pcard__frame"><img src="images/beans/fazendasertao.jpg" alt="Fazenda Sertao"></div>
+        <div class="pcard__type">Espresso</div>
+        <div class="pcard__name">Fazenda Sertao</div>
+        <div class="pcard__origin">Carmo de Minas, Minas Gerais &middot; Brazil<br>Red Catuai &middot; Natural</div>
+        <div class="pcard__notes">Hazelnut &middot; Red Plums &middot; Molasses</div>
+        <div class="pcard__foot">
+          <div><div class="pcard__price">$19</div><div class="pcard__weight">200g</div></div>
+          <span class="tlink">Find out more</span>
         </div>
-      </div>
-
-      <div class="coffee-card">
-        <img src="images/beans/planadas.jpg" alt="Planadas Orquidea — Colombia" class="coffee-card-img">
-        <div class="coffee-card-body">
-          <div class="coffee-card-type">Espresso</div>
-          <div class="coffee-card-name">Planadas Orquidea</div>
-          <div class="coffee-card-origin">Planadas, Tolima · Colombia<br>Castillo · Fully Washed</div>
-          <div class="coffee-card-notes">Red Dates · Raisins · Honey</div>
-          <div class="coffee-card-footer">
-            <div>
-              <div class="coffee-card-price">$22</div>
-              <div class="coffee-card-weight">200g</div>
-            </div>
-            <a href="beans/planadas-orquidea.html" class="btn-card">Find out more</a>
-          </div>
+      </a>
+      <a href="beans/planadas-orquidea.html" class="pcard">
+        <div class="pcard__frame"><img src="images/beans/planadas.jpg" alt="Planadas Orquidea"></div>
+        <div class="pcard__type">Espresso</div>
+        <div class="pcard__name">Planadas Orquidea</div>
+        <div class="pcard__origin">Planadas, Tolima &middot; Colombia<br>Castillo &middot; Fully Washed</div>
+        <div class="pcard__notes">Red Dates &middot; Raisins &middot; Honey</div>
+        <div class="pcard__foot">
+          <div><div class="pcard__price">$22</div><div class="pcard__weight">200g</div></div>
+          <span class="tlink">Find out more</span>
         </div>
-      </div>
-
+      </a>
     </div>
   </div>
+</section>
 
-  <div class="coffee-section reveal">
-    <p class="coffee-section-label">Filter</p>
-    <div class="coffee-grid">
-
-      <div class="coffee-card">
-        <img src="images/beans/csweetness.jpg" alt="Citrus Sweetness — Mexico" class="coffee-card-img">
-        <div class="coffee-card-body">
-          <div class="coffee-card-type">Filter</div>
-          <div class="coffee-card-name">Citrus Sweetness</div>
-          <div class="coffee-card-origin">Chiapas · Mexico<br>Red &amp; Yellow Bourbon · Double Fermentation</div>
-          <div class="coffee-card-notes">Cherry · Plum · Black Grape</div>
-          <div class="coffee-card-footer">
-            <div>
-              <div class="coffee-card-price">$28</div>
-              <div class="coffee-card-weight">200g</div>
-            </div>
-            <a href="beans/citrus-sweetness.html" class="btn-card">Find out more</a>
-          </div>
+<section class="section" style="padding-top:0;">
+  <div class="wrap">
+    <p class="rowlabel reveal">Filter</p>
+    <div class="pgrid reveal">
+      <a href="beans/citrus-sweetness.html" class="pcard">
+        <div class="pcard__frame"><img src="images/beans/csweetness.jpg" alt="Citrus Sweetness"></div>
+        <div class="pcard__type">Filter</div>
+        <div class="pcard__name">Citrus Sweetness</div>
+        <div class="pcard__origin">Chiapas &middot; Mexico<br>Red &amp; Yellow Bourbon &middot; Double Fermentation</div>
+        <div class="pcard__notes">Cherry &middot; Plum &middot; Black Grape</div>
+        <div class="pcard__foot">
+          <div><div class="pcard__price">$28</div><div class="pcard__weight">200g</div></div>
+          <span class="tlink">Find out more</span>
         </div>
-      </div>
-
-      <div class="coffee-card">
-        <img src="images/beans/alcanfor.jpg" alt="El Alcanfor — Peru" class="coffee-card-img">
-        <div class="coffee-card-body">
-          <div class="coffee-card-type">Filter</div>
-          <div class="coffee-card-name">El Alcanfor</div>
-          <div class="coffee-card-origin">San Ignacio, Cajamarca · Peru<br>Caturra · Fully Washed</div>
-          <div class="coffee-card-notes">Yellow Plums · Dried Fig · Red Tea</div>
-          <div class="coffee-card-footer">
-            <div>
-              <div class="coffee-card-price">$26</div>
-              <div class="coffee-card-weight">200g</div>
-            </div>
-            <a href="beans/el-alcanfor.html" class="btn-card">Find out more</a>
-          </div>
+      </a>
+      <a href="beans/el-alcanfor.html" class="pcard">
+        <div class="pcard__frame"><img src="images/beans/alcanfor.jpg" alt="El Alcanfor"></div>
+        <div class="pcard__type">Filter</div>
+        <div class="pcard__name">El Alcanfor</div>
+        <div class="pcard__origin">San Ignacio, Cajamarca &middot; Peru<br>Caturra &middot; Fully Washed</div>
+        <div class="pcard__notes">Yellow Plums &middot; Dried Fig &middot; Red Tea</div>
+        <div class="pcard__foot">
+          <div><div class="pcard__price">$26</div><div class="pcard__weight">200g</div></div>
+          <span class="tlink">Find out more</span>
         </div>
-      </div>
-
-      <div class="coffee-card">
-        <img src="images/beans/alovillage.jpg" alt="Alo Village — Ethiopia" class="coffee-card-img">
-        <div class="coffee-card-body">
-          <div class="coffee-card-type">Filter</div>
-          <div class="coffee-card-name">Alo Village</div>
-          <div class="coffee-card-origin">Bensa, Sidama · Ethiopia<br>JARC 74158 · Natural</div>
-          <div class="coffee-card-notes">Blueberry · Bergamot · Lavender</div>
-          <div class="coffee-card-footer">
-            <div>
-              <div class="coffee-card-price">$28</div>
-              <div class="coffee-card-weight">200g</div>
-            </div>
-            <a href="beans/alo-village.html" class="btn-card">Find out more</a>
-          </div>
+      </a>
+      <a href="beans/alo-village.html" class="pcard">
+        <div class="pcard__frame"><img src="images/beans/alovillage.jpg" alt="Alo Village"></div>
+        <div class="pcard__type">Filter</div>
+        <div class="pcard__name">Alo Village</div>
+        <div class="pcard__origin">Bensa, Sidama &middot; Ethiopia<br>JARC 74158 &middot; Natural</div>
+        <div class="pcard__notes">Blueberry &middot; Bergamot &middot; Lavender</div>
+        <div class="pcard__foot">
+          <div><div class="pcard__price">$28</div><div class="pcard__weight">200g</div></div>
+          <span class="tlink">Find out more</span>
         </div>
-      </div>
-
-      <div class="coffee-card">
-        <img src="images/beans/quebraditas.jpg" alt="Quebraditas — Colombia Gesha" class="coffee-card-img">
-        <div class="coffee-card-body">
-          <div class="coffee-card-type">Filter · Limited</div>
-          <div class="coffee-card-name">Quebraditas</div>
-          <div class="coffee-card-origin">Huila · Colombia<br>Gesha · Anaerobic Washed</div>
-          <div class="coffee-card-notes">Watermelon · Lychee · Roselle</div>
-          <div class="coffee-card-footer">
-            <div>
-              <div class="coffee-card-price">$38</div>
-              <div class="coffee-card-weight">150g</div>
-            </div>
-            <a href="beans/quebraditas.html" class="btn-card">Find out more</a>
-          </div>
+      </a>
+      <a href="beans/quebraditas.html" class="pcard">
+        <div class="pcard__frame"><img src="images/beans/quebraditas.jpg" alt="Quebraditas"></div>
+        <div class="pcard__type">Filter &middot; Limited</div>
+        <div class="pcard__name">Quebraditas</div>
+        <div class="pcard__origin">Huila &middot; Colombia<br>Gesha &middot; Anaerobic Washed</div>
+        <div class="pcard__notes">Watermelon &middot; Lychee &middot; Roselle</div>
+        <div class="pcard__foot">
+          <div><div class="pcard__price">$38</div><div class="pcard__weight">150g</div></div>
+          <span class="tlink">Find out more</span>
         </div>
-      </div>
-
+      </a>
     </div>
-    <p style="padding:28px 0; font-size:11px; color:var(--stone); letter-spacing:0.04em;">Coffees and pricing may change as seasonal offerings rotate.</p>
+    <p style="margin-top:48px; font-size:11px; color:var(--stone); letter-spacing:0.03em;">Coffees and pricing may change as seasonal offerings rotate.</p>
   </div>
+</section>
 
-</div>
-
-<footer>
-  <div class="container">
-    <div class="footer-top">
-      <a href="index.html" class="footer-logo"><img src="images/logo-black.png" alt="Pillars Coffee"></a>
-      <div class="footer-links">
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot__top">
+      <a href="index.html" class="foot__logo"><img src="images/logo-black.png" alt="Pillars Coffee"></a>
+      <div class="foot__links">
         <a href="https://instagram.com/pillars.sg" target="_blank">@pillars.sg</a>
         <a href="mailto:hello@pillarscoffee.sg">hello@pillarscoffee.sg</a>
         <a href="mailto:joinus@pillarscoffee.sg">Join the Team</a>
       </div>
     </div>
-    <div class="footer-bottom">
-      <span>© 2026 Pillars Coffee</span>
+    <div class="foot__bot">
+      <span>&copy; 2026 Pillars Coffee</span>
       <span>Solaris, Fusionopolis, Singapore</span>
     </div>
   </div>

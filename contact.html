@@ -1,61 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Contact — Pillars Coffee</title>
 <meta name="description" content="Get in touch with Pillars Coffee.">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
-</head><body>
-<header><div class="container"><nav class="nav">
-  <a href="index.html" class="nav-logo"><img src="images/logo-black.png" alt="Pillars Coffee"></a>
-  <div class="nav-links"><a href="about.html">About</a><a href="beans.html">Coffee</a><a href="visit.html">Visit</a><a href="contact.html">Contact</a><a href="preorder.html" class="btn-nav">Order Ahead</a></div>
-  <button class="menu-toggle" id="menuToggle">☰</button>
-</nav></div></header>
-<div class="mobile-overlay" id="mobileOverlay"></div>
-<div class="mobile-menu" id="mobileMenu"><button class="close-toggle" id="closeToggle">×</button>
-  <a href="index.html">Home</a><a href="about.html">About</a><a href="beans.html">Coffee</a><a href="visit.html">Visit</a><a href="contact.html">Contact</a><a href="preorder.html" class="btn-mob">Order Ahead</a>
-</div>
-
-<div class="page-header">
-  <div class="container">
-    <div class="eyebrow reveal"><span class="bar"></span>Contact</div>
-    <h1 class="reveal delay-1">Get in touch.</h1>
-    <p class="reveal delay-2">Questions, collaborations, or anything Pillars. We would love to hear from you.</p>
+</head>
+<body>
+<nav class="nav" data-hero="false">
+  <div class="nav__row">
+    <a href="index.html" class="nav__logo"><img src="images/logo-black.png" alt="Pillars Coffee"></a>
+    <div class="nav__links">
+      <a href="about.html">About</a>
+      <a href="beans.html">Coffee</a>
+      <a href="visit.html">Visit</a>
+      <a href="contact.html">Contact</a>
+      <a href="preorder.html" class="nav__cta">Order Ahead</a>
+    </div>
+    <button class="nav__burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer">
+  <button class="drawer__close" id="drawerClose" aria-label="Close">&times;</button>
+  <a href="index.html">Home</a>
+  <a href="about.html">About</a>
+  <a href="beans.html">Coffee</a>
+  <a href="visit.html">Visit</a>
+  <a href="contact.html">Contact</a>
+  <a href="preorder.html" class="drawer__cta">Order Ahead</a>
+</aside>
+<div class="phead">
+  <div class="wrap">
+    <div class="eyebrow reveal">Contact</div>
+    <h1 class="reveal d1">Get in touch.</h1>
+    <p class="reveal d2">Questions, collaborations, or anything Pillars. We would love to hear from you.</p>
   </div>
 </div>
 
 <section class="section">
-  <div class="container">
-    <div class="contact-grid reveal">
-      <div class="contact-card">
-        <div class="eyebrow"><span class="bar"></span>General</div>
+  <div class="wrap">
+    <div class="cgrid reveal">
+      <div class="ccard">
+        <div class="eyebrow">General</div>
         <h3>General Enquiries</h3>
         <p>Questions, collaborations, partnerships or anything Pillars.</p>
-        <a href="mailto:hello@pillarscoffee.sg" class="contact-email">hello@pillarscoffee.sg</a>
+        <a href="mailto:hello@pillarscoffee.sg" class="tlink">hello@pillarscoffee.sg</a>
       </div>
-      <div class="contact-card">
-        <div class="eyebrow"><span class="bar"></span>Careers</div>
+      <div class="ccard">
+        <div class="eyebrow">Careers</div>
         <h3>Join the Team</h3>
         <p>Interested in working with us? Send your resume and a short introduction.</p>
-        <a href="mailto:joinus@pillarscoffee.sg" class="contact-email">joinus@pillarscoffee.sg</a>
+        <a href="mailto:joinus@pillarscoffee.sg" class="tlink">joinus@pillarscoffee.sg</a>
       </div>
-      <div class="contact-card">
-        <div class="eyebrow"><span class="bar"></span>Social</div>
+      <div class="ccard">
+        <div class="eyebrow">Social</div>
         <h3>Follow Along</h3>
         <p>Daily updates, coffee releases and life at Pillars.</p>
-        <a href="https://instagram.com/pillars.sg" target="_blank" class="contact-email">@pillars.sg</a>
+        <a href="https://instagram.com/pillars.sg" target="_blank" class="tlink">@pillars.sg</a>
       </div>
     </div>
   </div>
 </section>
 
-<footer><div class="container">
-  <div class="footer-top">
-    <a href="index.html" class="footer-logo"><img src="images/logo-black.png" alt="Pillars Coffee"></a>
-    <div class="footer-links"><a href="https://instagram.com/pillars.sg" target="_blank">@pillars.sg</a><a href="mailto:hello@pillarscoffee.sg">hello@pillarscoffee.sg</a><a href="mailto:joinus@pillarscoffee.sg">Join the Team</a></div>
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot__top">
+      <a href="index.html" class="foot__logo"><img src="images/logo-black.png" alt="Pillars Coffee"></a>
+      <div class="foot__links">
+        <a href="https://instagram.com/pillars.sg" target="_blank">@pillars.sg</a>
+        <a href="mailto:hello@pillarscoffee.sg">hello@pillarscoffee.sg</a>
+        <a href="mailto:joinus@pillarscoffee.sg">Join the Team</a>
+      </div>
+    </div>
+    <div class="foot__bot">
+      <span>&copy; 2026 Pillars Coffee</span>
+      <span>Solaris, Fusionopolis, Singapore</span>
+    </div>
   </div>
-  <div class="footer-bottom"><span>© 2026 Pillars Coffee</span><span>Solaris, Fusionopolis, Singapore</span></div>
-</div></footer>
-<script src="script.js"></script></body></html>
+</footer>
+<script src="script.js"></script>
+</body>
+</html>

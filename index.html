@@ -5,194 +5,140 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pillars Coffee — Coffee that supports your day.</title>
 <meta name="description" content="Thoughtfully sourced espresso and filter coffee at Solaris, Fusionopolis. Open Monday to Friday.">
-<meta property="og:title" content="Pillars Coffee">
-<meta property="og:description" content="Thoughtfully sourced espresso and filter coffee. Solaris, Fusionopolis.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-<header>
-  <div class="container">
-    <nav class="nav">
-      <a href="index.html" class="nav-logo">
-        <img src="images/logo-black.png" alt="Pillars Coffee">
-      </a>
-      <div class="nav-links">
-        <a href="about.html">About</a>
-        <a href="beans.html">Coffee</a>
-        <a href="visit.html">Visit</a>
-        <a href="contact.html">Contact</a>
-        <a href="preorder.html" class="btn-nav">Order Ahead</a>
-      </div>
-      <button class="menu-toggle" id="menuToggle" aria-label="Open menu">☰</button>
-    </nav>
+<nav class="nav" data-hero="true">
+  <div class="nav__row">
+    <a href="index.html" class="nav__logo"><img src="images/logo-black.png" alt="Pillars Coffee"></a>
+    <div class="nav__links">
+      <a href="about.html">About</a>
+      <a href="beans.html">Coffee</a>
+      <a href="visit.html">Visit</a>
+      <a href="contact.html">Contact</a>
+      <a href="preorder.html" class="nav__cta">Order Ahead</a>
+    </div>
+    <button class="nav__burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
   </div>
-</header>
-
-<div class="mobile-overlay" id="mobileOverlay"></div>
-<div class="mobile-menu" id="mobileMenu">
-  <button class="close-toggle" id="closeToggle" aria-label="Close">×</button>
+</nav>
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer">
+  <button class="drawer__close" id="drawerClose" aria-label="Close">&times;</button>
   <a href="index.html">Home</a>
   <a href="about.html">About</a>
   <a href="beans.html">Coffee</a>
   <a href="visit.html">Visit</a>
   <a href="contact.html">Contact</a>
-  <a href="preorder.html" class="btn-mob">Order Ahead</a>
-</div>
+  <a href="preorder.html" class="drawer__cta">Order Ahead</a>
+</aside>
 
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-bg" style="background-image:url('images/hero.jpg');"></div>
-  <div class="container">
-    <div class="hero-inner">
-      <div class="eyebrow-light"><span class="bar"></span>Singapore</div>
-      <h1>Coffee that<br>supports your day.</h1>
-      <p>Thoughtfully sourced espresso and filter coffee, served with consistency for the people who work and create around us.</p>
-      <div class="hero-cta">
-        <a href="preorder.html" class="btn btn-white">
-          <span>Order Ahead</span>
-        </a>
-        <a href="beans.html" class="btn btn-ghost">Shop Coffee</a>
+<header class="hero">
+  <div class="hero__bg" style="background-image:url('images/hero.jpg')"></div>
+  <div class="wrap">
+    <div class="hero__inner">
+      <div class="eyebrow eyebrow--light">Singapore</div>
+      <h1 class="hero__title">Coffee that<br>supports your day.</h1>
+      <p class="hero__sub">Thoughtfully sourced espresso and filter coffee, served with consistency for the people who work and create around us.</p>
+      <div class="hero__cta">
+        <a href="preorder.html" class="btn btn--paper">Order Ahead</a>
+        <a href="beans.html" class="btn btn--ghost">Shop Coffee</a>
       </div>
-      <p class="hero-note">Solaris self pick-up only</p>
+      <p class="hero__note">Solaris self pick-up only</p>
     </div>
   </div>
-</section>
+</header>
 
-<!-- MARQUEE -->
-<div class="marquee-strip">
-  <div class="marquee-track">
-    <span class="marquee-item"><span class="marquee-dot"></span>Espresso</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>Filter Coffee</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>Single Origin</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>Solaris</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>Fusionopolis</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>Singapore</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>Specialty Coffee</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>Thoughtfully Sourced</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>Espresso</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>Filter Coffee</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>Single Origin</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>Solaris</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>Fusionopolis</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>Singapore</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>Specialty Coffee</span>
-    <span class="marquee-item"><span class="marquee-dot"></span>Thoughtfully Sourced</span>
-  </div>
-</div>
+<div class="marquee"><div class="marquee__track"><span class="marquee__item">Espresso</span><span class="marquee__item">Filter Coffee</span><span class="marquee__item">Single Origin</span><span class="marquee__item">Solaris</span><span class="marquee__item">Fusionopolis</span><span class="marquee__item">Singapore</span><span class="marquee__item">Specialty Coffee</span><span class="marquee__item">Seasonal Roasts</span><span class="marquee__item">Espresso</span><span class="marquee__item">Filter Coffee</span><span class="marquee__item">Single Origin</span><span class="marquee__item">Solaris</span><span class="marquee__item">Fusionopolis</span><span class="marquee__item">Singapore</span><span class="marquee__item">Specialty Coffee</span><span class="marquee__item">Seasonal Roasts</span><span class="marquee__item">Espresso</span><span class="marquee__item">Filter Coffee</span><span class="marquee__item">Single Origin</span><span class="marquee__item">Solaris</span><span class="marquee__item">Fusionopolis</span><span class="marquee__item">Singapore</span><span class="marquee__item">Specialty Coffee</span><span class="marquee__item">Seasonal Roasts</span><span class="marquee__item">Espresso</span><span class="marquee__item">Filter Coffee</span><span class="marquee__item">Single Origin</span><span class="marquee__item">Solaris</span><span class="marquee__item">Fusionopolis</span><span class="marquee__item">Singapore</span><span class="marquee__item">Specialty Coffee</span><span class="marquee__item">Seasonal Roasts</span><span class="marquee__item">Espresso</span><span class="marquee__item">Filter Coffee</span><span class="marquee__item">Single Origin</span><span class="marquee__item">Solaris</span><span class="marquee__item">Fusionopolis</span><span class="marquee__item">Singapore</span><span class="marquee__item">Specialty Coffee</span><span class="marquee__item">Seasonal Roasts</span><span class="marquee__item">Espresso</span><span class="marquee__item">Filter Coffee</span><span class="marquee__item">Single Origin</span><span class="marquee__item">Solaris</span><span class="marquee__item">Fusionopolis</span><span class="marquee__item">Singapore</span><span class="marquee__item">Specialty Coffee</span><span class="marquee__item">Seasonal Roasts</span></div></div>
 
-<!-- ABOUT -->
 <section class="section">
-  <div class="container">
-    <div class="two-col">
-      <div class="reveal-left">
-        <div class="eyebrow"><span class="bar"></span>Our Story</div>
-        <h2 class="display-xl" style="margin-bottom:24px;">Built around<br>the daily ritual.</h2>
-        <p class="body-lead" style="margin-bottom:16px;">Pillars was built around a simple belief: great coffee should be something people can rely on every day.</p>
-        <p class="body-lead" style="margin-bottom:40px;">Located within Solaris at Fusionopolis, we focus on approachable coffees, thoughtful sourcing and a consistent experience for the people who visit us daily.</p>
-        <a href="about.html" class="btn btn-outline">Read Our Story</a>
+  <div class="wrap">
+    <div class="split split--wide-img">
+      <div class="split__media reveal">
+        <div class="pframe pframe--tall"><img src="images/counter.jpg" alt="The Pillars Coffee kiosk at Solaris"></div>
       </div>
-      <div class="reveal-right">
-        <img src="images/counter.jpg" alt="The Pillars Coffee kiosk at Solaris, Fusionopolis" class="photo-counter">
+      <div class="split__body reveal d1">
+        <div class="eyebrow">Our Story</div>
+        <h2 class="h-xl" style="margin-bottom:22px;">Built around<br>the daily ritual.</h2>
+        <p class="lede" style="margin-bottom:16px;">Pillars was built around a simple belief: great coffee should be something people can rely on every day.</p>
+        <p class="lede" style="margin-bottom:36px;">Set within Solaris at Fusionopolis, we focus on approachable coffees, thoughtful sourcing and a consistent experience for the people who visit us daily.</p>
+        <a href="about.html" class="btn btn--line">Read Our Story</a>
       </div>
     </div>
   </div>
 </section>
 
-<!-- FEATURED COFFEE -->
 <section class="section" style="padding-top:0;">
-  <div class="container">
+  <div class="wrap">
     <div class="reveal">
-      <div class="eyebrow"><span class="bar"></span>On the Menu</div>
-      <h2 class="display-xl">Featured Coffee</h2>
+      <div class="eyebrow">On the Menu</div>
+      <h2 class="h-display">Featured Coffee</h2>
     </div>
-    <div class="featured-grid reveal delay-1">
-
-      <div class="featured-card">
-        <img src="images/beans/fazendasertao.jpg" alt="Fazenda Sertao espresso — Brazil" class="featured-card-img">
-        <div class="featured-card-body">
-          <div class="featured-card-type">Espresso</div>
-          <div class="featured-card-name">Fazenda Sertao</div>
-          <div class="featured-card-origin">Carmo de Minas, Brazil · Natural</div>
-          <div class="featured-card-notes">Hazelnut · Red Plums · Molasses</div>
-          <div class="featured-card-footer">
-            <div>
-              <div class="featured-card-price">$19</div>
-              <div class="featured-card-weight">200g</div>
-            </div>
-            <a href="beans/fazenda-sertao.html" class="shop-link">Shop</a>
-          </div>
+    <div class="pgrid reveal d1">
+      <a href="beans/fazenda-sertao.html" class="pcard">
+        <div class="pcard__frame"><img src="images/beans/fazendasertao.jpg" alt="Fazenda Sertao"></div>
+        <div class="pcard__type">Espresso</div>
+        <div class="pcard__name">Fazenda Sertao</div>
+        <div class="pcard__origin">Carmo de Minas, Brazil &middot; Natural</div>
+        <div class="pcard__notes">Hazelnut &middot; Red Plums &middot; Molasses</div>
+        <div class="pcard__foot">
+          <div><div class="pcard__price">$19</div><div class="pcard__weight">200g</div></div>
+          <span class="tlink">Shop</span>
         </div>
-      </div>
-
-      <div class="featured-card">
-        <img src="images/beans/quebraditas.jpg" alt="Quebraditas filter — Colombia Gesha" class="featured-card-img">
-        <div class="featured-card-body">
-          <div class="featured-card-type">Filter · Limited</div>
-          <div class="featured-card-name">Quebraditas</div>
-          <div class="featured-card-origin">Huila, Colombia · Anaerobic Washed</div>
-          <div class="featured-card-notes">Watermelon · Lychee · Roselle</div>
-          <div class="featured-card-footer">
-            <div>
-              <div class="featured-card-price">$38</div>
-              <div class="featured-card-weight">150g</div>
-            </div>
-            <a href="beans/quebraditas.html" class="shop-link">Shop</a>
-          </div>
+      </a>
+      <a href="beans/quebraditas.html" class="pcard">
+        <div class="pcard__frame"><img src="images/beans/quebraditas.jpg" alt="Quebraditas"></div>
+        <div class="pcard__type">Filter &middot; Limited</div>
+        <div class="pcard__name">Quebraditas</div>
+        <div class="pcard__origin">Huila, Colombia &middot; Anaerobic Washed</div>
+        <div class="pcard__notes">Watermelon &middot; Lychee &middot; Roselle</div>
+        <div class="pcard__foot">
+          <div><div class="pcard__price">$38</div><div class="pcard__weight">150g</div></div>
+          <span class="tlink">Shop</span>
         </div>
-      </div>
-
+      </a>
     </div>
-    <div class="reveal delay-2" style="margin-top:32px;">
-      <a href="beans.html" class="btn btn-outline">View All Coffee</a>
+    <div class="reveal d2" style="margin-top:48px;">
+      <a href="beans.html" class="btn btn--line">View All Coffee</a>
     </div>
   </div>
 </section>
 
-<!-- VISIT STRIP -->
-<div class="visit-strip reveal">
-  <div class="container" style="display:grid; grid-template-columns:1fr 1fr; gap:0;">
-    <div class="visit-strip-info">
-      <div class="eyebrow"><span class="bar"></span>Find Us</div>
-      <h2 class="display-xl" style="margin-bottom:32px;">Visit Us</h2>
-      <dl class="address-block">
-        <dt>Address</dt>
-        <dd>1 Fusionopolis Walk, #01-K1<br>Singapore 138628</dd>
-        <dt>Hours</dt>
-        <dd>Monday to Friday, 8am to 4pm</dd>
-        <dt>Weekends</dt>
-        <dd>Closed</dd>
-      </dl>
-      <a href="https://www.google.com/maps/search/?api=1&query=Pillars+Coffee+Singapore" target="_blank" class="btn btn-outline mt-48">Get Directions</a>
-    </div>
-    <div class="visit-strip-photo">
-      <img src="images/modbar.jpg" alt="The Modbar espresso system at Pillars Coffee">
+<section class="section" style="padding-top:0;">
+  <div class="wrap">
+    <div class="split split--rev">
+      <div class="split__body reveal">
+        <div class="eyebrow">Find Us</div>
+        <h2 class="h-xl" style="margin-bottom:24px;">Visit us at Solaris.</h2>
+        <dl class="addr">
+          <dt>Address</dt><dd>1 Fusionopolis Walk, #01-K1<br>Singapore 138628</dd>
+          <dt>Hours</dt><dd>Monday to Friday, 8am to 4pm</dd>
+          <dt>Weekends</dt><dd>Closed</dd>
+        </dl>
+        <a href="https://www.google.com/maps/search/?api=1&query=Pillars+Coffee+Singapore" target="_blank" class="btn btn--line mt40">Get Directions</a>
+      </div>
+      <div class="split__media reveal d1">
+        <div class="pframe pframe--tall"><img src="images/modbar.jpg" alt="The Modbar espresso system at Pillars"></div>
+      </div>
     </div>
   </div>
-</div>
+</section>
 
-<footer>
-  <div class="container">
-    <div class="footer-top">
-      <a href="index.html" class="footer-logo">
-        <img src="images/logo-black.png" alt="Pillars Coffee">
-      </a>
-      <div class="footer-links">
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot__top">
+      <a href="index.html" class="foot__logo"><img src="images/logo-black.png" alt="Pillars Coffee"></a>
+      <div class="foot__links">
         <a href="https://instagram.com/pillars.sg" target="_blank">@pillars.sg</a>
         <a href="mailto:hello@pillarscoffee.sg">hello@pillarscoffee.sg</a>
         <a href="mailto:joinus@pillarscoffee.sg">Join the Team</a>
       </div>
     </div>
-    <div class="footer-bottom">
-      <span>© 2026 Pillars Coffee</span>
+    <div class="foot__bot">
+      <span>&copy; 2026 Pillars Coffee</span>
       <span>Solaris, Fusionopolis, Singapore</span>
     </div>
   </div>
 </footer>
-
 <script src="script.js"></script>
 </body>
 </html>
