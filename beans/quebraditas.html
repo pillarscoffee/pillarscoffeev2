@@ -1,246 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Quebraditas — Pillars Coffee</title>
 <meta name="description" content="Filter · Limited · Watermelon · Lychee · Roselle · Huila · Colombia">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../styles.css">
-<style>
-.bean-detail-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:0;
-  min-height:70vh;
-  align-items:start;
-}
-.bean-detail-photo{
-  position:sticky;
-  top:76px;
-}
-.bean-detail-photo img{
-  width:100%;
-  height:calc(100vh - 76px);
-  object-fit:contain;
-  display:block;
-  background:#F2F1EE;
-}
-.bean-detail-info{
-  padding:70px 64px 90px;
-}
-.bean-back{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  font-size:13px;
-  font-weight:500;
-  color:var(--stone);
-  margin-bottom:48px;
-  transition:color .2s;
-}
-.bean-back:hover{color:var(--ink);}
-.bean-detail-name{
-  font-family:'Space Grotesk',sans-serif;
-  font-size:clamp(2rem,4vw,3rem);
-  font-weight:600;
-  letter-spacing:-0.02em;
-  line-height:1.05;
-  margin-bottom:10px;
-}
-.bean-detail-notes{
-  font-size:1rem;
-  color:var(--stone);
-  margin-bottom:40px;
-  letter-spacing:0.02em;
-}
-.bean-spec-table{
-  border-top:1px solid var(--line);
-  margin-bottom:40px;
-}
-.bean-spec-row{
-  display:flex;
-  justify-content:space-between;
-  align-items:baseline;
-  padding:14px 0;
-  border-bottom:1px solid var(--line);
-  gap:20px;
-}
-.bean-spec-label{
-  font-size:11px;
-  text-transform:uppercase;
-  letter-spacing:0.12em;
-  font-weight:600;
-  color:var(--stone);
-  flex-shrink:0;
-}
-.bean-spec-value{
-  font-size:0.92rem;
-  text-align:right;
-}
-.bean-description{
-  margin-bottom:40px;
-}
-.bean-description p{
-  font-size:0.97rem;
-  color:var(--stone);
-  line-height:1.75;
-  max-width:480px;
-}
-.bean-description p + p{
-  margin-top:14px;
-}
-.bean-order-block{
-  padding:32px;
-  border:1px solid var(--line);
-}
-.bean-order-price{
-  display:flex;
-  align-items:baseline;
-  gap:10px;
-  margin-bottom:20px;
-}
-.bean-order-price .price{
-  font-family:'Space Grotesk',sans-serif;
-  font-size:1.8rem;
-  font-weight:600;
-}
-.bean-order-price .weight{
-  font-size:0.9rem;
-  color:var(--stone);
-}
-.btn-wa-order{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-  width:100%;
-  padding:16px 24px;
-  background:var(--ink);
-  color:var(--paper);
-  font-size:15px;
-  font-weight:600;
-  border-radius:2px;
-  transition:background .2s;
-}
-.btn-wa-order:hover{background:#C13584;}
-.bean-order-note{
-  margin-top:14px;
-  font-size:0.8rem;
-  color:var(--stone);
-  text-align:center;
-}
-@media(max-width:900px){
-  .bean-detail-grid{grid-template-columns:1fr;}
-  .bean-detail-photo{position:static;}
-  .bean-detail-photo img{height:auto; max-height:85vw; object-fit:contain; background:var(--paper);}
-  .bean-detail-info{padding:40px 24px 70px;}
-  .bean-back{margin-bottom:32px;}
-}
-</style>
 </head>
 <body>
 
 <header>
-  <div class="container">
-    <nav class="nav">
-      <a href="../index.html" class="nav-logo"><img src="../images/logo-black.png" alt="Pillars Coffee" class="logo-img"></a>
-      <div class="nav-links">
-        <a href="../about.html">About</a>
-        <a href="../beans.html">Shop Coffee</a>
-        <a href="../visit.html">Visit Us</a>
-        <a href="../contact.html">Contact</a>
-        <a href="../preorder.html" class="btn-nav">Pre-Order</a>
-      </div>
-      <button class="menu-toggle" id="menuToggle" aria-label="Open menu">☰</button>
-    </nav>
-  </div>
+  <div class="container"><nav class="nav">
+    <a href="../index.html" class="nav-logo"><img src="../images/logo-black.png" alt="Pillars Coffee"></a>
+    <div class="nav-links">
+      <a href="../about.html">About</a><a href="../beans.html">Coffee</a>
+      <a href="../visit.html">Visit</a><a href="../contact.html">Contact</a>
+      <a href="../preorder.html" class="btn-nav">Order Ahead</a>
+    </div>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav></div>
 </header>
-
 <div class="mobile-overlay" id="mobileOverlay"></div>
 <div class="mobile-menu" id="mobileMenu">
-  <button class="close-toggle" id="closeToggle" aria-label="Close menu">×</button>
-  <a href="../index.html">Home</a>
-  <a href="../about.html">About</a>
-  <a href="../beans.html">Shop Coffee</a>
-  <a href="../visit.html">Visit Us</a>
+  <button class="close-toggle" id="closeToggle">×</button>
+  <a href="../index.html">Home</a><a href="../about.html">About</a>
+  <a href="../beans.html">Coffee</a><a href="../visit.html">Visit</a>
   <a href="../contact.html">Contact</a>
-  <a href="../preorder.html" class="btn-nav-mobile">Pre-Order</a>
+  <a href="../preorder.html" class="btn-mob">Order Ahead</a>
 </div>
 
-<div style="padding-top:76px;">
-  <div class="bean-detail-grid">
-
-    <div class="bean-detail-photo">
+<div style="padding-top:72px;">
+  <div class="bean-layout">
+    <div class="bean-photo-col reveal-left">
       <img src="../images/beans/quebraditas.jpg" alt="Quebraditas — Pillars Coffee">
     </div>
-
-    <div class="bean-detail-info">
-      <div class="container" style="max-width:none; width:100%; margin:0; padding:0;">
-
-        <a href="../beans.html" class="bean-back">← Back to Coffee</a>
-
-        <div class="eyebrow" style="margin-bottom:12px;"><span class="bar"></span>Filter · Limited</div>
-        <h1 class="bean-detail-name">Quebraditas</h1>
-        <p class="bean-detail-notes">Watermelon · Lychee · Roselle</p>
-
-        <div class="bean-spec-table">
-          <div class="bean-spec-row">
-            <span class="bean-spec-label">Origin</span>
-            <span class="bean-spec-value">Huila · Colombia</span>
-          </div>
-          <div class="bean-spec-row">
-            <span class="bean-spec-label">Variety</span>
-            <span class="bean-spec-value">Gesha</span>
-          </div>
-          <div class="bean-spec-row">
-            <span class="bean-spec-label">Process</span>
-            <span class="bean-spec-value">Anaerobic Washed</span>
-          </div>
-          <div class="bean-spec-row">
-            <span class="bean-spec-label">Format</span>
-            <span class="bean-spec-value">150g · Whole Bean</span>
-          </div>
+    <div class="bean-info-col reveal">
+      <a href="../beans.html" class="bean-back">← Back to Coffee</a>
+      <div class="eyebrow" style="margin-bottom:14px;"><span class="bar"></span>Filter · Limited</div>
+      <h1 class="bean-title">Quebraditas</h1>
+      <p class="bean-notes-hero">Watermelon · Lychee · Roselle</p>
+      <div class="spec-table">
+        <div class="spec-row"><span class="spec-label">Origin</span><span class="spec-value">Huila · Colombia</span></div>
+        <div class="spec-row"><span class="spec-label">Variety</span><span class="spec-value">Gesha</span></div>
+        <div class="spec-row"><span class="spec-label">Process</span><span class="spec-value">Anaerobic Washed</span></div>
+        <div class="spec-row"><span class="spec-label">Format</span><span class="spec-value">150g · Whole Bean</span></div>
+      </div>
+      <div class="bean-desc">
+        <p>Grown by Edison Argote and his family at Quebraditas Farm in Huila, Colombia at 1,850 metres, this Gesha undergoes an anaerobic washed process with thermal shock and carefully managed fermentation to create exceptional clarity and complexity.</p>
+        <p>Delicate floral aromas of jasmine and orange blossom are complemented by vibrant notes of pineapple, strawberry and honey melon, finishing with a crisp, wine-like acidity reminiscent of a fine Riesling.</p>
+      </div>
+      <div class="bean-order-box">
+        <div class="bean-price-row">
+          <span class="bean-price">$38</span>
+          <span class="bean-weight-tag">150g</span>
         </div>
-
-        <div class="bean-description">
-          <p>Grown by Edison Argote and his family at Quebraditas Farm in Huila, Colombia at 1,850 metres, this Gesha undergoes an anaerobic washed process with thermal shock and carefully managed fermentation to create exceptional clarity and complexity.</p>
-          <p>Delicate floral aromas of jasmine and orange blossom are complemented by vibrant notes of pineapple, strawberry, and honey melon — finishing with a crisp, wine-like acidity reminiscent of a fine Riesling.</p>
-        </div>
-
-        <div class="bean-order-block">
-          <div class="bean-order-price">
-            <span class="price">$38</span>
-            <span class="weight">150g</span>
-          </div>
-          <a href="https://ig.me/m/pillars.sg" target="_blank" class="btn-wa-order">
-            <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:currentColor;flex-shrink:0;"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg> Order via Instagram DM
-          </a>
-          <p class="bean-order-note">DM us on @pillars.sg — mention the coffee name and we'll sort it out.</p>
-        </div>
-
+        <a href="https://ig.me/m/pillars.sg" target="_blank" class="btn-ig">
+          <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg> Order via Instagram DM
+        </a>
+        <p class="bean-order-note">DM us on @pillars.sg and mention the coffee name. We will sort it out from there.</p>
       </div>
     </div>
-
   </div>
 </div>
 
-<footer>
-  <div class="container">
-    <div class="footer-top">
-      <a href="../index.html" class="nav-logo"><img src="../images/logo-black.png" alt="Pillars Coffee" class="logo-img"></a>
-      <div class="footer-links">
-        <a href="https://instagram.com/pillars.sg" target="_blank">Instagram</a>
-        <a href="mailto:hello@pillarscoffee.sg">General Enquiries</a>
-        <a href="mailto:joinus@pillarscoffee.sg">Join The Team</a>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <span>© 2026 Pillars Coffee</span>
-      <span>hello@pillarscoffee.sg</span>
+<footer><div class="container">
+  <div class="footer-top">
+    <a href="../index.html" class="footer-logo"><img src="../images/logo-black.png" alt="Pillars Coffee"></a>
+    <div class="footer-links">
+      <a href="https://instagram.com/pillars.sg" target="_blank">@pillars.sg</a>
+      <a href="mailto:hello@pillarscoffee.sg">hello@pillarscoffee.sg</a>
+      <a href="mailto:joinus@pillarscoffee.sg">Join the Team</a>
     </div>
   </div>
-</footer>
-
+  <div class="footer-bottom"><span>© 2026 Pillars Coffee</span><span>Solaris, Fusionopolis, Singapore</span></div>
+</div></footer>
 <script src="../script.js"></script>
 </body>
 </html>
