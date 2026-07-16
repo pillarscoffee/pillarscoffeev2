@@ -224,12 +224,12 @@ h1,h2,h3,h4{ font-weight:700; letter-spacing:-0.02em; line-height:1.06; }
 /* ============================================================
    FOOTER
 ============================================================ */
-.foot{ padding:56px 0 40px; border-top:1px solid var(--line); }
-.foot__links{ display:flex; align-items:center; justify-content:center; gap:40px; padding-bottom:36px; font-size:14px; font-weight:500; }
+.foot{ padding:40px 0 40px; border-top:1px solid var(--line); }
+.foot__links{ display:flex; align-items:center; justify-content:center; gap:40px; padding-bottom:40px; font-size:14px; font-weight:500; }
 .foot__links a{ color:var(--stone); position:relative; transition:color .2s; display:inline-flex; align-items:center; }
 .foot__links a:hover{ color:var(--ink); }
 .foot__ig svg{ display:block; }
-.foot__bot{ text-align:center; padding-top:28px; border-top:1px solid var(--line); font-size:12px; color:var(--stone); letter-spacing:0.04em; }
+.foot__bot{ text-align:center; padding-top:40px; border-top:1px solid var(--line); font-size:12px; color:var(--stone); letter-spacing:0.04em; }
 
 /* ---- reveal ---- */
 .reveal{ opacity:0; transform:translateY(34px); transition:opacity .8s cubic-bezier(.2,0,.2,1), transform .8s cubic-bezier(.2,0,.2,1); }
