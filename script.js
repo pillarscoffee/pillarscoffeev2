@@ -35,9 +35,18 @@
   closeBtn?.addEventListener('click', close);
   scrim?.addEventListener('click', close);
 
-  // reveal
-  const io = new IntersectionObserver((entries)=>{
-    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
-  }, { threshold:0.1 });
-  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  // reveal — fires as soon as an element edges into view (rootMargin),
+  // and never leaves content hidden if the observer is unsupported.
+  const revealEls = document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window){
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold:0, rootMargin:'0px 0px -8% 0px' });
+    revealEls.forEach(el=>io.observe(el));
+    // safety net: if anything is still hidden after 3s (e.g. tall off-screen
+    // sections the observer missed), force them visible.
+    setTimeout(()=>{ revealEls.forEach(el=>el.classList.add('in')); }, 3000);
+  } else {
+    revealEls.forEach(el=>el.classList.add('in'));
+  }
 })();
