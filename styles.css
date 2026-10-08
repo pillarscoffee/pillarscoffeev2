@@ -4,22 +4,40 @@
    Plus Jakarta Sans. Editorial minimalism.
 ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500&display=swap');
+/* Garet — self-hosted. Book covers light/regular weights, Heavy covers
+   semibold/bold. The browser auto-picks by the weight range below, so all
+   existing font-weight values keep working. */
+@font-face{
+  font-family:'Garet';
+  src:url('fonts/Garet-Book.woff2') format('woff2'),
+      url('fonts/Garet-Book.woff') format('woff');
+  font-weight:300 500;
+  font-style:normal;
+  font-display:swap;
+}
+@font-face{
+  font-family:'Garet';
+  src:url('fonts/Garet-Heavy.woff2') format('woff2'),
+      url('fonts/Garet-Heavy.woff') format('woff');
+  font-weight:600 900;
+  font-style:normal;
+  font-display:swap;
+}
 
 :root{
-  --bg:      #F5F5F4;   /* cool concrete paper */
-  --surface: #EAEAE8;   /* stone grey for image frames */
-  --ink:     #1C1C1A;   /* near-black, neutral */
-  --stone:   #7A7A76;   /* muted grey text */
-  --line:    #E0E0DD;   /* hairline */
-  --clay:    #4A4A47;   /* graphite accent (was warm clay) */
-  --paper:   #F5F5F4;
+  --bg:      #F4F1EC;   /* warm concrete paper */
+  --surface: #ECE7DF;   /* slightly deeper stone for frames */
+  --ink:     #1A1714;   /* near-black warm */
+  --stone:   #6E665B;   /* muted taupe text */
+  --line:    #DAD3C8;   /* hairline */
+  --clay:    #9A6F4E;   /* accent */
+  --paper:   #F4F1EC;
 }
 
 *,*::before,*::after{ margin:0; padding:0; box-sizing:border-box; }
 html{ scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
 body{
-  font-family:'Plus Jakarta Sans', ui-sans-serif, sans-serif;
+  font-family:'Garet', 'Plus Jakarta Sans', ui-sans-serif, sans-serif;
   background:var(--bg);
   color:var(--ink);
   line-height:1.6;
@@ -53,7 +71,7 @@ h1,h2,h3,h4{ font-weight:700; letter-spacing:-0.02em; line-height:1.06; }
 .h-xl{ font-size:clamp(2rem,4vw,3.2rem); font-weight:700; letter-spacing:-0.025em; }
 .h-lg{ font-size:clamp(1.5rem,2.6vw,2.1rem); font-weight:700; letter-spacing:-0.02em; }
 .lede{ font-size:1.08rem; line-height:1.75; color:var(--stone); max-width:46ch; }
-.quote{ font-size:clamp(1.7rem,3.6vw,2.9rem); font-weight:300; font-style:italic; line-height:1.25; letter-spacing:-0.02em; }
+.quote{ font-size:clamp(1.7rem,3.6vw,2.9rem); font-weight:400; font-style:normal; line-height:1.25; letter-spacing:-0.02em; }
 
 /* ============================================================
    NAV
@@ -253,17 +271,12 @@ h1,h2,h3,h4{ font-weight:700; letter-spacing:-0.02em; line-height:1.06; }
   .split--wide-text, .split--wide-img{ grid-template-columns:1fr; }
   .split--rev .split__media{ order:-1; }
   .pframe--tall{ max-height:none; }
-  /* 2-up compact grid on tablet/mobile (Nylon-style) */
-  .pgrid{ grid-template-columns:repeat(2,1fr); gap:36px 20px; margin-top:36px; max-width:none; }
-  .pcard__frame{ margin-bottom:14px; }
-  .pcard__type{ font-size:9px; letter-spacing:0.14em; margin-bottom:6px; }
-  .pcard__name{ font-size:1.02rem; margin-bottom:5px; line-height:1.15; }
-  .pcard__origin{ font-size:0.78rem; line-height:1.4; margin-bottom:5px; }
-  .pcard__notes{ font-size:0.76rem; margin-bottom:12px; }
-  .pcard__foot{ padding-top:12px; }
-  .pcard__price{ font-size:0.98rem; }
-  .pcard__weight{ font-size:0.72rem; margin-top:2px; }
-  .pcard .tlink{ font-size:11px; }
+  .pgrid{ grid-template-columns:1fr; gap:0; max-width:460px; margin-inline:auto; }
+  /* each bean becomes a clearly divided block on mobile */
+  .pcard{ padding-bottom:44px; margin-bottom:44px; border-bottom:1px solid var(--line); }
+  .pcard:last-child{ border-bottom:0; margin-bottom:0; padding-bottom:0; }
+  .pcard__frame{ margin-bottom:20px; }
+  .pcard__foot{ border-top:0; padding-top:14px; }
   .cgrid{ grid-template-columns:1fr; }
   .phead{ padding:130px 0 60px; }
 
@@ -278,11 +291,7 @@ h1,h2,h3,h4{ font-weight:700; letter-spacing:-0.02em; line-height:1.06; }
   .nav__row{ padding-inline:22px; }
   .hero__cta{ flex-direction:column; align-items:stretch; }
   .hero__cta .btn{ width:100%; }
-  /* tighten gutters and card gaps on narrow phones, keep 2-up */
-  .pgrid{ gap:30px 14px; }
-  .pcard__name{ font-size:0.95rem; }
-  .pcard__notes{ font-size:0.72rem; }
-  .pcard .tlink{ font-size:10px; }
+  .pgrid{ max-width:none; }
   .preorder__info{ padding:28px 22px; }
   .orderbox{ padding:28px 22px; }
 }
