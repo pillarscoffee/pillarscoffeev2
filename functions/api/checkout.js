@@ -120,13 +120,22 @@ export async function onRequestPost(context) {
       },
       body: form.toString(),
     });
-    hitpay = await resp.json();
+    const rawResp = await resp.text();
+    try {
+      hitpay = JSON.parse(rawResp);
+    } catch (parseErr) {
+      hitpay = null;
+    }
     if (!resp.ok || !hitpay || !hitpay.url) {
-      // Leave the order row as pending; it just never got a payment link.
-      return json({ error: "Could not start payment. Please try again." }, 502);
+      // Surface HitPay's actual error so we can see what is wrong.
+      let detail = "";
+      if (hitpay && hitpay.message) detail = hitpay.message;
+      else if (hitpay && hitpay.errors) detail = JSON.stringify(hitpay.errors);
+      else detail = rawResp.slice(0, 300);
+      return json({ error: "HitPay error (" + resp.status + "): " + detail }, 502);
     }
   } catch (e) {
-    return json({ error: "Could not reach payment provider. Please try again." }, 502);
+    return json({ error: "Could not reach payment provider: " + (e && e.message) }, 502);
   }
 
   // --- 6. Save HitPay's id back onto the order, then hand the url to the browser ---
