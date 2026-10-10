@@ -43,17 +43,29 @@
           <label for="f-name">Full name</label>
           <input id="f-name" name="name" type="text" autocomplete="name" required>
         </div>
-        <div class="field">
-          <label for="f-email">Email</label>
-          <input id="f-email" name="email" type="email" autocomplete="email" required>
+        <div class="co__row">
+          <div class="field">
+            <label for="f-email">Email</label>
+            <input id="f-email" name="email" type="email" autocomplete="email" required>
+          </div>
+          <div class="field">
+            <label for="f-phone">Phone</label>
+            <input id="f-phone" name="phone" type="tel" autocomplete="tel" placeholder="e.g. 9123 4567" required>
+          </div>
         </div>
         <div class="field">
-          <label for="f-phone">Phone</label>
-          <input id="f-phone" name="phone" type="tel" autocomplete="tel" required>
+          <label for="f-address1">Address</label>
+          <input id="f-address1" name="address1" type="text" autocomplete="address-line1" placeholder="Block and street name" required>
         </div>
-        <div class="field">
-          <label for="f-address">Delivery address</label>
-          <textarea id="f-address" name="address" rows="4" autocomplete="street-address" placeholder="Block, street, unit number, postal code" required></textarea>
+        <div class="co__row">
+          <div class="field">
+            <label for="f-unit">Unit number <span class="co__opt">(optional)</span></label>
+            <input id="f-unit" name="unit" type="text" autocomplete="address-line2" placeholder="e.g. #11-47">
+          </div>
+          <div class="field">
+            <label for="f-postal">Postal code</label>
+            <input id="f-postal" name="postal" type="text" inputmode="numeric" autocomplete="postal-code" maxlength="6" placeholder="6 digits" required>
+          </div>
         </div>
 
         <p class="co__delivery">Standard Delivery &middot; 1 to 3 working days. $3.50, waived on 2 bags or more.</p>
@@ -132,12 +144,26 @@
     e.preventDefault();
     errEl.style.display = "none";
 
+    // Build the full address from the structured fields.
+    var addr1 = document.getElementById("f-address1").value.trim();
+    var unit = document.getElementById("f-unit").value.trim();
+    var postal = document.getElementById("f-postal").value.trim();
+
+    // Light SG postal-code check (6 digits).
+    if (!/^\d{6}$/.test(postal)) {
+      errEl.textContent = "Please enter a valid 6-digit postal code.";
+      errEl.style.display = "block";
+      return;
+    }
+
+    var fullAddress = addr1 + (unit ? ", " + unit : "") + ", Singapore " + postal;
+
     var payload = {
       customer: {
         name: document.getElementById("f-name").value,
         email: document.getElementById("f-email").value,
         phone: document.getElementById("f-phone").value,
-        address: document.getElementById("f-address").value,
+        address: fullAddress,
       },
       cart: window.PillarsCart.get().map(function (i) { return { id: i.id, qty: i.qty }; }),
     };

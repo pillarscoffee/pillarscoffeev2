@@ -429,3 +429,10 @@ h1,h2,h3,h4{ font-weight:500; letter-spacing:-0.02em; line-height:1.06; }
   .co__wrap{ grid-template-columns:1fr; gap:40px; }
   .co__summary{ position:static; order:-1; }
 }
+
+/* ---- checkout: structured field rows ---- */
+.co__row{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.co__opt{ color:var(--stone); font-weight:400; text-transform:none; letter-spacing:0; font-size:0.85em; }
+@media(max-width:560px){
+  .co__row{ grid-template-columns:1fr; gap:20px; }
+}
