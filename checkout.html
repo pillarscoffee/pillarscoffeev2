@@ -182,19 +182,12 @@
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     })
-      .then(function (r) { return r.text().then(function (t) { return { ok: r.ok, status: r.status, text: t }; }); })
+      .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }).catch(function () { return { ok: r.ok, d: null }; }); })
       .then(function (res) {
-        var d = null;
-        try { d = JSON.parse(res.text); } catch (e) { d = null; }
-        if (res.ok && d && d.url) {
-          window.location.href = d.url; // off to HitPay
-        } else if (d && d.error) {
-          throw new Error(d.error);
-        } else if (d) {
-          // Show the full diagnostic response so we can see what happened.
-          throw new Error("[" + res.status + "] " + JSON.stringify(d));
+        if (res.ok && res.d && res.d.url) {
+          window.location.href = res.d.url; // off to HitPay
         } else {
-          throw new Error("[" + res.status + "] " + res.text.slice(0, 200));
+          throw new Error((res.d && res.d.error) || "Something went wrong. Please try again.");
         }
       })
       .catch(function (err) {
