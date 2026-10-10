@@ -149,6 +149,12 @@
     var unit = document.getElementById("f-unit").value.trim();
     var postal = document.getElementById("f-postal").value.trim();
 
+    // Backstop validation (in case browser validation is skipped).
+    if (!addr1) {
+      errEl.textContent = "Please enter your delivery address.";
+      errEl.style.display = "block";
+      return;
+    }
     // Light SG postal-code check (6 digits).
     if (!/^\d{6}$/.test(postal)) {
       errEl.textContent = "Please enter a valid 6-digit postal code.";
@@ -176,12 +182,19 @@
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     })
-      .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+      .then(function (r) { return r.text().then(function (t) { return { ok: r.ok, status: r.status, text: t }; }); })
       .then(function (res) {
-        if (res.ok && res.d && res.d.url) {
-          window.location.href = res.d.url; // off to HitPay
+        var d = null;
+        try { d = JSON.parse(res.text); } catch (e) { d = null; }
+        if (res.ok && d && d.url) {
+          window.location.href = d.url; // off to HitPay
+        } else if (d && d.error) {
+          throw new Error(d.error);
+        } else if (d) {
+          // Show the full diagnostic response so we can see what happened.
+          throw new Error("[" + res.status + "] " + JSON.stringify(d));
         } else {
-          throw new Error((res.d && res.d.error) || "Something went wrong. Please try again.");
+          throw new Error("[" + res.status + "] " + res.text.slice(0, 200));
         }
       })
       .catch(function (err) {
