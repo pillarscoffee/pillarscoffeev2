@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orders — Pillars (Team)</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+  :root{
+    --bg:#F5F5F4; --surface:#fff; --ink:#1C1C1A; --stone:#7A7A76;
+    --line:#E0E0DD; --accent:#1C1C1A;
+    --paid:#1f7a4d; --paidbg:#e7f4ee;
+    --packed:#9a6b00; --packedbg:#fbf1dc;
+    --shipped:#2a5fa5; --shippedbg:#e8f0fb;
+    --pending:#8a8a86; --pendingbg:#eeeeec;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;padding:0 16px;}
+  .wrap{max-width:820px;margin:0 auto;padding:40px 0 100px;}
+  h1{font-size:1.6rem;font-weight:600;letter-spacing:-.01em;margin-bottom:4px;}
+  .sub{color:var(--stone);font-size:.9rem;margin-bottom:28px;}
+  /* gate */
+  .gate{max-width:360px;margin:80px auto;text-align:center;}
+  .gate input{width:100%;font-size:1rem;padding:14px 16px;border:1px solid var(--line);border-radius:8px;margin:14px 0;}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:inherit;font-size:.95rem;font-weight:600;padding:12px 20px;border-radius:6px;border:1px solid var(--ink);background:var(--ink);color:#fff;cursor:pointer;transition:opacity .2s;}
+  .btn:hover{opacity:.85;}
+  .btn--line{background:transparent;color:var(--ink);}
+  .btn--full{width:100%;}
+  .btn:disabled{opacity:.4;cursor:default;}
+  .err{color:#8A3B2C;font-size:.9rem;margin-top:8px;min-height:1.2em;}
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
+  .chip{font-size:.82rem;padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:#fff;cursor:pointer;color:var(--stone);}
+  .chip.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+  /* cards */
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;margin-bottom:16px;}
+  .card__top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px;}
+  .ono{font-weight:700;font-size:1.05rem;}
+  .when{color:var(--stone);font-size:.78rem;margin-top:2px;}
+  .status{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:4px 10px;border-radius:999px;white-space:nowrap;}
+  .s-pending{color:var(--pending);background:var(--pendingbg);}
+  .s-paid{color:var(--paid);background:var(--paidbg);}
+  .s-packed{color:var(--packed);background:var(--packedbg);}
+  .s-shipped{color:var(--shipped);background:var(--shippedbg);}
+  .items{font-size:.9rem;margin:10px 0;}
+  .items div{padding:2px 0;}
+  .money{display:flex;gap:18px;flex-wrap:wrap;font-size:.84rem;color:var(--stone);margin:10px 0;padding:10px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+  .money b{color:var(--ink);}
+  .cust{font-size:.88rem;margin:10px 0;white-space:pre-line;}
+  .cust .label{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--stone);display:block;margin-bottom:3px;}
+  .actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:14px;}
+  .track{flex:1;min-width:180px;font-size:.9rem;padding:10px 12px;border:1px solid var(--line);border-radius:6px;}
+  .small{font-size:.8rem;padding:9px 14px;}
+  .muted{color:var(--stone);font-size:.82rem;}
+  .empty{text-align:center;color:var(--stone);padding:60px 0;}
+  .msg{font-size:.82rem;margin-top:6px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Password gate -->
+  <div id="gate" class="gate">
+    <h1>Pillars Orders</h1>
+    <p class="sub">Team access</p>
+    <input id="key" type="password" placeholder="Access key" autocomplete="current-password">
+    <button class="btn btn--full" id="enter">Enter</button>
+    <div class="err" id="gateErr"></div>
+  </div>
+
+  <!-- App -->
+  <div id="app" style="display:none;">
+    <h1>Orders</h1>
+    <p class="sub" id="count">Loading...</p>
+    <div class="toolbar" id="filters">
+      <span class="chip active" data-f="active">To action</span>
+      <span class="chip" data-f="paid">Paid</span>
+      <span class="chip" data-f="packed">Packed</span>
+      <span class="chip" data-f="shipped">Shipped</span>
+      <span class="chip" data-f="all">All</span>
+      <span class="chip" data-f="refresh" style="margin-left:auto;">↻ Refresh</span>
+    </div>
+    <div id="list"></div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var KEY = "";
+  var ALL = [];
+  var FILTER = "active";
+
+  function money(c){ return "$" + (c/100).toFixed(2); }
+  function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];}); }
+  function when(iso){ if(!iso) return ""; try{ var d=new Date(iso); return d.toLocaleString("en-SG",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}); }catch(e){ return iso; } }
+
+  // ---- gate ----
+  var gate=document.getElementById("gate"), app=document.getElementById("app");
+  document.getElementById("enter").addEventListener("click", tryEnter);
+  document.getElementById("key").addEventListener("keydown", function(e){ if(e.key==="Enter") tryEnter(); });
+  try{ var saved=sessionStorage.getItem("pillars_admin_key"); if(saved){ KEY=saved; verifyAndLoad(); } }catch(e){}
+
+  function tryEnter(){
+    KEY = document.getElementById("key").value.trim();
+    if(!KEY){ return; }
+    verifyAndLoad();
+  }
+
+  function verifyAndLoad(){
+    document.getElementById("gateErr") && (document.getElementById("gateErr").textContent="");
+    load(function(ok){
+      if(ok){
+        try{ sessionStorage.setItem("pillars_admin_key", KEY); }catch(e){}
+        gate.style.display="none"; app.style.display="block";
+      } else {
+        document.getElementById("gateErr").textContent="Wrong key, try again.";
+        try{ sessionStorage.removeItem("pillars_admin_key"); }catch(e){}
+      }
+    });
+  }
+
+  // ---- data ----
+  function load(cb){
+    fetch("/api/orders", { headers: { "x-pillars-key": KEY } })
+      .then(function(r){ if(r.status===401){ cb && cb(false); return null; } return r.json(); })
+      .then(function(d){ if(!d) return; ALL = d.orders||[]; render(); cb && cb(true); })
+      .catch(function(){ cb && cb(false); });
+  }
+
+  // ---- render ----
+  var ORDER = { pending:0, paid:1, packed:2, shipped:3 };
+  function render(){
+    var list=document.getElementById("list");
+    var rows = ALL.filter(function(o){
+      if(FILTER==="all") return true;
+      if(FILTER==="active") return o.status==="paid" || o.status==="packed";
+      return o.status===FILTER;
+    });
+    document.getElementById("count").textContent = ALL.length + " orders total · " + rows.length + " shown";
+    if(rows.length===0){ list.innerHTML='<div class="empty">Nothing here.</div>'; return; }
+
+    list.innerHTML = rows.map(function(o){
+      var items="";
+      try{ items = JSON.parse(o.items_json||"[]").map(function(i){ return "<div>"+i.qty+" × "+esc(i.name)+" <span class='muted'>("+esc(i.weight)+")</span> — "+money(i.line_cents)+"</div>"; }).join(""); }catch(e){}
+      var fee = o.hitpay_fee_cents!=null ? "<span>Fee <b>"+money(o.hitpay_fee_cents)+"</b></span><span>Net <b>"+money(o.total_cents-o.hitpay_fee_cents)+"</b></span>" : "";
+      var actions = "";
+      if(o.status==="paid"){
+        actions = '<button class="btn small" data-act="packed" data-no="'+esc(o.order_no)+'">Mark packed</button>';
+      } else if(o.status==="packed"){
+        actions =
+          '<input class="track" placeholder="Paste tracking link" id="t_'+esc(o.order_no)+'">' +
+          '<button class="btn small" data-act="shipped" data-no="'+esc(o.order_no)+'">Mark shipped + email</button>';
+      } else if(o.status==="shipped"){
+        actions = '<span class="muted">Shipped '+when(o.shipped_at)+(o.tracking_url?' · <a href="'+esc(o.tracking_url)+'" target="_blank">tracking</a>':'')+'</span>';
+      } else if(o.status==="pending"){
+        actions = '<span class="muted">Awaiting payment.</span> <button class="btn btn--line small" data-act="paid" data-no="'+esc(o.order_no)+'">Mark paid manually</button>';
+      }
+      return '<div class="card">' +
+        '<div class="card__top">' +
+          '<div><div class="ono">'+esc(o.order_no)+'</div><div class="when">'+when(o.created_at)+'</div></div>' +
+          '<span class="status s-'+o.status+'">'+o.status+'</span>' +
+        '</div>' +
+        '<div class="items">'+items+'</div>' +
+        '<div class="money"><span>Subtotal '+money(o.subtotal_cents)+'</span><span>Delivery '+(o.delivery_cents===0?"FREE":money(o.delivery_cents))+'</span><span><b>Total '+money(o.total_cents)+'</b></span>'+fee+'</div>' +
+        '<div class="cust"><span class="label">Deliver to</span>'+esc(o.customer_name)+'\n'+esc(o.phone)+'\n'+esc(o.address)+'\n'+esc(o.email)+'</div>' +
+        '<div class="actions">'+actions+'</div>' +
+        '<div class="msg muted" id="m_'+esc(o.order_no)+'"></div>' +
+      '</div>';
+    }).join("");
+
+    // wire action buttons
+    Array.prototype.forEach.call(list.querySelectorAll("[data-act]"), function(b){
+      b.addEventListener("click", function(){
+        var no=b.getAttribute("data-no"), act=b.getAttribute("data-act");
+        var payload={ order_no:no, action:act };
+        if(act==="shipped"){
+          var t=document.getElementById("t_"+no);
+          payload.tracking_url = t ? t.value.trim() : "";
+          if(!payload.tracking_url){ setMsg(no,"Paste a tracking link first."); return; }
+        }
+        b.disabled=true; setMsg(no,"Working...");
+        fetch("/api/orders", { method:"POST", headers:{ "Content-Type":"application/json", "x-pillars-key":KEY }, body:JSON.stringify(payload) })
+          .then(function(r){ return r.json().then(function(d){ return {ok:r.ok,d:d}; }); })
+          .then(function(res){
+            if(res.ok){ setMsg(no, act==="shipped" ? ("Shipped. Email "+(res.d.email||"")) : ("Marked "+res.d.status)); load(); }
+            else { setMsg(no, (res.d&&res.d.error)||"Failed"); b.disabled=false; }
+          })
+          .catch(function(){ setMsg(no,"Network error"); b.disabled=false; });
+      });
+    });
+  }
+  function setMsg(no,t){ var m=document.getElementById("m_"+no); if(m) m.textContent=t; }
+
+  // filters
+  document.getElementById("filters").addEventListener("click", function(e){
+    var c=e.target.closest(".chip"); if(!c) return;
+    var f=c.getAttribute("data-f");
+    if(f==="refresh"){ load(); return; }
+    FILTER=f;
+    Array.prototype.forEach.call(document.querySelectorAll(".chip"), function(x){ x.classList.toggle("active", x.getAttribute("data-f")===f); });
+    render();
+  });
+})();
+</script>
+</body>
+</html>
