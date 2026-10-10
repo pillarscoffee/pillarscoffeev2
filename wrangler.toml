@@ -1,0 +1,18 @@
+# Cloudflare Pages + D1 configuration for Pillars Coffee.
+#
+# This tells the Pages Functions how to reach the orders database.
+# The binding name "DB" is what the code uses (env.DB). The database_id is
+# filled in from the Cloudflare dashboard after you create the D1 database
+# (see the SETUP guide).
+#
+# Secrets (HitPay keys, and later Telegram/Resend) are NOT set here. They are
+# set in the Cloudflare dashboard so they never live in the repo.
+
+name = "pillarscoffee"
+pages_build_output_dir = "."
+compatibility_date = "2026-10-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "pillars-orders"
+database_id = "PASTE_YOUR_D1_DATABASE_ID_HERE"

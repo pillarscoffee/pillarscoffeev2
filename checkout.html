@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout — Pillars Coffee</title>
+<meta name="description" content="Complete your Pillars Coffee order. Standard delivery, 1 to 3 working days.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<nav class="nav" data-hero="false">
+  <div class="nav__row">
+    <a href="index.html" class="nav__logo"><img src="images/logo-black.png" alt="Pillars Coffee"></a>
+    <div class="nav__links">
+      <a href="about.html">About</a>
+      <a href="beans.html">Coffee</a>
+      <a href="visit.html">Visit</a>
+      <a href="contact.html">Contact</a>
+      <a href="preorder.html" class="nav__cta">Order Ahead</a>
+    </div>
+    <button class="nav__burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer">
+  <button class="drawer__close" id="drawerClose" aria-label="Close">&times;</button>
+  <a href="index.html">Home</a>
+  <a href="about.html">About</a>
+  <a href="beans.html">Coffee</a>
+  <a href="visit.html">Visit</a>
+  <a href="contact.html">Contact</a>
+  <a href="preorder.html" class="drawer__cta">Order Ahead</a>
+</aside>
+
+<section class="section co">
+  <div class="wrap co__wrap">
+    <div class="co__main">
+      <div class="eyebrow">Checkout</div>
+      <h1 class="h-xl" style="margin-bottom:28px;">Delivery details.</h1>
+
+      <form id="coForm" class="co__form" novalidate>
+        <div class="field">
+          <label for="f-name">Full name</label>
+          <input id="f-name" name="name" type="text" autocomplete="name" required>
+        </div>
+        <div class="field">
+          <label for="f-email">Email</label>
+          <input id="f-email" name="email" type="email" autocomplete="email" required>
+        </div>
+        <div class="field">
+          <label for="f-phone">Phone</label>
+          <input id="f-phone" name="phone" type="tel" autocomplete="tel" required>
+        </div>
+        <div class="field">
+          <label for="f-address">Delivery address</label>
+          <textarea id="f-address" name="address" rows="4" autocomplete="street-address" placeholder="Block, street, unit number, postal code" required></textarea>
+        </div>
+
+        <p class="co__delivery">Standard Delivery &middot; 1 to 3 working days. $3.50, waived on 2 bags or more.</p>
+
+        <p id="coError" class="co__error" role="alert" style="display:none;"></p>
+
+        <button type="submit" id="coPay" class="btn btn--solid btn--full" style="padding:19px;">
+          Pay with PayNow or Card
+        </button>
+        <p class="co__secure">You will be taken to our secure payment page to complete your order.</p>
+      </form>
+    </div>
+
+    <aside class="co__summary">
+      <h2 class="h-lg" style="margin-bottom:20px;">Order summary</h2>
+      <div id="coItems" class="co__items"></div>
+      <div id="coTotals" class="co__totals"></div>
+    </aside>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot__links">
+      <a href="https://instagram.com/pillars.sg" target="_blank" class="foot__ig" aria-label="Instagram"><svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+      <a href="mailto:hello@pillarscoffee.sg">General Enquiries</a>
+      <a href="mailto:joinus@pillarscoffee.sg">Join the Team</a>
+    </div>
+    <div class="foot__bot"><span>&copy; 2026 Pillars Coffee</span></div>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+<script src="cart.js"></script>
+<script>
+(function () {
+  function money(n) { return "$" + n.toFixed(2); }
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  var cart = window.PillarsCart.get();
+  var itemsEl = document.getElementById("coItems");
+  var totalsEl = document.getElementById("coTotals");
+  var form = document.getElementById("coForm");
+  var errEl = document.getElementById("coError");
+  var payBtn = document.getElementById("coPay");
+
+  function renderSummary() {
+    cart = window.PillarsCart.get();
+    if (!cart.length) {
+      itemsEl.innerHTML = '<p class="cart-empty">Your bag is empty.</p>';
+      totalsEl.innerHTML = '<a href="/beans.html" class="btn btn--line btn--full">Shop Coffee</a>';
+      form.style.display = "none";
+      return;
+    }
+    itemsEl.innerHTML = cart.map(function (i) {
+      return '<div class="co__item">' +
+        '<div><div class="co__item-name">' + esc(i.name) + '</div>' +
+        '<div class="co__item-meta">' + esc(i.weight) + ' &middot; Qty ' + i.qty + '</div></div>' +
+        '<div class="co__item-sum">' + money(i.price * i.qty) + '</div></div>';
+    }).join("");
+
+    var sub = window.PillarsCart.subtotal();
+    var fee = window.PillarsCart.deliveryFee();
+    totalsEl.innerHTML =
+      '<div class="co__trow"><span>Subtotal</span><span>' + money(sub) + '</span></div>' +
+      '<div class="co__trow"><span>Delivery</span><span>' + (fee === 0 ? "FREE" : money(fee)) + '</span></div>' +
+      '<div class="co__trow co__trow--grand"><span>Total</span><span>' + money(sub + fee) + '</span></div>';
+  }
+  renderSummary();
+
+  form && form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    errEl.style.display = "none";
+
+    var payload = {
+      customer: {
+        name: document.getElementById("f-name").value,
+        email: document.getElementById("f-email").value,
+        phone: document.getElementById("f-phone").value,
+        address: document.getElementById("f-address").value,
+      },
+      cart: window.PillarsCart.get().map(function (i) { return { id: i.id, qty: i.qty }; }),
+    };
+
+    payBtn.disabled = true;
+    payBtn.textContent = "Starting secure payment...";
+
+    fetch("/api/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    })
+      .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+      .then(function (res) {
+        if (res.ok && res.d && res.d.url) {
+          window.location.href = res.d.url; // off to HitPay
+        } else {
+          throw new Error((res.d && res.d.error) || "Something went wrong. Please try again.");
+        }
+      })
+      .catch(function (err) {
+        errEl.textContent = err.message;
+        errEl.style.display = "block";
+        payBtn.disabled = false;
+        payBtn.textContent = "Pay with PayNow or Card";
+      });
+  });
+})();
+</script>
+</body>
+</html>

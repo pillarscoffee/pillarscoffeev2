@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Visit — Pillars Coffee</title>
-<meta name="description" content="Pillars Coffee is at 1 Fusionopolis Walk #01-K1, Singapore. Open Monday to Friday, 8am to 4pm.">
+<title>Thank You — Pillars Coffee</title>
+<meta name="description" content="Thank you for your Pillars Coffee order.">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -31,43 +31,15 @@
   <a href="contact.html">Contact</a>
   <a href="preorder.html" class="drawer__cta">Order Ahead</a>
 </aside>
-<div class="phead">
-  <div class="wrap">
-    <div class="eyebrow reveal">Find Us</div>
-    <h1 class="reveal d1">Visit Us</h1>
-    <p class="reveal d2">Five days a week, for the people who work and create around us.</p>
-  </div>
-</div>
 
-<section class="section">
+<section class="preorder">
   <div class="wrap">
-    <div class="split">
-      <div class="split__body reveal">
-        <div class="eyebrow">Location</div>
-        <h2 class="h-xl" style="margin-bottom:26px;">Fusionopolis, Singapore</h2>
-        <p class="lede" style="margin-bottom:26px;">Set on the ground floor of Solaris, Pillars serves the daily coffee needs of the Fusionopolis community, from morning espresso to afternoon filter.</p>
-        <dl class="addr">
-          <dt>Address</dt><dd>1 Fusionopolis Walk, #01-K1<br>Singapore 138628</dd>
-          <dt>Opening Hours</dt><dd>Monday to Friday, 8am to 4pm</dd>
-          <dt>Weekends</dt><dd>Closed</dd>
-        </dl>
-        <a href="https://www.google.com/maps/search/?api=1&query=Pillars+Coffee+Singapore" target="_blank" class="btn btn--line mt40">Get Directions</a>
-      </div>
-      <div class="split__media reveal d1"><div class="pframe pframe--tall"><img src="images/counter.jpg" alt="The Pillars Coffee kiosk at Solaris"></div></div>
-    </div>
-  </div>
-</section>
-
-<section class="section" style="padding-top:0;">
-  <div class="wrap">
-    <div class="split split--rev">
-      <div class="split__body reveal">
-        <div class="eyebrow">Order Ahead</div>
-        <h2 class="h-xl" style="margin-bottom:22px;">Ready when you arrive.</h2>
-        <p class="lede" style="margin-bottom:36px;">Place your order online and collect from Pillars at Solaris. Fresh and ready for you when you walk in.</p>
-        <a href="preorder.html" class="btn btn--solid">Order Ahead</a>
-      </div>
-      <div class="split__media reveal d1"><div class="pframe pframe--tall"><img src="images/modbar.jpg" alt="The Modbar espresso system"></div></div>
+    <div class="preorder__card">
+      <div class="eyebrow eyebrow--center">Order Received</div>
+      <h1 class="h-display" style="margin-bottom:16px;">Thank you.</h1>
+      <p class="lede" style="margin-inline:auto;">We have received your order and will send a confirmation to your email shortly. Your beans will be packed fresh and delivered in 1 to 3 working days.</p>
+      <p id="refLine" class="preorder__sub" style="margin-top:28px;"></p>
+      <a href="/beans.html" class="btn btn--line" style="margin-top:28px;">Back to Coffee</a>
     </div>
   </div>
 </section>
@@ -79,12 +51,20 @@
       <a href="mailto:hello@pillarscoffee.sg">General Enquiries</a>
       <a href="mailto:joinus@pillarscoffee.sg">Join the Team</a>
     </div>
-    <div class="foot__bot">
-      <span>&copy; 2026 Pillars Coffee</span>
-    </div>
+    <div class="foot__bot"><span>&copy; 2026 Pillars Coffee</span></div>
   </div>
 </footer>
+
 <script src="script.js"></script>
 <script src="cart.js"></script>
+<script>
+(function () {
+  // Clear the bag now that the order has been placed.
+  try { window.PillarsCart && window.PillarsCart.clear(); } catch (e) {}
+  // Show the order reference if HitPay passed it back.
+  var ref = new URLSearchParams(window.location.search).get("ref");
+  if (ref) document.getElementById("refLine").textContent = "Order reference: " + ref;
+})();
+</script>
 </body>
 </html>
