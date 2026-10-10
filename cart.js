@@ -90,10 +90,18 @@
         '<path d="M6 8h12l-1 11a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L6 8z"/>' +
         '<path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>' +
         '<span class="cartbtn__count" id="cartCount">0</span>';
-      // place it just before the burger so it sits at the right edge
+      // Group the cart button together with the burger at the far right,
+      // so the cart sits in the top-right corner (not the middle of the header).
       var burger = navRow.querySelector(".nav__burger");
-      if (burger) navRow.insertBefore(btn, burger);
-      else navRow.appendChild(btn);
+      if (burger) {
+        var group = document.createElement("div");
+        group.className = "nav__right";
+        navRow.insertBefore(group, burger);
+        group.appendChild(btn);
+        group.appendChild(burger); // move the existing burger into the group
+      } else {
+        navRow.appendChild(btn);
+      }
     }
 
     // Drawer + scrim

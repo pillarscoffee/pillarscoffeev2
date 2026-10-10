@@ -305,10 +305,13 @@ h1,h2,h3,h4{ font-weight:500; letter-spacing:-0.02em; line-height:1.06; }
    CART + CHECKOUT  (added for own-checkout, Phase 1)
 ============================================================ */
 
+/* ---- nav right group (cart + burger sit together, far right) ---- */
+.nav__right{ display:inline-flex; align-items:center; gap:4px; }
+
 /* ---- nav cart button + badge ---- */
 .cartbtn{
   position:relative; display:inline-flex; align-items:center; justify-content:center;
-  width:40px; height:40px; margin-left:8px; background:none; border:0; cursor:pointer;
+  width:40px; height:40px; background:none; border:0; cursor:pointer;
   color:var(--ink); transition:color .2s;
 }
 .cartbtn:hover{ color:var(--clay); }
