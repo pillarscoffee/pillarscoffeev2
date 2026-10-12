@@ -5,17 +5,22 @@
 // the browser to redirect to. The order is only marked PAID later by the HitPay
 // webhook (functions/api/webhook.js) — never here.
 //
-// Self-contained (no imports) so the Cloudflare Pages Function bundles cleanly.
+// Prices come from the shared catalog (single source of truth). Whether a bean
+// can be bought right now is checked against the live stock table, so a sold-out
+// bean can never be ordered even if its id is sent from the browser.
 
-const CATALOG = {
-  "alo-mosto":    { name: "Alo Mosto",          price: 35, weight: "150g" },
-  "anaya-estate": { name: "Finca Anaya Estate", price: 28, weight: "200g" },
-  "la-esmeralda": { name: "La Esmeralda",       price: 38, weight: "150g" },
-  "banko-gotiti": { name: "Banko Gotiti",       price: 25, weight: "200g" },
-  "chinga-aa":    { name: "Chinga AA",          price: 25, weight: "200g" },
-  "ruli-cws":     { name: "Ruli CWS",           price: 26, weight: "200g" },
-  "sitio-yamava": { name: "Sitio Yamava",       price: 19, weight: "200g" },
-};
+import { CATALOG, getProduct } from "../_catalog.js";
+
+// Returns the Set of bean ids currently switched ON in the Stock tab.
+async function availableSet(env) {
+  const set = new Set();
+  if (!env.DB) return set;
+  try {
+    const res = await env.DB.prepare(`SELECT bean_id FROM stock WHERE available = 1`).all();
+    for (const r of (res && res.results) || []) set.add(r.bean_id);
+  } catch (e) { /* no stock table yet -> empty set */ }
+  return set;
+}
 
 const CURRENCY = "SGD";
 const DELIVERY_FEE_CENTS = 350;      // $3.50
@@ -65,11 +70,15 @@ export async function onRequestPost(context) {
     if (!Array.isArray(cart) || cart.length === 0) {
       return json({ error: "Your bag is empty." }, 400);
     }
+    const inStock = await availableSet(env);
     let subtotalCents = 0, totalQty = 0;
     const items = [];
     for (const line of cart) {
-      const p = CATALOG[line && line.id];
+      const p = getProduct(line && line.id);
       if (!p) return json({ error: "One of the items is no longer available." }, 400);
+      if (inStock.size > 0 && !inStock.has(line.id)) {
+        return json({ error: p.name + " just sold out. Please remove it and try again." }, 400);
+      }
       const qty = Math.max(1, Math.min(20, Math.floor(Number(line.qty)) || 1));
       const unit = Math.round(p.price * 100);
       subtotalCents += unit * qty;
