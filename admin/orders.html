@@ -78,6 +78,7 @@
       <span class="chip" data-f="paid">Paid</span>
       <span class="chip" data-f="packed">Packed</span>
       <span class="chip" data-f="shipped">Shipped</span>
+      <span class="chip" data-f="refunded">Refunded</span>
       <span class="chip" data-f="all">All</span>
       <span class="chip" data-f="refresh" style="margin-left:auto;">↻ Refresh</span>
       <span class="chip" data-f="clear" style="color:#8A3B2C;border-color:#e3c9c2;">Clear unpaid</span>
@@ -135,7 +136,7 @@
   function render(){
     var list=document.getElementById("list");
     var rows = ALL.filter(function(o){
-      if(FILTER==="all") return true;
+      if(FILTER==="all") return o.status!=="refunded"; // refunded live in their own tab
       if(FILTER==="active") return o.status==="paid" || o.status==="packed";
       return o.status===FILTER;
     });
