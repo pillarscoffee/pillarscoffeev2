@@ -34,7 +34,7 @@ export async function onRequestGet(context) {
     const res = await env.DB.prepare(
       `SELECT id, order_no, status, fulfilment, customer_name, email, phone, address,
               items_json, subtotal_cents, delivery_cents, total_cents, currency,
-              hitpay_fee_cents, tracking_url, created_at, paid_at, shipped_at
+              hitpay_fee_cents, tracking_url, created_at, paid_at, shipped_at, refunded_at
          FROM orders
         ORDER BY id DESC
         LIMIT 200`
@@ -81,6 +81,22 @@ export async function onRequestPost(context) {
       `UPDATE orders SET status = 'paid', paid_at = COALESCE(paid_at, strftime('%Y-%m-%dT%H:%M:%SZ','now')) WHERE order_no = ?`
     ).bind(orderNo).run();
     return json({ ok: true, status: "paid" });
+  }
+
+  if (action === "refunded") {
+    // Mark an order refunded AFTER you have done the refund in HitPay.
+    // Only a real (paid/packed/shipped) order can be refunded; a pending one
+    // was never paid, so there is nothing to refund.
+    if (order.status === "pending") {
+      return json({ error: "This order was never paid, so there is nothing to refund. Use Remove instead." }, 400);
+    }
+    if (order.status === "refunded") {
+      return json({ ok: true, status: "refunded" });
+    }
+    await env.DB.prepare(
+      `UPDATE orders SET status = 'refunded', refunded_at = strftime('%Y-%m-%dT%H:%M:%SZ','now') WHERE order_no = ?`
+    ).bind(orderNo).run();
+    return json({ ok: true, status: "refunded" });
   }
 
   if (action === "delete") {
