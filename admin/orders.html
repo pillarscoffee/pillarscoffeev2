@@ -13,6 +13,7 @@
     --packed:#9a6b00; --packedbg:#fbf1dc;
     --shipped:#2a5fa5; --shippedbg:#e8f0fb;
     --pending:#8a8a86; --pendingbg:#eeeeec;
+    --refunded:#8A3B2C; --refundedbg:#f4e8e5;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   body{font-family:'DM Sans',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;padding:0 16px;}
@@ -41,6 +42,7 @@
   .s-paid{color:var(--paid);background:var(--paidbg);}
   .s-packed{color:var(--packed);background:var(--packedbg);}
   .s-shipped{color:var(--shipped);background:var(--shippedbg);}
+  .s-refunded{color:var(--refunded);background:var(--refundedbg);}
   .items{font-size:.9rem;margin:10px 0;}
   .items div{padding:2px 0;}
   .money{display:flex;gap:18px;flex-wrap:wrap;font-size:.84rem;color:var(--stone);margin:10px 0;padding:10px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
@@ -145,14 +147,18 @@
       try{ items = JSON.parse(o.items_json||"[]").map(function(i){ return "<div>"+i.qty+" × "+esc(i.name)+" <span class='muted'>("+esc(i.weight)+")</span> — "+money(i.line_cents)+"</div>"; }).join(""); }catch(e){}
       var fee = o.hitpay_fee_cents!=null ? "<span>Fee <b>"+money(o.hitpay_fee_cents)+"</b></span><span>Net <b>"+money(o.total_cents-o.hitpay_fee_cents)+"</b></span>" : "";
       var actions = "";
+      // After you refund in HitPay, this records it on the order.
+      var refundBtn = ' <button class="btn btn--line small" data-act="refunded" data-no="'+esc(o.order_no)+'" style="color:#8A3B2C;border-color:#e3c9c2;">Mark refunded</button>';
       if(o.status==="paid"){
-        actions = '<button class="btn small" data-act="packed" data-no="'+esc(o.order_no)+'">Mark packed</button>';
+        actions = '<button class="btn small" data-act="packed" data-no="'+esc(o.order_no)+'">Mark packed</button>' + refundBtn;
       } else if(o.status==="packed"){
         actions =
           '<input class="track" placeholder="Paste tracking link" id="t_'+esc(o.order_no)+'">' +
-          '<button class="btn small" data-act="shipped" data-no="'+esc(o.order_no)+'">Mark shipped + email</button>';
+          '<button class="btn small" data-act="shipped" data-no="'+esc(o.order_no)+'">Mark shipped + email</button>' + refundBtn;
       } else if(o.status==="shipped"){
-        actions = '<span class="muted">Shipped '+when(o.shipped_at)+(o.tracking_url?' · <a href="'+esc(o.tracking_url)+'" target="_blank">tracking</a>':'')+'</span>';
+        actions = '<span class="muted">Shipped '+when(o.shipped_at)+(o.tracking_url?' · <a href="'+esc(o.tracking_url)+'" target="_blank">tracking</a>':'')+'</span>' + refundBtn;
+      } else if(o.status==="refunded"){
+        actions = '<span class="muted">Refunded '+when(o.refunded_at)+'.</span>';
       } else if(o.status==="pending"){
         actions = '<span class="muted">Awaiting payment.</span> <button class="btn btn--line small" data-act="paid" data-no="'+esc(o.order_no)+'">Mark paid manually</button> <button class="btn btn--line small" data-act="delete" data-no="'+esc(o.order_no)+'" style="color:#8A3B2C;border-color:#e3c9c2;">Remove</button>';
       }
@@ -175,6 +181,7 @@
         var no=b.getAttribute("data-no"), act=b.getAttribute("data-act");
         if(act==="delete" && !confirm("Remove unpaid order "+no+"? This cannot be undone.")){ return; }
         if(act==="paid" && !confirm("Mark "+no+" as PAID manually? Only do this if you have confirmed the money came in.")){ return; }
+        if(act==="refunded" && !confirm("Mark "+no+" as REFUNDED? Do this only AFTER you have refunded it in HitPay.")){ return; }
         var payload={ order_no:no, action:act };
         if(act==="shipped"){
           var t=document.getElementById("t_"+no);
