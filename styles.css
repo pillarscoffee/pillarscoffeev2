@@ -200,7 +200,13 @@ h1,h2,h3,h4{ font-weight:500; letter-spacing:-0.02em; line-height:1.06; }
 .carousel__track.dragging a{ pointer-events:none; }
 .carousel__empty{ color:var(--stone); font-size:.95rem; padding:20px 0; }
 @media (max-width:900px){ .carousel .pcard{ flex-basis:calc((100% - 40px) / 2); } }
-@media (max-width:620px){ .carousel__track{ gap:20px; } .carousel .pcard{ flex-basis:78%; } }
+@media (max-width:620px){
+  .carousel__track{ gap:20px; }
+  .carousel .pcard{ flex-basis:82%; }
+  .carousel__nav{ gap:12px; justify-content:space-between; }
+  .carousel__dots{ flex-wrap:wrap; justify-content:center; gap:7px; flex:1; }
+  .carousel__btn{ width:42px; height:42px; }
+}
 
 /* ============================================================
    PAGE HEADER

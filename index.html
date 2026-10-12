@@ -193,26 +193,29 @@
   }
 
   // ---- drag to scroll (desktop; touch already swipes natively) ----
+  // Drag-to-scroll for MOUSE ONLY. Touch devices already swipe natively via CSS
+  // scroll-snap, and taps must pass through to the card links untouched, so we
+  // ignore any pointer that is not a mouse. This fixes mobile taps doing nothing.
   function wireDrag(){
     var down=false, startX=0, startScroll=0, moved=false;
-    track.addEventListener("mousedown", function(e){
+    track.addEventListener("pointerdown", function(e){
+      if(e.pointerType !== "mouse") return;      // leave touch/pen alone
       down=true; moved=false; startX=e.pageX; startScroll=track.scrollLeft;
       track.classList.add("dragging");
     });
-    window.addEventListener("mouseup", function(){
+    window.addEventListener("pointerup", function(){
+      if(!down) return;
       down=false; track.classList.remove("dragging");
     });
-    track.addEventListener("mouseleave", function(){ down=false; track.classList.remove("dragging"); });
-    track.addEventListener("mousemove", function(e){
-      if(!down) return;
-      e.preventDefault();
+    track.addEventListener("pointermove", function(e){
+      if(!down || e.pointerType !== "mouse") return;
       var dx = e.pageX - startX;
-      if(Math.abs(dx) > 4) moved=true;
-      track.scrollLeft = startScroll - dx;
+      if(Math.abs(dx) > 6) moved=true;           // only count a real drag
+      if(moved){ e.preventDefault(); track.scrollLeft = startScroll - dx; }
     });
-    // prevent a drag from also triggering the card link click
+    // Only block the click if the mouse actually dragged (so taps/clicks work).
     track.addEventListener("click", function(e){
-      if(moved){ e.preventDefault(); moved=false; }
+      if(moved){ e.preventDefault(); e.stopPropagation(); moved=false; }
     }, true);
   }
 })();
