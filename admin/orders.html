@@ -78,6 +78,7 @@
       <span class="chip" data-f="shipped">Shipped</span>
       <span class="chip" data-f="all">All</span>
       <span class="chip" data-f="refresh" style="margin-left:auto;">↻ Refresh</span>
+      <span class="chip" data-f="clear" style="color:#8A3B2C;border-color:#e3c9c2;">Clear unpaid</span>
     </div>
     <div id="list"></div>
   </div>
@@ -153,7 +154,7 @@
       } else if(o.status==="shipped"){
         actions = '<span class="muted">Shipped '+when(o.shipped_at)+(o.tracking_url?' · <a href="'+esc(o.tracking_url)+'" target="_blank">tracking</a>':'')+'</span>';
       } else if(o.status==="pending"){
-        actions = '<span class="muted">Awaiting payment.</span> <button class="btn btn--line small" data-act="paid" data-no="'+esc(o.order_no)+'">Mark paid manually</button>';
+        actions = '<span class="muted">Awaiting payment.</span> <button class="btn btn--line small" data-act="paid" data-no="'+esc(o.order_no)+'">Mark paid manually</button> <button class="btn btn--line small" data-act="delete" data-no="'+esc(o.order_no)+'" style="color:#8A3B2C;border-color:#e3c9c2;">Remove</button>';
       }
       return '<div class="card">' +
         '<div class="card__top">' +
@@ -172,6 +173,8 @@
     Array.prototype.forEach.call(list.querySelectorAll("[data-act]"), function(b){
       b.addEventListener("click", function(){
         var no=b.getAttribute("data-no"), act=b.getAttribute("data-act");
+        if(act==="delete" && !confirm("Remove unpaid order "+no+"? This cannot be undone.")){ return; }
+        if(act==="paid" && !confirm("Mark "+no+" as PAID manually? Only do this if you have confirmed the money came in.")){ return; }
         var payload={ order_no:no, action:act };
         if(act==="shipped"){
           var t=document.getElementById("t_"+no);
@@ -196,6 +199,14 @@
     var c=e.target.closest(".chip"); if(!c) return;
     var f=c.getAttribute("data-f");
     if(f==="refresh"){ load(); return; }
+    if(f==="clear"){
+      if(!confirm("Remove ALL unpaid (pending) orders? Paid orders are never touched. This cannot be undone.")) return;
+      fetch("/api/orders", { method:"POST", headers:{ "Content-Type":"application/json", "x-pillars-key":KEY }, body:JSON.stringify({ action:"clear_pending" }) })
+        .then(function(r){ return r.json(); })
+        .then(function(d){ alert((d&&d.removed!=null? d.removed : 0)+" unpaid orders removed."); load(); })
+        .catch(function(){ alert("Could not clear. Try again."); });
+      return;
+    }
     FILTER=f;
     Array.prototype.forEach.call(document.querySelectorAll(".chip"), function(x){ x.classList.toggle("active", x.getAttribute("data-f")===f); });
     render();
