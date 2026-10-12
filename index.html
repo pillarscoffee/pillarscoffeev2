@@ -197,26 +197,31 @@
   // scroll-snap, and taps must pass through to the card links untouched, so we
   // ignore any pointer that is not a mouse. This fixes mobile taps doing nothing.
   function wireDrag(){
-    var down=false, startX=0, startScroll=0, moved=false;
+    var down=false, startX=0, startScroll=0, dragging=false;
     track.addEventListener("pointerdown", function(e){
       if(e.pointerType !== "mouse") return;      // leave touch/pen alone
-      down=true; moved=false; startX=e.pageX; startScroll=track.scrollLeft;
-      track.classList.add("dragging");
-    });
-    window.addEventListener("pointerup", function(){
-      if(!down) return;
-      down=false; track.classList.remove("dragging");
+      down=true; dragging=false; startX=e.pageX; startScroll=track.scrollLeft;
     });
     track.addEventListener("pointermove", function(e){
       if(!down || e.pointerType !== "mouse") return;
       var dx = e.pageX - startX;
-      if(Math.abs(dx) > 6) moved=true;           // only count a real drag
-      if(moved){ e.preventDefault(); track.scrollLeft = startScroll - dx; }
+      if(!dragging && Math.abs(dx) > 8){ dragging=true; track.classList.add("dragging"); }
+      if(dragging){ e.preventDefault(); track.scrollLeft = startScroll - dx; }
     });
-    // Only block the click if the mouse actually dragged (so taps/clicks work).
-    track.addEventListener("click", function(e){
-      if(moved){ e.preventDefault(); e.stopPropagation(); moved=false; }
-    }, true);
+    // End the press. Only suppress the click that immediately follows a REAL drag.
+    window.addEventListener("pointerup", function(){
+      if(!down) return;
+      down=false;
+      track.classList.remove("dragging");
+      if(dragging){
+        // swallow exactly the one click this drag would otherwise trigger
+        var kill = function(ev){ ev.preventDefault(); ev.stopPropagation(); };
+        track.addEventListener("click", kill, { capture:true, once:true });
+        // if no click comes (normal), remove the one-shot guard shortly after
+        setTimeout(function(){ track.removeEventListener("click", kill, true); }, 50);
+      }
+      dragging=false;
+    });
   }
 })();
 </script>
