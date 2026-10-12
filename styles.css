@@ -170,6 +170,7 @@ h1,h2,h3,h4{ font-weight:500; letter-spacing:-0.02em; line-height:1.06; }
 .pcard__frame img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition:transform .7s cubic-bezier(.2,0,.2,1); }
 .pcard:hover .pcard__frame img{ transform:scale(1.04); }
 .pcard__type{ font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.16em; color:var(--stone); margin-bottom:9px; }
+.pcard__type .avail{ display:inline-block; margin-left:8px; padding:2px 8px; border-radius:999px; background:#e7f4ee; color:#1f7a4d; letter-spacing:0.08em; }
 .pcard__name{ font-size:1.4rem; font-weight:700; letter-spacing:-0.02em; margin-bottom:8px; }
 .pcard__origin{ font-size:0.9rem; color:var(--stone); line-height:1.55; margin-bottom:8px; }
 .pcard__notes{ font-size:0.88rem; color:var(--ink); opacity:.55; margin-bottom:22px; }
@@ -179,6 +180,21 @@ h1,h2,h3,h4{ font-weight:500; letter-spacing:-0.02em; line-height:1.06; }
 
 /* section label divider (Espresso / Filter) */
 .rowlabel{ font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.18em; color:var(--stone); padding-bottom:20px; border-bottom:1px solid var(--line); margin-top:0; }
+
+/* ============================================================
+   AVAILABLE-BEANS CAROUSEL (homepage)
+============================================================ */
+.carousel{ position:relative; margin-top:56px; }
+.carousel__track{ display:flex; gap:40px; overflow-x:auto; scroll-snap-type:x mandatory; scroll-behavior:smooth; -webkit-overflow-scrolling:touch; padding-bottom:8px; scrollbar-width:none; }
+.carousel__track::-webkit-scrollbar{ display:none; }
+.carousel .pcard{ flex:0 0 calc((100% - 80px) / 3); scroll-snap-align:start; }
+.carousel__nav{ display:flex; gap:10px; margin-top:28px; }
+.carousel__btn{ width:46px; height:46px; border:1px solid var(--line); background:var(--surface); border-radius:50%; cursor:pointer; font-size:1.1rem; color:var(--ink); display:flex; align-items:center; justify-content:center; transition:background .2s,opacity .2s; }
+.carousel__btn:hover{ background:var(--bg); }
+.carousel__btn:disabled{ opacity:.3; cursor:default; }
+.carousel__empty{ color:var(--stone); font-size:.95rem; padding:20px 0; }
+@media (max-width:900px){ .carousel .pcard{ flex-basis:calc((100% - 40px) / 2); } }
+@media (max-width:620px){ .carousel__track{ gap:20px; } .carousel .pcard{ flex-basis:78%; } }
 
 /* ============================================================
    PAGE HEADER

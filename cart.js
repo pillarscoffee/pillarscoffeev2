@@ -224,12 +224,15 @@
   }
 
   /* ---------- wire "Add to Bag" buttons ---------- */
+  var IG = "https://instagram.com/pillars.sg";
+
   function wireAddButtons() {
     Array.prototype.forEach.call(
       document.querySelectorAll("[data-add-to-bag]"),
       function (b) {
         b.addEventListener("click", function (e) {
           e.preventDefault();
+          if (b.disabled) return;
           addItem({
             id: b.getAttribute("data-id"),
             name: b.getAttribute("data-name"),
@@ -239,6 +242,36 @@
         });
       }
     );
+  }
+
+  // Availability: fetch the live stock list once, then disable "Add to Bag" for
+  // any bean not currently in stock and turn it into a "Check availability" link
+  // to Instagram. If the stock list is empty or the call fails, buttons are left
+  // as-is (so the site keeps working during the transition / if offline).
+  function applyAvailability() {
+    var buttons = document.querySelectorAll("[data-add-to-bag]");
+    if (!buttons.length) return;
+    fetch("/api/stock")
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        var list = (d && d.available) || [];
+        if (!list.length) return; // nothing configured yet -> leave buttons alone
+        var inStock = {};
+        list.forEach(function (id) { inStock[id] = true; });
+        Array.prototype.forEach.call(buttons, function (b) {
+          var id = b.getAttribute("data-id");
+          if (inStock[id]) return; // available -> keep Add to Bag
+          // unavailable -> swap to "Check availability" linking to Instagram
+          var link = document.createElement("a");
+          link.href = IG;
+          link.target = "_blank";
+          link.rel = "noopener";
+          link.className = b.className;
+          link.textContent = "Check availability";
+          b.parentNode.replaceChild(link, b);
+        });
+      })
+      .catch(function () { /* leave buttons as-is on error */ });
   }
 
   /* ---------- expose a tiny API for checkout.html ---------- */
@@ -255,6 +288,7 @@
     buildUI();
     render();
     wireAddButtons();
+    applyAvailability();
   }
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);

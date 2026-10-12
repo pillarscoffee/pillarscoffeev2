@@ -68,55 +68,16 @@
 <section class="section" style="padding-top:0;">
   <div class="wrap">
     <div class="reveal">
-      <div class="eyebrow">On the Menu</div>
+      <div class="eyebrow">Available Now</div>
       <h2 class="h-display">Make it yours.</h2>
-      <p class="lede" style="margin-top:20px;">Every bag ships blank, ready to draw on, keep, or gift. Here is a little of what our cups can become.</p>
+      <p class="lede" style="margin-top:20px;">Every bag ships blank, ready to draw on, keep, or gift. These are the beans we have in stock right now.</p>
     </div>
-    <div class="pgrid reveal d1">
-      <a href="beans/sitio-yamava.html" class="pcard">
-        <div class="pcard__frame"><img src="images/drawn-sitio.jpg" alt="Sitio Yamava, hand-drawn sample"></div>
-        <div class="pcard__type">Espresso</div>
-        <div class="pcard__name">Sitio Yamava</div>
-        <div class="pcard__origin">Alta Mogiana, Brazil &middot; Natural</div>
-        <div class="pcard__notes">Hazelnut &middot; Milk Chocolate &middot; Brown Sugar</div>
-        <div class="pcard__foot">
-          <div><div class="pcard__price">$19</div><div class="pcard__weight">200g</div></div>
-          <span class="tlink">Find out more</span>
-        </div>
-      </a>
-      <a href="beans/anaya-estate.html" class="pcard">
-        <div class="pcard__frame"><img src="images/drawn-anaya.jpg" alt="Finca Anaya Estate, hand-drawn sample"></div>
-        <div class="pcard__type">Filter</div>
-        <div class="pcard__name">Finca Anaya Estate</div>
-        <div class="pcard__origin">Huila, Colombia &middot; Mosto Fermentation</div>
-        <div class="pcard__notes">Guava &middot; Passionfruit &middot; Pineapple</div>
-        <div class="pcard__foot">
-          <div><div class="pcard__price">$28</div><div class="pcard__weight">200g</div></div>
-          <span class="tlink">Find out more</span>
-        </div>
-      </a>
-      <a href="beans/la-esmeralda.html" class="pcard">
-        <div class="pcard__frame"><img src="images/drawn-esmeralda.jpg" alt="La Esmeralda, hand-drawn sample"></div>
-        <div class="pcard__type">Filter &middot; Limited</div>
-        <div class="pcard__name">La Esmeralda</div>
-        <div class="pcard__origin">Huila, Colombia &middot; Natural</div>
-        <div class="pcard__notes">Tropical Fruits &middot; Jasmine &middot; Wild Honey</div>
-        <div class="pcard__foot">
-          <div><div class="pcard__price">$38</div><div class="pcard__weight">150g</div></div>
-          <span class="tlink">Find out more</span>
-        </div>
-      </a>
-      <a href="beans/chinga-aa.html" class="pcard">
-        <div class="pcard__frame"><img src="images/drawn-chinga.jpg" alt="Chinga AA, hand-drawn sample"></div>
-        <div class="pcard__type">Espresso</div>
-        <div class="pcard__name">Chinga AA</div>
-        <div class="pcard__origin">Nyeri County, Kenya &middot; Fully Washed</div>
-        <div class="pcard__notes">Kefir Lime &middot; Blackcurrants &middot; Roselle</div>
-        <div class="pcard__foot">
-          <div><div class="pcard__price">$25</div><div class="pcard__weight">200g</div></div>
-          <span class="tlink">Find out more</span>
-        </div>
-      </a>
+    <div class="carousel reveal d1" id="beanCarousel">
+      <div class="carousel__track" id="carTrack"></div>
+      <div class="carousel__nav" id="carNav" style="display:none;">
+        <button class="carousel__btn" id="carPrev" aria-label="Previous">&larr;</button>
+        <button class="carousel__btn" id="carNext" aria-label="Next">&rarr;</button>
+      </div>
     </div>
     <div class="reveal d2" style="margin-top:48px;">
       <a href="beans.html" class="btn btn--line">View All Coffee</a>
@@ -158,5 +119,60 @@
 </footer>
 <script src="script.js"></script>
 <script src="cart.js"></script>
+<script src="beans-data.js"></script>
+<script>
+(function(){
+  var track = document.getElementById("carTrack");
+  var nav = document.getElementById("carNav");
+  var BEANS = window.PILLARS_BEANS || {};
+  if(!track) return;
+
+  function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];}); }
+
+  function card(id){
+    var b = BEANS[id]; if(!b) return "";
+    var img = b.drawn || window.PILLARS_DRAWN_FALLBACK(id);
+    var fallback = window.PILLARS_DRAWN_FALLBACK(id);
+    return '<a href="beans/'+esc(id)+'.html" class="pcard">' +
+      '<div class="pcard__frame"><img src="'+esc(img)+'" alt="'+esc(b.name)+'" ' +
+        'onerror="this.onerror=null;this.src=\''+esc(fallback)+'\'"></div>' +
+      '<div class="pcard__type">'+esc(b.type)+'</div>' +
+      '<div class="pcard__name">'+esc(b.name)+'</div>' +
+      '<div class="pcard__origin">'+esc(b.origin)+'</div>' +
+      '<div class="pcard__notes">'+esc(b.notes)+'</div>' +
+      '<div class="pcard__foot">' +
+        '<div><div class="pcard__price">$'+b.price+'</div><div class="pcard__weight">'+esc(b.weight)+'</div></div>' +
+        '<span class="tlink">Find out more</span>' +
+      '</div></a>';
+  }
+
+  fetch("/api/stock")
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var ids = (d && d.available) || [];
+      if(!ids.length){
+        // nothing in stock yet: fall back to showing a few menu beans so the
+        // homepage never looks empty.
+        ids = Object.keys(BEANS).slice(0,4);
+      }
+      track.innerHTML = ids.map(card).join("");
+      if(ids.length > 3){ nav.style.display = "flex"; wireNav(); }
+    })
+    .catch(function(){
+      // on error, show a few beans rather than an empty section
+      var ids = Object.keys(BEANS).slice(0,4);
+      track.innerHTML = ids.map(card).join("");
+      if(ids.length > 3){ nav.style.display = "flex"; wireNav(); }
+    });
+
+  function wireNav(){
+    var prev = document.getElementById("carPrev");
+    var next = document.getElementById("carNext");
+    function step(){ var c = track.querySelector(".pcard"); return c ? c.offsetWidth + 40 : 300; }
+    prev.addEventListener("click", function(){ track.scrollBy({left:-step(),behavior:"smooth"}); });
+    next.addEventListener("click", function(){ track.scrollBy({left: step(),behavior:"smooth"}); });
+  }
+})();
+</script>
 </body>
 </html>

@@ -263,5 +263,37 @@
 </footer>
 <script src="script.js"></script>
 <script src="cart.js"></script>
+<script>
+(function(){
+  // Mark which portfolio beans are available to buy right now. In-stock cards get
+  // a small "Available now" tag; the rest stay as portfolio (showcase) cards.
+  var cards = document.querySelectorAll(".pcard");
+  if(!cards.length) return;
+  fetch("/api/stock")
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var list = (d && d.available) || [];
+      if(!list.length) return;
+      var inStock = {};
+      list.forEach(function(id){ inStock[id] = true; });
+      Array.prototype.forEach.call(cards, function(c){
+        var href = c.getAttribute("href") || "";
+        var m = href.match(/beans\/([^.\/]+)\.html/);
+        var id = m ? m[1] : null;
+        if(id && inStock[id]){
+          c.classList.add("pcard--available");
+          var type = c.querySelector(".pcard__type");
+          if(type && type.querySelector(".avail")===null){
+            var tag = document.createElement("span");
+            tag.className = "avail";
+            tag.textContent = "Available now";
+            type.appendChild(tag);
+          }
+        }
+      });
+    })
+    .catch(function(){});
+})();
+</script>
 </body>
 </html>
