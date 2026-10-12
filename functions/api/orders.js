@@ -57,6 +57,14 @@ export async function onRequestPost(context) {
   const action = String(body.action || "").trim();
   const trackingUrl = String(body.tracking_url || "").trim();
 
+  // Bulk cleanup: remove every pending (unpaid) order in one go. Never touches
+  // a paid/packed/shipped order.
+  if (action === "clear_pending") {
+    const res = await env.DB.prepare(`DELETE FROM orders WHERE status = 'pending'`).run();
+    const removed = (res && res.meta && res.meta.changes) || 0;
+    return json({ ok: true, removed });
+  }
+
   if (!orderNo) return json({ error: "Missing order_no" }, 400);
 
   const order = await env.DB.prepare(`SELECT * FROM orders WHERE order_no = ?`).bind(orderNo).first();
@@ -73,6 +81,16 @@ export async function onRequestPost(context) {
       `UPDATE orders SET status = 'paid', paid_at = COALESCE(paid_at, strftime('%Y-%m-%dT%H:%M:%SZ','now')) WHERE order_no = ?`
     ).bind(orderNo).run();
     return json({ ok: true, status: "paid" });
+  }
+
+  if (action === "delete") {
+    // Safety: only ever delete a PENDING order. A paid/packed/shipped order is
+    // real money and can never be removed from here.
+    if (order.status !== "pending") {
+      return json({ error: "Only unpaid (pending) orders can be removed." }, 400);
+    }
+    await env.DB.prepare(`DELETE FROM orders WHERE order_no = ? AND status = 'pending'`).bind(orderNo).run();
+    return json({ ok: true, deleted: orderNo });
   }
 
   if (action === "shipped") {
