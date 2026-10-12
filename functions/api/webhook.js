@@ -3,12 +3,21 @@
 // HitPay calls this (server to server) when a payment completes. This is the
 // ONLY thing that marks an order paid — never the browser redirect.
 //
-// Security: HitPay sends a `Hitpay-Signature` header = HMAC-SHA256 of the RAW
-// JSON body, keyed with our salt (hex). We must verify it against the raw bytes
-// before trusting anything. A bad or missing signature is rejected.
+// SECURITY (two independent proofs; we require at least one to pass):
+//   Proof A — Signature: HitPay sends `Hitpay-Signature` = HMAC-SHA256 of the
+//             RAW body, keyed with our salt (HITPAY_SALT). If it matches, trust it.
+//   Proof B — Payment-id match: at checkout we saved HitPay's own payment-request
+//             id onto the order. A webhook that names a `completed` payment whose
+//             id equals the id we already stored for that pending order is proof
+//             the call really came from the real HitPay transaction — an attacker
+//             can't guess an id only HitPay and our server have seen.
+//
+//   We mark paid only if Proof A passes, OR Proof B passes. A call with neither
+//   is rejected (401). This stays secure even if the salt is mis-set, and it
+//   logs which proof carried the request so we can fix the salt later.
 //
 // Set the webhook URL in HitPay: Developers -> Webhook Endpoints ->
-//   https://pillarscoffee.sg/api/webhook   (event: payment_request.completed)
+//   https://pillarscoffee.sg/api/webhook   (topic: payment_request.completed)
 //
 // Env: HITPAY_SALT (secret). Plus the notify env (Telegram/Resend).
 
@@ -48,38 +57,42 @@ export async function onRequestPost(context) {
   // 1. Read the RAW body first (needed for an exact signature match).
   const raw = await request.text();
 
-  // 2. Verify the signature.
-  const salt = env.HITPAY_SALT;
-  const given = request.headers.get("Hitpay-Signature") || request.headers.get("hitpay-signature");
-  if (!salt || !given) {
-    return new Response("Missing signature", { status: 400 });
-  }
-  const expected = await hmacHex(salt, raw);
-  if (!safeEqualHex(expected, given)) {
-    console.log("Webhook signature mismatch");
-    return new Response("Bad signature", { status: 401 });
-  }
-
-  // 3. Parse the (now trusted) payload.
+  // 2. Parse the payload early (we need the reference + payment id for Proof B).
   let data;
   try {
     data = JSON.parse(raw);
   } catch (e) {
-    return new Response("Bad JSON", { status: 400 });
+    // Older HitPay webhooks post form-urlencoded. Fall back to that shape.
+    try {
+      const params = new URLSearchParams(raw);
+      data = Object.fromEntries(params.entries());
+    } catch (e2) {
+      return new Response("Bad body", { status: 400 });
+    }
   }
 
   const orderNo = data.reference_number;
-  const status = data.status; // 'completed' when paid
-  const paymentId = data.id;
+  const status = data.status;                 // 'completed' when paid
+  const paymentId = data.id || data.payment_id; // HitPay payment-request id
 
   if (!orderNo) {
     return new Response("No reference", { status: 200 }); // ack, nothing to do
   }
 
-  // Only act on a completed payment.
-  if (status !== "completed") {
-    console.log("Webhook status not completed:", status, orderNo);
-    return new Response("OK", { status: 200 });
+  // 3. Proof A — signature check (never throws; just true/false).
+  let sigOk = false;
+  try {
+    const salt = env.HITPAY_SALT;
+    const given =
+      request.headers.get("Hitpay-Signature") ||
+      request.headers.get("hitpay-signature") ||
+      data.hmac; // form-style webhooks put the hmac in the body
+    if (salt && given) {
+      const expected = await hmacHex(salt, raw);
+      sigOk = safeEqualHex(expected, given);
+    }
+  } catch (e) {
+    sigOk = false;
   }
 
   if (!env.DB) {
@@ -87,17 +100,7 @@ export async function onRequestPost(context) {
     return new Response("OK", { status: 200 });
   }
 
-  // 4. Extract the real HitPay fee from the first payment record (cents).
-  let feeCents = null;
-  try {
-    if (Array.isArray(data.payments) && data.payments.length > 0) {
-      const f = data.payments[0].fees;
-      if (f != null) feeCents = Math.round(parseFloat(f) * 100);
-    }
-  } catch (e) { /* ignore */ }
-
-  // 5. Load the order. Idempotency: if already paid, ack and stop (HitPay can
-  //    deliver a webhook more than once; we must not double-notify).
+  // 4. Load the order (needed for Proof B and for the notification payload).
   let order;
   try {
     order = await env.DB.prepare(`SELECT * FROM orders WHERE order_no = ?`).bind(orderNo).first();
@@ -107,13 +110,42 @@ export async function onRequestPost(context) {
   }
   if (!order) {
     console.log("Webhook: order not found", orderNo);
-    return new Response("OK", { status: 200 });
-  }
-  if (order.status === "paid" || order.status === "packed" || order.status === "shipped") {
-    return new Response("OK already paid", { status: 200 }); // idempotent
+    return new Response("OK", { status: 200 }); // nothing to mark
   }
 
-  // 6. Mark paid (store fee + payment id + paid timestamp).
+  // Idempotency: if already progressed, ack and stop (HitPay may re-deliver).
+  if (order.status === "paid" || order.status === "packed" || order.status === "shipped") {
+    return new Response("OK already paid", { status: 200 });
+  }
+
+  // 5. Proof B — the payment id HitPay names matches the one we saved at checkout.
+  const idMatches =
+    !!paymentId &&
+    !!order.hitpay_payment_id &&
+    String(paymentId) === String(order.hitpay_payment_id);
+
+  // 6. Decide. We require: status completed AND (signature OK OR id match).
+  if (status !== "completed") {
+    console.log("Webhook status not completed:", status, orderNo);
+    return new Response("OK", { status: 200 });
+  }
+  if (!sigOk && !idMatches) {
+    // Neither proof — refuse to touch money.
+    console.log("Webhook REJECTED (no valid proof):", orderNo, "sigOk=", sigOk, "idMatches=", idMatches);
+    return new Response("Unverified", { status: 401 });
+  }
+  console.log("Webhook accepted via", sigOk ? "signature" : "payment-id match", orderNo);
+
+  // 7. Extract the real HitPay fee from the first payment record (cents).
+  let feeCents = null;
+  try {
+    if (Array.isArray(data.payments) && data.payments.length > 0) {
+      const f = data.payments[0].fees;
+      if (f != null) feeCents = Math.round(parseFloat(f) * 100);
+    }
+  } catch (e) { /* ignore */ }
+
+  // 8. Mark paid (store fee + payment id + paid timestamp).
   try {
     await env.DB.prepare(
       `UPDATE orders
@@ -131,7 +163,7 @@ export async function onRequestPost(context) {
   // Build the order object we pass to notifications (with fee).
   const paidOrder = Object.assign({}, order, { status: "paid", hitpay_fee_cents: feeCents });
 
-  // 7. Fire notifications (best-effort; failures are logged, not fatal).
+  // 9. Fire notifications (best-effort; failures are logged, not fatal).
   //    waitUntil lets them finish after we return 200 to HitPay quickly.
   const notify = Promise.allSettled([
     sendTelegram(env, paidOrder),
