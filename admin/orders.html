@@ -55,6 +55,26 @@
   .muted{color:var(--stone);font-size:.82rem;}
   .empty{text-align:center;color:var(--stone);padding:60px 0;}
   .msg{font-size:.82rem;margin-top:6px;}
+  /* top-level tabs */
+  .tabs{display:flex;gap:4px;margin-bottom:24px;border-bottom:1px solid var(--line);}
+  .tab{font-family:inherit;font-size:1rem;font-weight:600;padding:10px 18px;border:0;background:none;color:var(--stone);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;}
+  .tab.active{color:var(--ink);border-bottom-color:var(--ink);}
+  /* stock rows */
+  .srow{display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin-bottom:10px;}
+  .srow__pos{width:26px;height:26px;flex:none;border-radius:50%;background:var(--pendingbg);color:var(--stone);font-size:.78rem;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  .srow.on .srow__pos{background:var(--paidbg);color:var(--paid);}
+  .srow__info{flex:1;min-width:0;}
+  .srow__name{font-weight:600;}
+  .srow__meta{font-size:.78rem;color:var(--stone);}
+  .srow__meta .warn{color:#8A3B2C;}
+  /* toggle switch */
+  .sw{position:relative;width:48px;height:28px;flex:none;}
+  .sw input{opacity:0;width:0;height:0;}
+  .sw__track{position:absolute;inset:0;background:#d4d4d1;border-radius:999px;transition:background .18s;cursor:pointer;}
+  .sw__track::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;background:#fff;border-radius:50%;transition:transform .18s;box-shadow:0 1px 2px rgba(0,0,0,.2);}
+  .sw input:checked + .sw__track{background:var(--paid);}
+  .sw input:checked + .sw__track::after{transform:translateX(20px);}
+  .sw input:disabled + .sw__track{opacity:.5;cursor:default;}
 </style>
 </head>
 <body>
@@ -71,19 +91,37 @@
 
   <!-- App -->
   <div id="app" style="display:none;">
-    <h1>Orders</h1>
-    <p class="sub" id="count">Loading...</p>
-    <div class="toolbar" id="filters">
-      <span class="chip active" data-f="active">To action</span>
-      <span class="chip" data-f="paid">Paid</span>
-      <span class="chip" data-f="packed">Packed</span>
-      <span class="chip" data-f="shipped">Shipped</span>
-      <span class="chip" data-f="refunded">Refunded</span>
-      <span class="chip" data-f="all">All</span>
-      <span class="chip" data-f="refresh" style="margin-left:auto;">↻ Refresh</span>
-      <span class="chip" data-f="clear" style="color:#8A3B2C;border-color:#e3c9c2;">Clear unpaid</span>
+
+    <!-- Top-level view switch -->
+    <div class="tabs">
+      <button class="tab active" data-view="orders">Orders</button>
+      <button class="tab" data-view="stock">Stock</button>
     </div>
-    <div id="list"></div>
+
+    <!-- ORDERS view -->
+    <div id="view-orders">
+      <h1>Orders</h1>
+      <p class="sub" id="count">Loading...</p>
+      <div class="toolbar" id="filters">
+        <span class="chip active" data-f="active">To action</span>
+        <span class="chip" data-f="paid">Paid</span>
+        <span class="chip" data-f="packed">Packed</span>
+        <span class="chip" data-f="shipped">Shipped</span>
+        <span class="chip" data-f="refunded">Refunded</span>
+        <span class="chip" data-f="all">All</span>
+        <span class="chip" data-f="refresh" style="margin-left:auto;">↻ Refresh</span>
+        <span class="chip" data-f="clear" style="color:#8A3B2C;border-color:#e3c9c2;">Clear unpaid</span>
+      </div>
+      <div id="list"></div>
+    </div>
+
+    <!-- STOCK view -->
+    <div id="view-stock" style="display:none;">
+      <h1>Stock</h1>
+      <p class="sub">Switch a bean ON to make it buyable and show it in the homepage carousel. The order you switch them ON sets the carousel order (1, 2, 3...). Switch OFF and the beans page shows "Check availability" linking to Instagram.</p>
+      <div id="stockList"></div>
+    </div>
+
   </div>
 
 </div>
@@ -219,6 +257,65 @@
     Array.prototype.forEach.call(document.querySelectorAll(".chip"), function(x){ x.classList.toggle("active", x.getAttribute("data-f")===f); });
     render();
   });
+
+  // ---- top-level tabs (Orders / Stock) ----
+  var stockLoaded = false;
+  Array.prototype.forEach.call(document.querySelectorAll(".tab"), function(t){
+    t.addEventListener("click", function(){
+      var view = t.getAttribute("data-view");
+      Array.prototype.forEach.call(document.querySelectorAll(".tab"), function(x){ x.classList.toggle("active", x===t); });
+      document.getElementById("view-orders").style.display = view==="orders" ? "block" : "none";
+      document.getElementById("view-stock").style.display  = view==="stock"  ? "block" : "none";
+      if(view==="stock" && !stockLoaded){ loadStock(); stockLoaded = true; }
+    });
+  });
+
+  // ---- stock ----
+  function loadStock(){
+    var el = document.getElementById("stockList");
+    el.innerHTML = '<div class="empty">Loading beans...</div>';
+    fetch("/api/stock?all=1", { headers: { "x-pillars-key": KEY } })
+      .then(function(r){ return r.json(); })
+      .then(function(d){ renderStock((d && d.beans) || []); })
+      .catch(function(){ el.innerHTML = '<div class="empty">Could not load. Did you run the stock table setup?</div>'; });
+  }
+
+  function renderStock(beans){
+    var el = document.getElementById("stockList");
+    // show available first (by position), then the rest by name
+    beans.sort(function(a,b){
+      if(a.available && b.available) return (a.position||0)-(b.position||0);
+      if(a.available) return -1;
+      if(b.available) return 1;
+      return a.name.localeCompare(b.name);
+    });
+    el.innerHTML = beans.map(function(b){
+      var pos = b.available ? (b.position||"·") : "·";
+      return '<div class="srow '+(b.available?"on":"")+'" id="s_'+esc(b.id)+'">' +
+        '<div class="srow__pos">'+pos+'</div>' +
+        '<div class="srow__info">' +
+          '<div class="srow__name">'+esc(b.name)+'</div>' +
+          '<div class="srow__meta">'+esc(b.type)+' · $'+b.price+' · '+esc(b.weight)+'</div>' +
+        '</div>' +
+        '<label class="sw"><input type="checkbox" data-bean="'+esc(b.id)+'" '+(b.available?"checked":"")+'><span class="sw__track"></span></label>' +
+      '</div>';
+    }).join("");
+
+    Array.prototype.forEach.call(el.querySelectorAll("input[data-bean]"), function(cb){
+      cb.addEventListener("change", function(){
+        var id = cb.getAttribute("data-bean");
+        var want = cb.checked;
+        cb.disabled = true;
+        fetch("/api/stock", { method:"POST", headers:{ "Content-Type":"application/json", "x-pillars-key":KEY }, body:JSON.stringify({ bean_id:id, available:want }) })
+          .then(function(r){ return r.json().then(function(d){ return {ok:r.ok,d:d}; }); })
+          .then(function(res){
+            if(!res.ok){ cb.checked = !want; alert((res.d&&res.d.error)||"Could not update."); }
+            loadStock(); // reload so positions renumber correctly
+          })
+          .catch(function(){ cb.checked = !want; cb.disabled=false; alert("Network error."); });
+      });
+    });
+  }
 })();
 </script>
 </body>
