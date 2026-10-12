@@ -76,6 +76,7 @@
       <div class="carousel__track" id="carTrack"></div>
       <div class="carousel__nav" id="carNav" style="display:none;">
         <button class="carousel__btn" id="carPrev" aria-label="Previous">&larr;</button>
+        <div class="carousel__dots" id="carDots"></div>
         <button class="carousel__btn" id="carNext" aria-label="Next">&rarr;</button>
       </div>
     </div>
@@ -146,31 +147,73 @@
       '</div></a>';
   }
 
+  function build(ids){
+    track.innerHTML = ids.map(card).join("");
+    // show nav if there is anything to scroll (more cards than fit on screen)
+    if(ids.length > 1){ nav.style.display = "flex"; wireNav(); buildDots(ids.length); }
+    wireDrag();
+  }
+
   fetch("/api/stock")
     .then(function(r){ return r.json(); })
     .then(function(d){
       var ids = (d && d.available) || [];
-      if(!ids.length){
-        // nothing in stock yet: fall back to showing a few menu beans so the
-        // homepage never looks empty.
-        ids = Object.keys(BEANS).slice(0,4);
-      }
-      track.innerHTML = ids.map(card).join("");
-      if(ids.length > 3){ nav.style.display = "flex"; wireNav(); }
+      if(!ids.length){ ids = Object.keys(BEANS).slice(0,4); } // placeholder until stock is set
+      build(ids);
     })
-    .catch(function(){
-      // on error, show a few beans rather than an empty section
-      var ids = Object.keys(BEANS).slice(0,4);
-      track.innerHTML = ids.map(card).join("");
-      if(ids.length > 3){ nav.style.display = "flex"; wireNav(); }
-    });
+    .catch(function(){ build(Object.keys(BEANS).slice(0,4)); });
+
+  function step(){ var c = track.querySelector(".pcard"); return c ? c.offsetWidth + 40 : 300; }
 
   function wireNav(){
-    var prev = document.getElementById("carPrev");
-    var next = document.getElementById("carNext");
-    function step(){ var c = track.querySelector(".pcard"); return c ? c.offsetWidth + 40 : 300; }
-    prev.addEventListener("click", function(){ track.scrollBy({left:-step(),behavior:"smooth"}); });
-    next.addEventListener("click", function(){ track.scrollBy({left: step(),behavior:"smooth"}); });
+    document.getElementById("carPrev").addEventListener("click", function(){ track.scrollBy({left:-step(),behavior:"smooth"}); });
+    document.getElementById("carNext").addEventListener("click", function(){ track.scrollBy({left: step(),behavior:"smooth"}); });
+  }
+
+  // ---- dot indicators ----
+  var dotsEl = document.getElementById("carDots");
+  function buildDots(n){
+    if(!dotsEl) return;
+    dotsEl.innerHTML = "";
+    for(var i=0;i<n;i++){
+      (function(idx){
+        var b = document.createElement("button");
+        b.className = "carousel__dot" + (idx===0?" active":"");
+        b.setAttribute("aria-label","Go to bean "+(idx+1));
+        b.addEventListener("click", function(){ track.scrollTo({left: idx*step(), behavior:"smooth"}); });
+        dotsEl.appendChild(b);
+      })(i);
+    }
+    track.addEventListener("scroll", syncDots, { passive:true });
+  }
+  function syncDots(){
+    if(!dotsEl) return;
+    var active = Math.round(track.scrollLeft / step());
+    Array.prototype.forEach.call(dotsEl.children, function(d,i){ d.classList.toggle("active", i===active); });
+  }
+
+  // ---- drag to scroll (desktop; touch already swipes natively) ----
+  function wireDrag(){
+    var down=false, startX=0, startScroll=0, moved=false;
+    track.addEventListener("mousedown", function(e){
+      down=true; moved=false; startX=e.pageX; startScroll=track.scrollLeft;
+      track.classList.add("dragging");
+    });
+    window.addEventListener("mouseup", function(){
+      down=false; track.classList.remove("dragging");
+    });
+    track.addEventListener("mouseleave", function(){ down=false; track.classList.remove("dragging"); });
+    track.addEventListener("mousemove", function(e){
+      if(!down) return;
+      e.preventDefault();
+      var dx = e.pageX - startX;
+      if(Math.abs(dx) > 4) moved=true;
+      track.scrollLeft = startScroll - dx;
+    });
+    // prevent a drag from also triggering the card link click
+    track.addEventListener("click", function(e){
+      if(moved){ e.preventDefault(); moved=false; }
+    }, true);
   }
 })();
 </script>
