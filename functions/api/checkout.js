@@ -10,6 +10,7 @@
 // bean can never be ordered even if its id is sent from the browser.
 
 import { CATALOG, getProduct } from "../_catalog.js";
+import { getLocation } from "../_locations.js";
 
 // Returns the Set of bean ids currently switched ON in the Stock tab.
 async function availableSet(env) {
@@ -56,15 +57,29 @@ export async function onRequestPost(context) {
     const customer = (body && body.customer) || {};
     const cart = (body && body.cart) || [];
 
-    // --- Validate customer (delivery needs a shipping address) ---
+    // --- Fulfilment: delivery (default) or self-pickup at an outlet ---
+    const fulfilment = (body && body.fulfilment) === "pickup" ? "pickup" : "delivery";
+    let pickupLocation = null;
+    if (fulfilment === "pickup") {
+      pickupLocation = getLocation(clean(body.pickup_location, 40));
+      if (!pickupLocation) return json({ error: "Please choose a pickup location." }, 400);
+    }
+
+    // --- Validate customer ---
     const name = clean(customer.name, 120);
     const email = clean(customer.email, 160);
     const phone = clean(customer.phone, 40);
-    const address = clean(customer.address, 600);
+    let address = clean(customer.address, 600);
     if (!name) return json({ error: "Please enter your name." }, 400);
     if (!looksLikeEmail(email)) return json({ error: "Please enter a valid email." }, 400);
     if (!phone) return json({ error: "Please enter a phone number." }, 400);
-    if (address.length < 10) return json({ error: "Please enter your full delivery address." }, 400);
+    if (fulfilment === "delivery" && address.length < 10) {
+      return json({ error: "Please enter your full delivery address." }, 400);
+    }
+    // For pickup, store the collection point as the "address" so staff see where.
+    if (fulfilment === "pickup") {
+      address = "SELF-PICKUP: " + pickupLocation.label;
+    }
 
     // --- Re-price the cart from the server catalog (never trust browser prices) ---
     if (!Array.isArray(cart) || cart.length === 0) {
@@ -86,7 +101,10 @@ export async function onRequestPost(context) {
       items.push({ id: line.id, name: p.name, weight: p.weight, qty: qty, unit_cents: unit, line_cents: unit * qty });
     }
 
-    const deliveryCents = totalQty >= FREE_DELIVERY_MIN_QTY ? 0 : DELIVERY_FEE_CENTS;
+    // Pickup never has a delivery fee. Delivery keeps the $3.50 rule (free on 2+ bags).
+    const deliveryCents = fulfilment === "pickup"
+      ? 0
+      : (totalQty >= FREE_DELIVERY_MIN_QTY ? 0 : DELIVERY_FEE_CENTS);
     const totalCents = subtotalCents + deliveryCents;
     const amountStr = (totalCents / 100).toFixed(2);
 
@@ -104,9 +122,9 @@ export async function onRequestPost(context) {
           `INSERT INTO orders
             (order_no, status, fulfilment, customer_name, email, phone, address,
              items_json, subtotal_cents, delivery_cents, total_cents, currency, hitpay_reference)
-           VALUES (?, 'pending', 'delivery', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+           VALUES (?, 'pending', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
         ).bind(
-          orderNo, name, email, phone, address,
+          orderNo, fulfilment, name, email, phone, address,
           JSON.stringify(items), subtotalCents, deliveryCents, totalCents, CURRENCY, orderNo
         ).run();
         orderId = r.meta && r.meta.last_row_id;
