@@ -43,6 +43,7 @@
   .s-packed{color:var(--packed);background:var(--packedbg);}
   .s-shipped{color:var(--shipped);background:var(--shippedbg);}
   .s-refunded{color:var(--refunded);background:var(--refundedbg);}
+  .s-pickup{color:#2a5fa5;background:#e8f0fb;}
   .items{font-size:.9rem;margin:10px 0;}
   .items div{padding:2px 0;}
   .money{display:flex;gap:18px;flex-wrap:wrap;font-size:.84rem;color:var(--stone);margin:10px 0;padding:10px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
@@ -201,14 +202,18 @@
       } else if(o.status==="pending"){
         actions = '<span class="muted">Awaiting payment.</span> <button class="btn btn--line small" data-act="paid" data-no="'+esc(o.order_no)+'">Mark paid manually</button> <button class="btn btn--line small" data-act="delete" data-no="'+esc(o.order_no)+'" style="color:#8A3B2C;border-color:#e3c9c2;">Remove</button>';
       }
+      var pickup = o.fulfilment==="pickup";
+      var fulTag = pickup ? '<span class="status s-pickup">pickup</span>' : '';
+      var deliverLabel = pickup ? "Collect at counter" : "Deliver to";
+      var feeLabel = pickup ? "Collection FREE" : ("Delivery "+(o.delivery_cents===0?"FREE":money(o.delivery_cents)));
       return '<div class="card">' +
         '<div class="card__top">' +
           '<div><div class="ono">'+esc(o.order_no)+'</div><div class="when">'+when(o.created_at)+'</div></div>' +
-          '<span class="status s-'+o.status+'">'+o.status+'</span>' +
+          '<div style="display:flex;gap:6px;align-items:center;">'+fulTag+'<span class="status s-'+o.status+'">'+o.status+'</span></div>' +
         '</div>' +
         '<div class="items">'+items+'</div>' +
-        '<div class="money"><span>Subtotal '+money(o.subtotal_cents)+'</span><span>Delivery '+(o.delivery_cents===0?"FREE":money(o.delivery_cents))+'</span><span><b>Total '+money(o.total_cents)+'</b></span>'+fee+'</div>' +
-        '<div class="cust"><span class="label">Deliver to</span>'+esc(o.customer_name)+'\n'+esc(o.phone)+'\n'+esc(o.address)+'\n'+esc(o.email)+'</div>' +
+        '<div class="money"><span>Subtotal '+money(o.subtotal_cents)+'</span><span>'+feeLabel+'</span><span><b>Total '+money(o.total_cents)+'</b></span>'+fee+'</div>' +
+        '<div class="cust"><span class="label">'+deliverLabel+'</span>'+esc(o.customer_name)+'\n'+esc(o.phone)+'\n'+esc(o.address)+'\n'+esc(o.email)+'</div>' +
         '<div class="actions">'+actions+'</div>' +
         '<div class="msg muted" id="m_'+esc(o.order_no)+'"></div>' +
       '</div>';
