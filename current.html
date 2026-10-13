@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Current Offerings — Pillars Coffee</title>
+<meta name="description" content="The beans we have in stock right now at Pillars Coffee. Browse and collect at our Solaris counter, or have them delivered.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<nav class="nav" data-hero="false">
+  <div class="nav__row">
+    <a href="index.html" class="nav__logo"><img src="images/logo-black.png" alt="Pillars Coffee"></a>
+    <div class="nav__links">
+      <a href="about.html">About</a>
+      <a href="beans.html">Coffee</a>
+      <a href="visit.html">Visit</a>
+      <a href="contact.html">Contact</a>
+      <a href="preorder.html" class="nav__cta">Order Ahead</a>
+    </div>
+    <button class="nav__burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer">
+  <button class="drawer__close" id="drawerClose" aria-label="Close">&times;</button>
+  <a href="index.html">Home</a>
+  <a href="about.html">About</a>
+  <a href="beans.html">Coffee</a>
+  <a href="visit.html">Visit</a>
+  <a href="contact.html">Contact</a>
+  <a href="preorder.html" class="drawer__cta">Order Ahead</a>
+</aside>
+
+<div class="phead">
+  <div class="wrap">
+    <div class="eyebrow reveal">Available Now</div>
+    <h1 class="reveal d1">Current Offerings</h1>
+    <p class="reveal d2">Standing at our counter? Here is what we have in stock right now. Browse below, then collect from us or have it delivered. For our full range, see <a href="beans.html" style="color:inherit;text-decoration:underline;">Shop Coffee</a>.</p>
+  </div>
+</div>
+
+<section class="section" style="padding-top:48px;">
+  <div class="wrap">
+    <div class="pgrid" id="curGrid"></div>
+    <p id="curEmpty" class="carousel__empty" style="display:none;">Fresh beans are on the way. Check back soon, or see our full range on <a href="beans.html" style="color:inherit;text-decoration:underline;">Shop Coffee</a>.</p>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot__links">
+      <a href="https://instagram.com/pillars.sg" target="_blank" class="foot__ig" aria-label="Instagram"><svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+      <a href="mailto:hello@pillarscoffee.sg">General Enquiries</a>
+      <a href="mailto:joinus@pillarscoffee.sg">Join the Team</a>
+    </div>
+    <div class="foot__bot"><span>&copy; 2026 Pillars Coffee</span></div>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+<script src="cart.js"></script>
+<script src="beans-data.js"></script>
+<script>
+(function(){
+  var grid = document.getElementById("curGrid");
+  var emptyEl = document.getElementById("curEmpty");
+  var BEANS = window.PILLARS_BEANS || {};
+  if(!grid) return;
+
+  function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];}); }
+
+  function card(id){
+    var b = BEANS[id]; if(!b) return "";
+    var img = b.drawn || window.PILLARS_DRAWN_FALLBACK(id);
+    var fallback = window.PILLARS_DRAWN_FALLBACK(id);
+    return '<a href="beans/'+esc(id)+'.html" class="pcard">' +
+      '<div class="pcard__frame"><img src="'+esc(img)+'" alt="'+esc(b.name)+'" ' +
+        'onerror="this.onerror=null;this.src=\''+esc(fallback)+'\'"></div>' +
+      '<div class="pcard__type">'+esc(b.type)+'</div>' +
+      '<div class="pcard__name">'+esc(b.name)+'</div>' +
+      '<div class="pcard__origin">'+esc(b.origin)+'</div>' +
+      '<div class="pcard__notes">'+esc(b.notes)+'</div>' +
+      '<div class="pcard__foot">' +
+        '<div><div class="pcard__price">$'+b.price+'</div><div class="pcard__weight">'+esc(b.weight)+'</div></div>' +
+        '<span class="tlink">Find out more</span>' +
+      '</div></a>';
+  }
+
+  function show(ids){
+    if(!ids.length){ grid.style.display="none"; emptyEl.style.display="block"; return; }
+    grid.innerHTML = ids.map(card).join("");
+  }
+
+  fetch("/api/stock")
+    .then(function(r){ return r.json(); })
+    .then(function(d){ show((d && d.available) || []); })
+    .catch(function(){
+      // on error, fall back to a few menu beans so the page is never blank
+      show(Object.keys(BEANS).slice(0,4));
+    });
+})();
+</script>
+</body>
+</html>
