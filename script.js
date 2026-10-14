@@ -63,7 +63,7 @@
 ============================================================ */
 (function () {
   "use strict";
-  var PIXEL_ID = "1347321530632453";
+  var PIXEL_ID = "1116626670842443";
   var OPTOUT_KEY = "pillars_ads_optout_v1";   // "1" = opted out
   var SEEN_KEY   = "pillars_cookie_seen_v1";  // "1" = notice dismissed
 
