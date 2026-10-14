@@ -472,3 +472,42 @@ h1,h2,h3,h4{ font-weight:500; letter-spacing:-0.02em; line-height:1.06; }
 @media(max-width:560px){
   .co__row{ grid-template-columns:1fr; gap:20px; }
 }
+
+/* ============================================================
+   COOKIE / CONSENT BANNER (Meta Pixel gating)
+============================================================ */
+#cc-banner{
+  position:fixed; left:16px; right:16px; bottom:16px; z-index:9999;
+  max-width:720px; margin:0 auto;
+  background:var(--ink); color:#fff;
+  border-radius:10px; padding:18px 20px;
+  display:flex; align-items:center; gap:18px; flex-wrap:wrap;
+  box-shadow:0 8px 30px rgba(0,0,0,.28);
+  transform:translateY(130%); opacity:0; transition:transform .3s ease, opacity .3s ease;
+  font-family:inherit;
+}
+#cc-banner.cc-in{ transform:translateY(0); opacity:1; }
+.cc-banner__text{ flex:1; min-width:220px; font-size:.86rem; line-height:1.55; color:#ececeb; }
+.cc-banner__text a{ color:#fff; text-decoration:underline; }
+.cc-banner__btns{ display:flex; gap:10px; flex:none; }
+.cc-btn{
+  font-family:inherit; font-size:.85rem; font-weight:600; cursor:pointer;
+  padding:11px 20px; border-radius:6px; border:1px solid #fff; transition:opacity .2s, background .2s;
+}
+.cc-btn--solid{ background:#fff; color:var(--ink); }
+.cc-btn--solid:hover{ opacity:.85; }
+.cc-btn--line{ background:transparent; color:#fff; }
+.cc-btn--line:hover{ background:rgba(255,255,255,.12); }
+@media(max-width:560px){
+  #cc-banner{ flex-direction:column; align-items:stretch; gap:12px; padding:16px; }
+  .cc-banner__btns{ width:100%; }
+  .cc-btn{ flex:1; }
+}
+
+/* ============================================================
+   LEGAL / PRIVACY PAGE
+============================================================ */
+.legal h2{ font-size:1.15rem; font-weight:700; letter-spacing:-0.01em; margin:34px 0 10px; }
+.legal h2:first-child{ margin-top:0; }
+.legal p{ font-size:0.98rem; line-height:1.7; color:var(--ink); opacity:.82; margin-bottom:14px; }
+.legal a{ color:var(--ink); text-decoration:underline; }
