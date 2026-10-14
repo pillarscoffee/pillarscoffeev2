@@ -52,26 +52,28 @@
 })();
 
 /* ============================================================
-   Meta Pixel + consent (advertising / retargeting)
+   Meta Pixel + cookie notice (advertising / retargeting)
    - Loads site-wide from this one file; no duplication.
-   - The Pixel (base code + PageView + noscript image) only fires
-     AFTER the visitor clicks Accept. The choice is remembered so the
-     banner shows once. Declining fires nothing.
+   - Subtle "implied consent" model: the Pixel tracks on page load by
+     default. A slim notice bar informs the visitor (not blocking); it
+     can be dismissed, and a "Cookie Settings" footer link lets anyone
+     OPT OUT, which stops the Pixel on future loads. Opting out is
+     remembered. The <noscript> image is omitted on purpose.
    - Touches nothing else: no design, cart, or checkout changes.
 ============================================================ */
 (function () {
   "use strict";
   var PIXEL_ID = "1347321530632453";
-  var KEY = "pillars_consent_v1"; // "granted" | "denied"
+  var OPTOUT_KEY = "pillars_ads_optout_v1";   // "1" = opted out
+  var SEEN_KEY   = "pillars_cookie_seen_v1";  // "1" = notice dismissed
 
-  function readConsent() {
-    try { return localStorage.getItem(KEY); } catch (e) { return null; }
-  }
-  function saveConsent(v) {
-    try { localStorage.setItem(KEY, v); } catch (e) {}
-  }
+  function get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  function del(k) { try { localStorage.removeItem(k); } catch (e) {} }
 
-  // The exact Meta Pixel base code, run only when consent is granted.
+  var optedOut = get(OPTOUT_KEY) === "1";
+
+  // The exact Meta Pixel base code. Fires on load unless the visitor opted out.
   function loadPixel() {
     if (window.fbq) return; // never init twice
     !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -81,64 +83,49 @@
     'https://connect.facebook.net/en_US/fbevents.js');
     fbq('init', PIXEL_ID);
     fbq('track', 'PageView');
-    // The <noscript> pixel image is intentionally OMITTED: it fires on load when
-    // JavaScript is disabled, which cannot be consent-gated. Leaving it out keeps
-    // all tracking strictly behind consent.
+    // The <noscript> pixel image is intentionally omitted.
   }
 
-  // --- consent banner (built in JS so no HTML page is touched) ---
-  function showBanner() {
+  // Track by default, unless the visitor has opted out.
+  if (!optedOut) loadPixel();
+
+  // --- slim notice bar (informational; shown once until dismissed) ---
+  function showNotice() {
     if (document.getElementById('cc-banner')) return;
     var bar = document.createElement('div');
     bar.id = 'cc-banner';
-    bar.setAttribute('role', 'dialog');
-    bar.setAttribute('aria-label', 'Cookie consent');
+    bar.setAttribute('role', 'note');
+    bar.setAttribute('aria-label', 'Cookie notice');
     bar.innerHTML =
-      '<div class="cc-banner__text">We use cookies for advertising and analytics, including the Meta Pixel, to understand visits and show relevant ads. See our ' +
-      '<a href="/privacy.html">Privacy Policy</a>.</div>' +
-      '<div class="cc-banner__btns">' +
-        '<button type="button" class="cc-btn cc-btn--line" id="cc-decline">Decline</button>' +
-        '<button type="button" class="cc-btn cc-btn--solid" id="cc-accept">Accept</button>' +
-      '</div>';
+      '<div class="cc-banner__text">We use cookies for advertising and analytics, including the Meta Pixel. ' +
+      '<a href="/privacy.html">Learn more</a>.</div>' +
+      '<button type="button" class="cc-x" id="cc-dismiss" aria-label="Dismiss">&times;</button>';
     document.body.appendChild(bar);
-    // slight delay so it slides in rather than flashing
     requestAnimationFrame(function(){ bar.classList.add('cc-in'); });
-
-    document.getElementById('cc-accept').addEventListener('click', function () {
-      saveConsent('granted');
-      hideBanner(bar);
-      loadPixel();
-    });
-    document.getElementById('cc-decline').addEventListener('click', function () {
-      saveConsent('denied');
-      hideBanner(bar);
-      // nothing loads
+    document.getElementById('cc-dismiss').addEventListener('click', function () {
+      set(SEEN_KEY, "1");
+      hideBar(bar);
     });
   }
-  function hideBanner(bar) {
+  function hideBar(bar) {
     bar.classList.remove('cc-in');
     setTimeout(function () { if (bar && bar.parentNode) bar.parentNode.removeChild(bar); }, 300);
   }
 
-  // --- decide on each page load ---
-  var consent = readConsent();
-  if (consent === 'granted') {
-    loadPixel();            // returning visitor who accepted: track, no banner
-  } else if (consent === 'denied') {
-    /* do nothing */        // respected their decline
-  } else {
-    // first visit: ask. Run after DOM is ready so body exists.
+  // Show the notice once (until dismissed), and never to someone who opted out.
+  if (!optedOut && get(SEEN_KEY) !== "1") {
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', showBanner);
+      document.addEventListener('DOMContentLoaded', showNotice);
     } else {
-      showBanner();
+      showNotice();
     }
   }
 
-  // Public API: reopen the banner so visitors can change / withdraw consent.
+  // Public API for the "Cookie Settings" link: let people opt out or back in.
   window.PillarsConsent = {
-    reset: function () { saveConsent(''); try{localStorage.removeItem(KEY);}catch(e){} showBanner(); },
-    status: function () { return readConsent(); }
+    optOut: function () { set(OPTOUT_KEY, "1"); alert("Advertising cookies turned off. This takes effect on your next page load."); },
+    optIn:  function () { del(OPTOUT_KEY); alert("Advertising cookies turned on. Thank you."); },
+    isOptedOut: function () { return get(OPTOUT_KEY) === "1"; }
   };
 
   // Add a "Cookie Settings" link to every page footer (one source, site-wide).
@@ -153,13 +140,17 @@
       a.textContent = 'Cookie Settings';
       linksRow.appendChild(a);
     }
-    // Wire any cookie-settings trigger on the page to reopen the banner.
+    // Wire any cookie-settings trigger to toggle the advertising opt-out.
     ['footerCookieSettings', 'openCookieSettings'].forEach(function (id) {
       var el = document.getElementById(id);
       if (el) {
         el.addEventListener('click', function (e) {
           e.preventDefault();
-          window.PillarsConsent.reset();
+          if (window.PillarsConsent.isOptedOut()) {
+            if (confirm("Advertising cookies are currently OFF. Turn them back on?")) window.PillarsConsent.optIn();
+          } else {
+            if (confirm("Turn OFF advertising cookies (Meta Pixel) for this browser?")) window.PillarsConsent.optOut();
+          }
         });
       }
     });
