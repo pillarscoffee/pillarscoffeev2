@@ -60,6 +60,19 @@
     save(cart);
     render();
     openDrawer();
+    // Meta AddToCart — fires only after a successful add, once per click.
+    // Consent-gated via PillarsTrack (no-op if the visitor opted out).
+    try {
+      if (window.PillarsTrack) {
+        window.PillarsTrack.track('AddToCart', {
+          content_ids: [item.id],
+          content_name: item.name,
+          content_type: 'product',
+          value: Number(item.price) || 0,
+          currency: 'SGD'
+        });
+      }
+    } catch (e) {}
   }
   function setQty(id, qty) {
     var it = find(id);

@@ -125,6 +125,48 @@
     }
   }
 
+  // Shared tracking helper. Other scripts (bean pages, cart.js) call
+  // PillarsTrack.track('ViewContent', {...}) and it only fires when the pixel
+  // is active (i.e. the visitor has not opted out). Always a STANDARD track.
+  window.PillarsTrack = {
+    track: function (eventName, params) {
+      try {
+        if (optedOut) return;        // respect opt-out
+        if (!window.fbq) return;      // pixel not loaded
+        window.fbq('track', eventName, params || {});
+      } catch (e) {}
+    },
+    active: function () { return !optedOut && !!window.fbq; }
+  };
+
+  // --- ViewContent on a bean product page ---------------------------------
+  // A bean page is any page carrying a single [data-add-to-bag] button. We read
+  // the product id / name / price straight off that button, so EVERY current and
+  // future bean is tracked automatically with no per-page code. Fires once.
+  function fireViewContent() {
+    try {
+      var btn = document.querySelector("[data-add-to-bag]");
+      if (!btn) return;                       // not a product page
+      if (!window.PillarsTrack) return;
+      var id = btn.getAttribute("data-id");
+      var name = btn.getAttribute("data-name");
+      var price = parseFloat(btn.getAttribute("data-price"));
+      if (!id || !name) return;               // nothing meaningful to send
+      window.PillarsTrack.track("ViewContent", {
+        content_ids: [id],
+        content_name: name,
+        content_type: "product",
+        value: isNaN(price) ? 0 : price,
+        currency: "SGD"
+      });
+    } catch (e) {}
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", fireViewContent);
+  } else {
+    fireViewContent();
+  }
+
   // Public API for the "Cookie Settings" link: let people opt out or back in.
   window.PillarsConsent = {
     optOut: function () { set(OPTOUT_KEY, "1"); alert("Advertising cookies turned off. This takes effect on your next page load."); },
