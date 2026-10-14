@@ -35,6 +35,88 @@
 
 import { sendTelegram, sendOrderConfirmation } from "../_notify.js";
 
+// SHA-256 -> lowercase hex. Meta requires user data (email/phone) hashed.
+async function sha256Hex(input) {
+  const enc = new TextEncoder();
+  const buf = await crypto.subtle.digest("SHA-256", enc.encode(String(input)));
+  const bytes = new Uint8Array(buf);
+  let hex = "";
+  for (let i = 0; i < bytes.length; i++) hex += bytes[i].toString(16).padStart(2, "0");
+  return hex;
+}
+
+// Normalise a SG phone to E.164 digits (meta wants digits only, country code).
+function normalisePhone(raw) {
+  if (!raw) return null;
+  let d = String(raw).replace(/[^\d]/g, "");
+  if (!d) return null;
+  if (d.length === 8) d = "65" + d; // bare SG mobile/landline -> +65
+  return d;
+}
+
+// Send a server-side Purchase to the Meta Conversions API. This is the SOURCE OF
+// TRUTH for Purchase: it runs only after an order is verified-paid, so it can
+// never fire on an unpaid order, and it is immune to ad-blockers / incognito.
+// event_id = order_no so Meta DEDUPES it against the browser Purchase on
+// success.html. No-ops silently if the two env vars are not set, so tracking can
+// never break order processing.
+async function sendMetaPurchase(env, order) {
+  try {
+    const pixelId = env.META_PIXEL_ID;
+    const token = env.META_CAPI_TOKEN;
+    if (!pixelId || !token) return; // not configured -> skip quietly
+
+    const value = (Number(order.total_cents) || 0) / 100;
+    const currency = order.currency || "SGD";
+
+    const userData = {};
+    if (order.email) userData.em = [await sha256Hex(String(order.email).trim().toLowerCase())];
+    const ph = normalisePhone(order.phone);
+    if (ph) userData.ph = [await sha256Hex(ph)];
+
+    let contentIds = [];
+    try {
+      const items = JSON.parse(order.items_json || "[]");
+      contentIds = items.map(function (i) { return i.id; }).filter(Boolean);
+    } catch (e) { /* ignore */ }
+
+    const body = {
+      data: [{
+        event_name: "Purchase",
+        event_time: Math.floor(Date.now() / 1000),
+        event_id: order.order_no,            // <-- dedupe key (matches browser)
+        action_source: "website",
+        event_source_url: "https://pillarscoffee.sg/success.html",
+        user_data: userData,
+        custom_data: {
+          currency: currency,
+          value: value,
+          content_type: "product",
+          content_ids: contentIds,
+          order_id: order.order_no
+        }
+      }]
+    };
+
+    const resp = await fetch(
+      "https://graph.facebook.com/v19.0/" + encodeURIComponent(pixelId) +
+        "/events?access_token=" + encodeURIComponent(token),
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      }
+    );
+    if (!resp.ok) {
+      console.log("Meta CAPI Purchase HTTP", resp.status, order.order_no);
+    } else {
+      console.log("Meta CAPI Purchase sent", order.order_no);
+    }
+  } catch (e) {
+    console.log("Meta CAPI Purchase error:", e && e.message);
+  }
+}
+
 // Constant-time-ish compare of two hex strings.
 function safeEqualHex(a, b) {
   if (typeof a !== "string" || typeof b !== "string") return false;
@@ -265,6 +347,7 @@ export async function onRequestPost(context) {
   const notify = Promise.allSettled([
     sendTelegram(env, paidOrder),
     sendOrderConfirmation(env, paidOrder),
+    sendMetaPurchase(env, paidOrder),   // server-side Purchase (source of truth)
   ]);
   if (context.waitUntil) context.waitUntil(notify);
   else await notify;
