@@ -212,6 +212,21 @@
   }
   renderSummary();
 
+  // Meta InitiateCheckout — fires once when the checkout page is opened.
+  // Consent-gated via PillarsTrack (no-op if the visitor opted out).
+  try {
+    if (window.PillarsTrack) {
+      var icItems = window.PillarsCart.get();
+      window.PillarsTrack.track("InitiateCheckout", {
+        content_ids: icItems.map(function (i) { return i.id; }),
+        content_type: "product",
+        num_items: window.PillarsCart.totalQty(),
+        value: Number(window.PillarsCart.subtotal()) || 0,
+        currency: "SGD"
+      });
+    }
+  } catch (e) {}
+
   form && form.addEventListener("submit", function (e) {
     e.preventDefault();
     errEl.style.display = "none";
@@ -264,6 +279,22 @@
       .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }).catch(function () { return { ok: r.ok, d: null }; }); })
       .then(function (res) {
         if (res.ok && res.d && res.d.url) {
+          // Stash this order's value so success.html can fire an accurate
+          // Purchase event (keyed by order number). Display-only; the server
+          // is still the source of truth for what was actually charged.
+          try {
+            var sub2 = window.PillarsCart.subtotal();
+            var fee2 = fulfilment === "pickup" ? 0 : window.PillarsCart.deliveryFee();
+            var stash = {
+              value: Number(sub2 + fee2) || 0,
+              currency: "SGD",
+              content_ids: window.PillarsCart.get().map(function (i) { return i.id; }),
+              num_items: window.PillarsCart.totalQty()
+            };
+            if (res.d.order_no) {
+              localStorage.setItem("pillars_last_order_v1", JSON.stringify({ ref: res.d.order_no, data: stash }));
+            }
+          } catch (e) {}
           window.location.href = res.d.url; // off to HitPay
         } else {
           throw new Error((res.d && res.d.error) || "Something went wrong. Please try again.");
