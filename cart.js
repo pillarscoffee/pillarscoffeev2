@@ -237,7 +237,9 @@
   }
 
   /* ---------- wire "Add to Bag" buttons ---------- */
-  var IG = "https://instagram.com/pillars.sg";
+  var IG = "https://ig.me/m/pillars.sg";
+  var IN_STOCK_NOTE = "Ships fresh from Pillars. Standard delivery, 1 to 3 working days.";
+  var OUT_OF_STOCK_NOTE = "This roast rotates in and out. DM us on @pillars.sg to check what is available now.";
 
   function wireAddButtons() {
     Array.prototype.forEach.call(
@@ -257,34 +259,54 @@
     );
   }
 
-  // Availability: fetch the live stock list once, then disable "Add to Bag" for
-  // any bean not currently in stock and turn it into a "Check availability" link
-  // to Instagram. If the stock list is empty or the call fails, buttons are left
-  // as-is (so the site keeps working during the transition / if offline).
+  function setStockNote(button, message) {
+    var note = button.parentNode.querySelector("[data-stock-note]");
+    if (note) note.textContent = message;
+  }
+
+  function showCheckAvailability(button, message) {
+    setStockNote(button, message);
+    var link = document.createElement("a");
+    link.href = IG;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.className = button.className;
+    link.textContent = "Check Availability";
+    button.parentNode.replaceChild(link, button);
+  }
+
+  // Product pages start with a disabled button while we check live D1 stock.
+  // Always resolve BOTH directions from the Stock tab, including when ALL
+  // beans are switched OFF. Never let an API failure default to "Add to Bag".
   function applyAvailability() {
     var buttons = document.querySelectorAll("[data-add-to-bag]");
     if (!buttons.length) return;
-    fetch("/api/stock")
-      .then(function (r) { return r.json(); })
+    fetch("/api/stock", { cache: "no-store" })
+      .then(function (r) {
+        if (!r.ok) throw new Error("Stock lookup failed");
+        return r.json();
+      })
       .then(function (d) {
-        var list = (d && d.available) || [];
-        if (!list.length) return; // nothing configured yet -> leave buttons alone
+        if (!d || !Array.isArray(d.available)) throw new Error("Invalid stock response");
         var inStock = {};
-        list.forEach(function (id) { inStock[id] = true; });
+        d.available.forEach(function (id) { inStock[id] = true; });
         Array.prototype.forEach.call(buttons, function (b) {
           var id = b.getAttribute("data-id");
-          if (inStock[id]) return; // available -> keep Add to Bag
-          // unavailable -> swap to "Check availability" linking to Instagram
-          var link = document.createElement("a");
-          link.href = IG;
-          link.target = "_blank";
-          link.rel = "noopener";
-          link.className = b.className;
-          link.textContent = "Check availability";
-          b.parentNode.replaceChild(link, b);
+          if (inStock[id]) {
+            b.disabled = false;
+            b.textContent = "Add to Bag";
+            setStockNote(b, IN_STOCK_NOTE);
+          } else {
+            showCheckAvailability(b, OUT_OF_STOCK_NOTE);
+          }
         });
       })
-      .catch(function () { /* leave buttons as-is on error */ });
+      .catch(function () {
+        // If stock cannot be confirmed, offer a DM, not an unverified sale.
+        Array.prototype.forEach.call(buttons, function (b) {
+          showCheckAvailability(b, "Unable to confirm live stock. Please DM us on @pillars.sg.");
+        });
+      });
   }
 
   /* ---------- expose a tiny API for checkout.html ---------- */
