@@ -507,3 +507,23 @@ h1,h2,h3,h4{ font-weight:500; letter-spacing:-0.02em; line-height:1.06; }
 .legal h2:first-child{ margin-top:0; }
 .legal p{ font-size:0.98rem; line-height:1.7; color:var(--ink); opacity:.82; margin-bottom:14px; }
 .legal a{ color:var(--ink); text-decoration:underline; }
+
+
+/* Coffee submenu: matches the existing understated navigation. */
+.nav__coffee{position:relative;}
+.nav__coffee-options{display:none;position:absolute;top:100%;left:-15px;min-width:185px;padding:12px 15px;background:var(--bg);border:1px solid var(--line);box-shadow:0 12px 25px rgba(0,0,0,.08);z-index:30;}
+.nav__coffee:hover .nav__coffee-options,.nav__coffee:focus-within .nav__coffee-options{display:grid;gap:8px;}
+.nav .nav__coffee-options a{display:block!important;color:var(--ink)!important;font-size:13px!important;white-space:nowrap;}
+.drawer__coffee{border-bottom:1px solid var(--line);}
+.drawer__coffee summary{list-style:none;cursor:pointer;font-size:28px;font-weight:700;letter-spacing:-.02em;padding-block:18px;}
+.drawer__coffee summary::-webkit-details-marker{display:none;}
+.drawer__coffee summary::after{content:'+';float:right;font-weight:400;font-size:23px;}
+.drawer__coffee[open] summary::after{content:'−';}
+.drawer__coffee-options{padding:0 0 10px 14px;}
+.drawer .drawer__coffee-options a{font-size:17px;font-weight:500;padding:13px 0;border:0;color:var(--stone);}
+.drawer__coffee summary:hover,.drawer__coffee-options a:hover{color:var(--clay);}
+
+/* Small neutral portfolio badge. Independent of live Available Now stock status. */
+.pcard__type .popular{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;background:#e5e4e1;color:#50504c;font-size:10px;letter-spacing:.08em;vertical-align:middle;}
+
+.pcard__type .lowstock{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;background:#f3ece0;color:#84642e;font-size:10px;letter-spacing:.06em;vertical-align:middle;}

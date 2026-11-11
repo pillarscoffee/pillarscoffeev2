@@ -126,6 +126,7 @@
   var track = document.getElementById("carTrack");
   var nav = document.getElementById("carNav");
   var BEANS = window.PILLARS_BEANS || {};
+  var remaining = {};
   if(!track) return;
 
   function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];}); }
@@ -137,7 +138,7 @@
     return '<a href="beans/'+esc(id)+'.html" class="pcard">' +
       '<div class="pcard__frame"><img src="'+esc(img)+'" alt="'+esc(b.name)+'" ' +
         'onerror="this.onerror=null;this.src=\''+esc(fallback)+'\'"></div>' +
-      '<div class="pcard__type">'+esc(b.type)+'</div>' +
+      '<div class="pcard__type">'+esc(b.type)+((id==="anaya-estate"||id==="quebraditas")?'<span class="popular">Popular</span>':'')+((remaining[id]!=null && remaining[id]<=3)?'<span class="lowstock">Only '+remaining[id]+' left</span>':'')+'</div>' +
       '<div class="pcard__name">'+esc(b.name)+'</div>' +
       '<div class="pcard__origin">'+esc(b.origin)+'</div>' +
       '<div class="pcard__notes">'+esc(b.notes)+'</div>' +
@@ -148,7 +149,8 @@
   }
 
   function build(ids){
-    track.innerHTML = ids.map(card).join("");
+    track.innerHTML = ids.length ? ids.map(card).join("") : '<p class="carousel__empty">Our next coffee rotation is on the way. <a href="beans.html">Explore the archive</a>.</p>';
+    if(!ids.length) return;
     // show nav if there is anything to scroll (more cards than fit on screen)
     if(ids.length > 1){ nav.style.display = "flex"; wireNav(); buildDots(ids.length); }
     wireDrag();
@@ -158,10 +160,10 @@
     .then(function(r){ return r.json(); })
     .then(function(d){
       var ids = (d && d.available) || [];
-      if(!ids.length){ ids = Object.keys(BEANS).slice(0,4); } // placeholder until stock is set
+      remaining = (d && d.remaining) || {};
       build(ids);
     })
-    .catch(function(){ build(Object.keys(BEANS).slice(0,4)); });
+    .catch(function(){ build([]); });
 
   function step(){ var c = track.querySelector(".pcard"); return c ? c.offsetWidth + 40 : 300; }
 

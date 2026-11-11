@@ -269,6 +269,16 @@
   // a small "Available now" tag; the rest stay as portfolio (showcase) cards.
   var cards = document.querySelectorAll(".pcard");
   if(!cards.length) return;
+  // Popular reflects past customer favourites and remains visible even when OFF.
+  Array.prototype.forEach.call(cards, function(c){
+    var href=c.getAttribute("href") || "";
+    if(!/beans\/(anaya-estate|quebraditas)\.html/.test(href)) return;
+    var type=c.querySelector(".pcard__type");
+    if(type && !type.querySelector(".popular")) {
+      var tag=document.createElement("span");tag.className="popular";tag.textContent="Popular";
+      type.appendChild(tag);
+    }
+  });
   fetch("/api/stock")
     .then(function(r){ return r.json(); })
     .then(function(d){
@@ -288,6 +298,9 @@
             tag.className = "avail";
             tag.textContent = "Available now";
             type.appendChild(tag);
+          }
+          if(type && d.remaining && d.remaining[id]!=null && d.remaining[id]<=3 && !type.querySelector('.lowstock')){
+            var low=document.createElement('span');low.className='lowstock';low.textContent='Only '+d.remaining[id]+' left';type.appendChild(low);
           }
         }
       });

@@ -66,6 +66,7 @@
   var grid = document.getElementById("curGrid");
   var emptyEl = document.getElementById("curEmpty");
   var BEANS = window.PILLARS_BEANS || {};
+  var remaining = {};
   if(!grid) return;
 
   function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];}); }
@@ -77,7 +78,7 @@
     return '<a href="beans/'+esc(id)+'.html" class="pcard">' +
       '<div class="pcard__frame"><img src="'+esc(img)+'" alt="'+esc(b.name)+'" ' +
         'onerror="this.onerror=null;this.src=\''+esc(fallback)+'\'"></div>' +
-      '<div class="pcard__type">'+esc(b.type)+'</div>' +
+      '<div class="pcard__type">'+esc(b.type)+((id==="anaya-estate"||id==="quebraditas")?'<span class="popular">Popular</span>':'')+((remaining[id]!=null && remaining[id]<=3)?'<span class="lowstock">Only '+remaining[id]+' left</span>':'')+'</div>' +
       '<div class="pcard__name">'+esc(b.name)+'</div>' +
       '<div class="pcard__origin">'+esc(b.origin)+'</div>' +
       '<div class="pcard__notes">'+esc(b.notes)+'</div>' +
@@ -94,10 +95,10 @@
 
   fetch("/api/stock")
     .then(function(r){ return r.json(); })
-    .then(function(d){ show((d && d.available) || []); })
+    .then(function(d){ remaining=(d && d.remaining)||{};show((d && d.available)||[]); })
     .catch(function(){
-      // on error, fall back to a few menu beans so the page is never blank
-      show(Object.keys(BEANS).slice(0,4));
+      // Don't advertise unverified stock as available.
+      show([]);
     });
 })();
 </script>

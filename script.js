@@ -19,6 +19,38 @@
     onScroll();
   }
 
+
+  // Coffee submenu: the existing hamburger remains the main navigation.
+  // Desktop users can hover Coffee in the open menu; mobile users tap to expand.
+  function setupCoffeeMenu() {
+    var topLink = document.querySelector('.nav__links a[href$="beans.html"]');
+    if (topLink && !topLink.closest('.nav__coffee')) {
+      var wrap = document.createElement('div');
+      wrap.className = 'nav__coffee';
+      topLink.parentNode.insertBefore(wrap, topLink);
+      wrap.appendChild(topLink);
+      var path = topLink.getAttribute('href').replace(/beans\.html$/, '');
+      var submenu = document.createElement('div');
+      submenu.className = 'nav__coffee-options';
+      submenu.innerHTML = '<a href="' + path + 'beans.html">Shop Coffee</a><a href="' + path + 'current.html">Current Offerings</a>';
+      wrap.appendChild(submenu);
+    }
+    var drawerLink = document.querySelector('#drawer > a[href$="beans.html"]');
+    if (drawerLink) {
+      var details = document.createElement('details');
+      details.className = 'drawer__coffee';
+      var path = drawerLink.getAttribute('href').replace(/beans\.html$/, '');
+      details.innerHTML = '<summary>Coffee</summary><div class="drawer__coffee-options">' +
+        '<a href="' + path + 'beans.html">Shop Coffee</a><a href="' + path + 'current.html">Current Offerings</a></div>';
+      drawerLink.parentNode.replaceChild(details, drawerLink);
+      if (window.matchMedia('(hover:hover)').matches) {
+        details.addEventListener('mouseenter', function(){ details.open = true; });
+        details.addEventListener('mouseleave', function(){ details.open = false; });
+      }
+    }
+  }
+  setupCoffeeMenu();
+
   // hero entrance
   window.addEventListener('load', ()=>{
     setTimeout(()=>document.querySelector('.hero__inner')?.classList.add('in'), 120);
