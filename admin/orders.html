@@ -65,6 +65,10 @@
   .srow__pos{width:26px;height:26px;flex:none;border-radius:50%;background:var(--pendingbg);color:var(--stone);font-size:.78rem;font-weight:700;display:flex;align-items:center;justify-content:center;}
   .srow.on .srow__pos{background:var(--paidbg);color:var(--paid);}
   .srow__info{flex:1;min-width:0;}
+  .srow__qty{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+  .srow__qty label{font-size:.75rem;color:var(--stone);}
+  .srow__qty input{width:72px;padding:7px;border:1px solid var(--line);border-radius:6px;font:inherit;}
+  @media(max-width:600px){.srow__qty{width:100%;order:3;margin-left:38px;}}
   .srow__name{font-weight:600;}
   .srow__meta{font-size:.78rem;color:var(--stone);}
   .srow__meta .warn{color:#8A3B2C;}
@@ -120,6 +124,7 @@
     <div id="view-stock" style="display:none;">
       <h1>Stock</h1>
       <p class="sub">Switch a bean ON to make it buyable and show it in the homepage carousel. The order you switch them ON sets the carousel order (1, 2, 3...). Switch OFF and the beans page shows "Check availability" linking to Instagram.</p>
+      <p class="sub" style="margin-bottom:16px;">Bags left: blank = untracked, 0 = sold out. For limited stock, enter the bags ready to sell and press Save.</p>
       <div id="stockList"></div>
     </div>
 
@@ -193,10 +198,16 @@
         actions = '<button class="btn small" data-act="packed" data-no="'+esc(o.order_no)+'">Mark packed</button>' + refundBtn;
       } else if(o.status==="packed"){
         actions =
-          '<input class="track" placeholder="Paste tracking link" id="t_'+esc(o.order_no)+'">' +
+          '<select class="track" id="carrier_'+esc(o.order_no)+'" aria-label="Courier"><option value="jt">J&T Express</option><option value="singpost">SingPost</option><option value="other">Other courier</option></select>' +
+          '<input class="track" placeholder="Tracking number" id="t_'+esc(o.order_no)+'" autocomplete="off">' +
+          '<input class="track" placeholder="Other courier HTTPS tracking page" id="url_'+esc(o.order_no)+'" style="display:none;min-width:240px;">' +
           '<button class="btn small" data-act="shipped" data-no="'+esc(o.order_no)+'">Mark shipped + email</button>' + refundBtn;
       } else if(o.status==="shipped"){
-        actions = '<span class="muted">Shipped '+when(o.shipped_at)+(o.tracking_url?' · <a href="'+esc(o.tracking_url)+'" target="_blank">tracking</a>':'')+'</span>' + refundBtn;
+        var carrierNames={jt:"J&T Express",singpost:"SingPost",other:"Other courier"};
+        var courierText=(o.tracking_number ? ' · '+esc(carrierNames[o.tracking_carrier]||'Courier')+' '+esc(o.tracking_number) : '');
+        var link=(o.tracking_url && /^https:\/\//i.test(o.tracking_url)) ? ' · <a href="'+esc(o.tracking_url)+'" target="_blank" rel="noopener">tracking page</a>' : '';
+        actions = '<span class="muted">Shipped '+when(o.shipped_at)+courierText+link+'</span>' +
+          ' <button class="btn btn--line small" data-act="resend_shipping" data-no="'+esc(o.order_no)+'">Resend shipping email</button>' + refundBtn;
       } else if(o.status==="refunded"){
         actions = '<span class="muted">Refunded '+when(o.refunded_at)+'.</span>';
       } else if(o.status==="pending"){
@@ -219,6 +230,13 @@
       '</div>';
     }).join("");
 
+    // Show a manual tracking-page field for couriers added in future.
+    Array.prototype.forEach.call(list.querySelectorAll('select[id^="carrier_"]'), function(sel){
+      sel.addEventListener("change",function(){
+        var no=sel.id.slice(8), u=document.getElementById("url_"+no);
+        if(u) u.style.display=sel.value==="other" ? "" : "none";
+      });
+    });
     // wire action buttons
     Array.prototype.forEach.call(list.querySelectorAll("[data-act]"), function(b){
       b.addEventListener("click", function(){
@@ -228,15 +246,26 @@
         if(act==="refunded" && !confirm("Mark "+no+" as REFUNDED? Do this only AFTER you have refunded it in HitPay.")){ return; }
         var payload={ order_no:no, action:act };
         if(act==="shipped"){
-          var t=document.getElementById("t_"+no);
-          payload.tracking_url = t ? t.value.trim() : "";
-          if(!payload.tracking_url){ setMsg(no,"Paste a tracking link first."); return; }
+          var t=document.getElementById("t_"+no), carrier=document.getElementById("carrier_"+no);
+          payload.tracking_number = t ? t.value.trim() : "";
+          payload.tracking_carrier = carrier ? carrier.value : "";
+          if(payload.tracking_carrier==="other") {
+            var u=document.getElementById("url_"+no);
+            payload.tracking_url = u ? u.value.trim() : "";
+          }
+          if(!payload.tracking_number){ setMsg(no,"Enter the tracking number first."); return; }
         }
         b.disabled=true; setMsg(no,"Working...");
         fetch("/api/orders", { method:"POST", headers:{ "Content-Type":"application/json", "x-pillars-key":KEY }, body:JSON.stringify(payload) })
           .then(function(r){ return r.json().then(function(d){ return {ok:r.ok,d:d}; }); })
           .then(function(res){
-            if(res.ok){ setMsg(no, act==="shipped" ? ("Shipped. Email "+(res.d.email||"")) : ("Marked "+res.d.status)); load(); }
+            if(res.ok){
+              var message=act==="shipped" ? ("Shipped. Email "+(res.d.email||"")) :
+                (act==="resend_shipping" ? "Shipping email sent." : "Marked "+res.d.status);
+              setMsg(no,message);
+              if(act==="shipped" && res.d.email==="failed") alert("Order marked shipped, but email FAILED. Use Resend shipping email from the Shipped tab.");
+              load();
+            }
             else { setMsg(no, (res.d&&res.d.error)||"Failed"); b.disabled=false; }
           })
           .catch(function(){ setMsg(no,"Network error"); b.disabled=false; });
@@ -300,12 +329,28 @@
         '<div class="srow__pos">'+pos+'</div>' +
         '<div class="srow__info">' +
           '<div class="srow__name">'+esc(b.name)+'</div>' +
-          '<div class="srow__meta">'+esc(b.type)+' · $'+b.price+' · '+esc(b.weight)+'</div>' +
+          '<div class="srow__meta">'+esc(b.type)+' · $'+b.price+' · '+esc(b.weight)+
+            (b.available && b.quantity===0 ? ' · <span class="warn">Sold out</span>' : '')+'</div>' +
         '</div>' +
+        '<div class="srow__qty"><label for="q_'+esc(b.id)+'">Bags left</label>'+
+          '<input type="number" min="0" max="9999" step="1" id="q_'+esc(b.id)+'" placeholder="—" value="'+(b.quantity==null?'':b.quantity)+'" title="Blank = not tracked">'+
+          '<button class="btn btn--line small" data-save-qty="'+esc(b.id)+'">Save</button></div>' +
         '<label class="sw"><input type="checkbox" data-bean="'+esc(b.id)+'" '+(b.available?"checked":"")+'><span class="sw__track"></span></label>' +
       '</div>';
     }).join("");
 
+    Array.prototype.forEach.call(el.querySelectorAll("[data-save-qty]"), function(btn){
+      btn.addEventListener("click",function(){
+        var id=btn.getAttribute("data-save-qty"), input=document.getElementById("q_"+id);
+        var value=input.value.trim();
+        if(value && (!/^\d+$/.test(value) || Number(value)>9999)) { alert("Enter a whole number from 0–9999, or leave blank for untracked."); return; }
+        btn.disabled=true;
+        fetch("/api/stock", {method:"POST",headers:{"Content-Type":"application/json","x-pillars-key":KEY},body:JSON.stringify({bean_id:id,quantity:value===""?null:Number(value)})})
+          .then(function(r){return r.json().then(function(d){return {ok:r.ok,d:d};});})
+          .then(function(res){if(!res.ok) alert((res.d&&res.d.error)||"Could not save quantity.");loadStock();})
+          .catch(function(){btn.disabled=false;alert("Network error.");});
+      });
+    });
     Array.prototype.forEach.call(el.querySelectorAll("input[data-bean]"), function(cb){
       cb.addEventListener("change", function(){
         var id = cb.getAttribute("data-bean");
