@@ -149,6 +149,28 @@ export async function sendOrderConfirmation(env, order) {
   });
 }
 
+// ---- Resend: pickup ready notification ----
+export async function sendPickupReadyEmail(env, order) {
+  if (!env.RESEND_API_KEY) return { ok: false, skipped: true };
+  const from = env.ORDER_FROM_EMAIL || DEFAULT_FROM;
+  const replyTo = env.ORDER_REPLY_TO || DEFAULT_REPLY_TO;
+  // Escaped for email HTML, because customer-entered values are untrusted.
+  function safe(v) { return String(v == null ? "" : v).replace(/[&<>"']/g, function(c) { return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+  const html = '<div style="font-family:Arial,Helvetica,sans-serif;max-width:560px;margin:0 auto;color:#1c1c1a;">' +
+    '<h1 style="font-size:22px;letter-spacing:2px;">PILLARS COFFEE</h1>' +
+    '<p>Hi ' + safe(order.customer_name) + ',</p>' +
+    '<p>Your coffee is packed and ready for collection.</p>' +
+    '<p><b>Order:</b> ' + safe(order.order_no) + '<br><b>Collection:</b> ' + safe(order.address) + '</p>' +
+    '<p>Please quote your order number when collecting. Questions? Reply to this email.</p>' +
+    '</div>';
+  const plain = 'PILLARS COFFEE\n\nHi ' + esc(order.customer_name) +
+    ',\nYour coffee is packed and ready for collection.\n' +
+    'Order: ' + esc(order.order_no) + '\nCollection: ' + esc(order.address) +
+    '\nPlease quote your order number when collecting.\n';
+  return resendSend(env, { from, to: order.email, reply_to: replyTo,
+    subject: 'Your Pillars Coffee order is ready for collection', html, text: plain });
+}
+
 // ---- Resend: shipped email ----
 export async function sendShippedEmail(env, order) {
   const key = env.RESEND_API_KEY;
