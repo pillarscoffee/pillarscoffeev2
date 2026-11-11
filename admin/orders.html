@@ -242,7 +242,7 @@
       b.addEventListener("click", function(){
         var no=b.getAttribute("data-no"), act=b.getAttribute("data-act");
         if(act==="delete" && !confirm("Remove unpaid order "+no+"? This cannot be undone.")){ return; }
-        if(act==="paid" && !confirm("Mark "+no+" as PAID manually? Only do this if you have confirmed the money came in.")){ return; }
+        if(act==="paid" && !confirm("Confirm payment for "+no+" in HitPay FIRST. This will mark the order PAID and deduct tracked bean stock. It does NOT collect payment. Continue?")){ return; }
         if(act==="refunded" && !confirm("Mark "+no+" as REFUNDED? Do this only AFTER you have refunded it in HitPay.")){ return; }
         var payload={ order_no:no, action:act };
         if(act==="shipped"){
