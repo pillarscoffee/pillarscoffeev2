@@ -524,6 +524,6 @@ h1,h2,h3,h4{ font-weight:500; letter-spacing:-0.02em; line-height:1.06; }
 .drawer__coffee summary:hover,.drawer__coffee-options a:hover{color:var(--clay);}
 
 /* Small neutral portfolio badge. Independent of live Available Now stock status. */
-.pcard__type .popular{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;background:#e5e4e1;color:#50504c;font-size:10px;letter-spacing:.08em;vertical-align:middle;}
+.pcard__type .popular{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;background:#ffe6dd;color:#ad3a20;font-size:10px;font-weight:800;letter-spacing:.08em;vertical-align:middle;}
 
 .pcard__type .lowstock{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;background:#f3ece0;color:#84642e;font-size:10px;letter-spacing:.06em;vertical-align:middle;}
