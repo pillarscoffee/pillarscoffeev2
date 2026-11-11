@@ -99,7 +99,7 @@ async function sendMetaPurchase(env, order) {
     };
 
     const resp = await fetch(
-      "https://graph.facebook.com/v19.0/" + encodeURIComponent(pixelId) +
+      "https://graph.facebook.com/v26.0/" + encodeURIComponent(pixelId) +
         "/events?access_token=" + encodeURIComponent(token),
       {
         method: "POST",
@@ -179,6 +179,8 @@ async function confirmWithHitPay(env, paymentRequestId) {
       status: body && body.status,
       amount: body && body.amount,
       currency: body && body.currency,
+      reference_number: body && body.reference_number,
+      id: body && body.id,
     };
   } catch (e) {
     console.log("HitPay confirm error:", e && e.message);
@@ -207,7 +209,9 @@ export async function onRequestPost(context) {
   }
 
   const orderNo = data.reference_number;
-  const paymentId = data.id || data.payment_id; // HitPay payment-request id
+  // Legacy payment_id can refer to the transaction, not the payment request.
+  // Prefer our original stored request ID over anything in the incoming body.
+  const postedRequestId = data.payment_request_id || data.id || null;
 
   if (!orderNo) {
     return new Response("No reference", { status: 200 }); // ack, nothing to do
@@ -230,6 +234,7 @@ export async function onRequestPost(context) {
     console.log("Webhook: order not found", orderNo);
     return new Response("OK", { status: 200 }); // nothing to mark
   }
+  const paymentId = order.hitpay_payment_id || postedRequestId;
 
   // Idempotency (fast exit): if already progressed, ack and stop.
   if (order.status === "paid" || order.status === "packed" || order.status === "shipped") {
@@ -268,6 +273,12 @@ export async function onRequestPost(context) {
       console.log("Webhook REJECTED (no signature, HitPay confirm failed):", orderNo);
       return new Response("Unverified", { status: 401 });
     }
+    // A different paid request for the same amount must never pay this order.
+    if (c.reference_number !== orderNo ||
+        (order.hitpay_payment_id && c.id !== order.hitpay_payment_id)) {
+      console.log("Webhook REJECTED (payment request does not belong to order):", orderNo);
+      return new Response("Wrong payment reference", { status: 401 });
+    }
     proof = "api-confirm";
     trueStatus = c.status;
     trueAmount = c.amount;
@@ -287,13 +298,16 @@ export async function onRequestPost(context) {
   //    that is genuine-looking but names the wrong (e.g. smaller) amount.
   //    If the signed body did not carry an amount, fall back to an API confirm
   //    rather than skipping the check.
-  if (trueAmount == null && proof === "signature") {
+  if ((trueAmount == null || !trueCurrency) && proof === "signature") {
     const c = await confirmWithHitPay(env, paymentId);
-    if (c.ok) { trueAmount = c.amount; trueCurrency = trueCurrency || c.currency; }
+    if (c.ok && c.reference_number === orderNo &&
+        (!order.hitpay_payment_id || c.id === order.hitpay_payment_id)) {
+      trueAmount = c.amount;
+      trueCurrency = c.currency;
+    }
   }
   const amountOk = amountMatchesCents(trueAmount, order.total_cents);
-  const currencyOk =
-    !order.currency || !trueCurrency ||
+  const currencyOk = !!trueCurrency && !!order.currency &&
     String(trueCurrency).toUpperCase() === String(order.currency).toUpperCase();
   if (!amountOk || !currencyOk) {
     console.log(
