@@ -11,7 +11,7 @@
 //
 // Env: ADMIN_KEY (secret), DB, plus notify env for the shipped email.
 
-import { sendShippedEmail } from "../_notify.js";
+import { sendShippedEmail, sendOrderConfirmation, sendTelegram, sendPickupReadyEmail } from "../_notify.js";
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -76,7 +76,13 @@ export async function onRequestPost(context) {
   if (!order) return json({ error: "Order not found" }, 404);
 
   if (action === "packed") {
-    await env.DB.prepare(`UPDATE orders SET status = 'packed' WHERE order_no = ?`).bind(orderNo).run();
+    if (order.status !== "paid") return json({ error: "Only paid orders can be packed." }, 409);
+    const result = await env.DB.prepare(`UPDATE orders SET status = 'packed' WHERE order_no = ? AND status = 'paid'`).bind(orderNo).run();
+    if (!result || !result.meta || result.meta.changes !== 1) return json({ error: "Order changed. Refresh the list." }, 409);
+    if (order.fulfilment === "pickup") {
+      const r = await sendPickupReadyEmail(env, Object.assign({}, order, { status: "packed" }));
+      return json({ ok: true, status: "packed", email: r.ok ? "sent" : "failed" });
+    }
     return json({ ok: true, status: "packed" });
   }
 
@@ -119,7 +125,16 @@ export async function onRequestPost(context) {
       console.log("Manual paid/stock reconciliation error:", e && e.message);
       return json({ error: "Could not update payment and stock. Please retry after checking the order." }, 503);
     }
-    return json({ ok: true, status: "paid" });
+    // Manual fallback must trigger the same customer receipt as a paid webhook.
+    // Since the conditional paid transition above succeeded, a concurrent webhook
+    // cannot also flip the order and send a second confirmation.
+    const paidOrder = Object.assign({}, order, { status: "paid" });
+    const outcomes = await Promise.allSettled([
+      sendOrderConfirmation(env, paidOrder),
+      sendTelegram(env, paidOrder),
+    ]);
+    const emailOk = outcomes[0].status === "fulfilled" && outcomes[0].value && outcomes[0].value.ok;
+    return json({ ok: true, status: "paid", email: emailOk ? "sent" : "failed" });
   }
 
   if (action === "refunded") {
@@ -148,13 +163,33 @@ export async function onRequestPost(context) {
     return json({ ok: true, deleted: orderNo });
   }
 
+  if (action === "resend_confirmation") {
+    if (!["paid", "packed"].includes(order.status)) return json({ error: "Only paid or packed orders can resend their confirmation email." }, 400);
+    const r = await sendOrderConfirmation(env, order);
+    return r.ok ? json({ ok: true, email: "sent" }) : json({ error: "Confirmation email could not be sent." }, 502);
+  }
+
+  if (action === "resend_pickup") {
+    if (order.fulfilment !== "pickup" || order.status !== "packed") return json({ error: "Only packed pickup orders can resend their collection email." }, 400);
+    const r = await sendPickupReadyEmail(env, order);
+    return r.ok ? json({ ok: true, email: "sent" }) : json({ error: "Collection email could not be sent." }, 502);
+  }
+
+  if (action === "collected") {
+    if (order.fulfilment !== "pickup" || order.status !== "packed") return json({ error: "Only ready pickup orders can be marked collected." }, 400);
+    const result = await env.DB.prepare(`UPDATE orders SET status='shipped', shipped_at=strftime('%Y-%m-%dT%H:%M:%SZ','now') WHERE order_no=? AND status='packed'`).bind(orderNo).run();
+    if (!result || !result.meta || result.meta.changes !== 1) return json({ error: "Order changed. Refresh the list." }, 409);
+    return json({ ok: true, status: "shipped", fulfilment: "pickup" });
+  }
+
   if (action === "resend_shipping") {
-    if (order.status !== "shipped") return json({ error: "Only shipped orders can resend their shipping email." }, 400);
+    if (order.fulfilment === "pickup" || order.status !== "shipped") return json({ error: "Only delivered orders can resend their shipping email." }, 400);
     const r = await sendShippedEmail(env, order);
     return r.ok ? json({ ok: true, email: "sent" }) : json({ error: "Email could not be sent. Check Resend and retry." }, 502);
   }
 
   if (action === "shipped") {
+    if (order.fulfilment === "pickup") return json({ error: "Pickup orders cannot be shipped. Mark collected instead." }, 400);
     if (order.status !== "packed") return json({ error: "Mark this order packed before shipping." }, 400);
     if (!["jt", "singpost", "other"].includes(trackingCarrier)) return json({ error: "Select a courier." }, 400);
     if (!/^[A-Za-z0-9][A-Za-z0-9 -]{3,49}$/.test(trackingNumber)) {
