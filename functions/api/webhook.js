@@ -99,7 +99,7 @@ async function sendMetaPurchase(env, order) {
     };
 
     const resp = await fetch(
-      "https://graph.facebook.com/v19.0/" + encodeURIComponent(pixelId) +
+      "https://graph.facebook.com/v26.0/" + encodeURIComponent(pixelId) +
         "/events?access_token=" + encodeURIComponent(token),
       {
         method: "POST",
@@ -179,6 +179,8 @@ async function confirmWithHitPay(env, paymentRequestId) {
       status: body && body.status,
       amount: body && body.amount,
       currency: body && body.currency,
+      reference_number: body && body.reference_number,
+      id: body && body.id,
     };
   } catch (e) {
     console.log("HitPay confirm error:", e && e.message);
@@ -207,7 +209,9 @@ export async function onRequestPost(context) {
   }
 
   const orderNo = data.reference_number;
-  const paymentId = data.id || data.payment_id; // HitPay payment-request id
+  // Legacy payment_id can refer to the transaction, not the payment request.
+  // Prefer our original stored request ID over anything in the incoming body.
+  const postedRequestId = data.payment_request_id || data.id || null;
 
   if (!orderNo) {
     return new Response("No reference", { status: 200 }); // ack, nothing to do
@@ -230,6 +234,7 @@ export async function onRequestPost(context) {
     console.log("Webhook: order not found", orderNo);
     return new Response("OK", { status: 200 }); // nothing to mark
   }
+  const paymentId = order.hitpay_payment_id || postedRequestId;
 
   // Idempotency (fast exit): if already progressed, ack and stop.
   if (order.status === "paid" || order.status === "packed" || order.status === "shipped") {
@@ -268,6 +273,12 @@ export async function onRequestPost(context) {
       console.log("Webhook REJECTED (no signature, HitPay confirm failed):", orderNo);
       return new Response("Unverified", { status: 401 });
     }
+    // A different paid request for the same amount must never pay this order.
+    if (c.reference_number !== orderNo ||
+        (order.hitpay_payment_id && c.id !== order.hitpay_payment_id)) {
+      console.log("Webhook REJECTED (payment request does not belong to order):", orderNo);
+      return new Response("Wrong payment reference", { status: 401 });
+    }
     proof = "api-confirm";
     trueStatus = c.status;
     trueAmount = c.amount;
@@ -287,13 +298,16 @@ export async function onRequestPost(context) {
   //    that is genuine-looking but names the wrong (e.g. smaller) amount.
   //    If the signed body did not carry an amount, fall back to an API confirm
   //    rather than skipping the check.
-  if (trueAmount == null && proof === "signature") {
+  if ((trueAmount == null || !trueCurrency) && proof === "signature") {
     const c = await confirmWithHitPay(env, paymentId);
-    if (c.ok) { trueAmount = c.amount; trueCurrency = trueCurrency || c.currency; }
+    if (c.ok && c.reference_number === orderNo &&
+        (!order.hitpay_payment_id || c.id === order.hitpay_payment_id)) {
+      trueAmount = c.amount;
+      trueCurrency = c.currency;
+    }
   }
   const amountOk = amountMatchesCents(trueAmount, order.total_cents);
-  const currencyOk =
-    !order.currency || !trueCurrency ||
+  const currencyOk = !!trueCurrency && !!order.currency &&
     String(trueCurrency).toUpperCase() === String(order.currency).toUpperCase();
   if (!amountOk || !currencyOk) {
     console.log(
@@ -314,27 +328,35 @@ export async function onRequestPost(context) {
     }
   } catch (e) { /* ignore */ }
 
-  // 9. Mark paid ATOMICALLY: only flip a row that is still 'pending'. The result's
-  //    changes count tells us whether THIS call is the one that did it, so two
-  //    simultaneous webhooks can never both proceed to notify.
+  // 9. Paid transition and finite-stock decrement, atomically in D1.
+  // NULL quantities remain untracked. All mutations are gated on pending status,
+  // so a repeat HitPay webhook cannot deduct stock a second time.
   let didFlip = false;
   try {
-    const res = await env.DB.prepare(
-      `UPDATE orders
-         SET status = 'paid',
-             paid_at = strftime('%Y-%m-%dT%H:%M:%SZ','now'),
-             hitpay_payment_id = COALESCE(hitpay_payment_id, ?),
-             hitpay_fee_cents = ?
-       WHERE order_no = ? AND status = 'pending'`
-    ).bind(paymentId, feeCents, orderNo).run();
-    const changes = (res && res.meta && typeof res.meta.changes === "number")
-      ? res.meta.changes
-      : (res && typeof res.changes === "number" ? res.changes : 0);
+    let purchased = [];
+    try { purchased = JSON.parse(order.items_json || "[]"); } catch (e) { purchased = []; }
+    const updates = [];
+    for (const line of purchased) {
+      if (!line.id || !Number.isInteger(Number(line.qty)) || Number(line.qty) < 1) continue;
+      updates.push(env.DB.prepare(
+        `UPDATE stock SET quantity = MAX(0, quantity - ?),
+           updated_at = strftime('%Y-%m-%dT%H:%M:%SZ','now')
+         WHERE bean_id = ? AND quantity IS NOT NULL
+           AND EXISTS (SELECT 1 FROM orders WHERE order_no=? AND status='pending')`
+      ).bind(Number(line.qty), line.id, orderNo));
+    }
+    updates.push(env.DB.prepare(
+      `UPDATE orders SET status='paid', paid_at=strftime('%Y-%m-%dT%H:%M:%SZ','now'),
+         hitpay_payment_id=COALESCE(hitpay_payment_id, ?), hitpay_fee_cents=?
+         WHERE order_no=? AND status='pending'`
+    ).bind(paymentId, feeCents, orderNo));
+    const results = await env.DB.batch(updates);
+    const result = results[results.length-1];
+    const changes = result && result.meta && typeof result.meta.changes === "number" ? result.meta.changes : 0;
     didFlip = changes > 0;
   } catch (e) {
-    console.log("Webhook DB update error:", e && e.message);
-    // If we cannot confirm the write, do NOT fire notifications (avoid false ship).
-    return new Response("OK", { status: 200 });
+    console.log("Webhook atomic payment/stock update error:", e && e.message);
+    return new Response("Payment reconciliation needed", {status: 503});
   }
 
   if (!didFlip) {

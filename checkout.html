@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Checkout — Pillars Coffee</title>
-<meta name="description" content="Complete your Pillars Coffee order. Standard delivery, 1 to 3 working days.">
+<meta name="description" content="Complete your Pillars Coffee order. Standard delivery, 1 to 4 working days.">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -64,6 +64,10 @@
         <!-- Delivery address (hidden on pickup) -->
         <div id="coAddress">
           <div class="field">
+            <label>Delivery country</label>
+            <div style="background:var(--surface);border:1px solid var(--line);padding:15px 16px;color:var(--ink);">Singapore only</div>
+          </div>
+          <div class="field">
             <label for="f-address1">Address</label>
             <input id="f-address1" name="address1" type="text" autocomplete="address-line1" placeholder="Block and street name">
           </div>
@@ -88,7 +92,7 @@
           <p class="co__pickup-note" id="coPickupNote"></p>
         </div>
 
-        <p class="co__delivery" id="coDeliveryNote">Standard Delivery &middot; 1 to 3 working days. $3.50, waived on 2 bags or more.</p>
+        <p class="co__delivery" id="coDeliveryNote">Standard Delivery &middot; 1 to 4 working days. $3.50, waived on 2 bags or more.</p>
 
         <p id="coError" class="co__error" role="alert" style="display:none;"></p>
 
@@ -265,6 +269,8 @@
         errEl.style.display = "block";
         return;
       }
+      payload.customer.country = "SG";
+      payload.customer.postal_code = postal;
       payload.customer.address = addr1 + (unit ? ", " + unit : "") + ", Singapore " + postal;
     }
 
@@ -292,7 +298,16 @@
               num_items: window.PillarsCart.totalQty()
             };
             if (res.d.order_no) {
-              localStorage.setItem("pillars_last_order_v1", JSON.stringify({ ref: res.d.order_no, data: stash }));
+              // For the thank-you page, remember whether this exact order was
+              // delivery or self-pickup. Checkout still uses the server as the
+              // source of truth for fulfilment, pricing and payment.
+              var pickupChoice = fulfilment === "pickup" ? currentLocation() : null;
+              localStorage.setItem("pillars_last_order_v1", JSON.stringify({
+                ref: res.d.order_no,
+                data: stash,
+                fulfilment: fulfilment,
+                pickup_label: pickupChoice ? String(pickupChoice.label || "") : ""
+              }));
             }
           } catch (e) {}
           window.location.href = res.d.url; // off to HitPay

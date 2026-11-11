@@ -34,6 +34,17 @@
   }
 
   var cart = load();
+  var remaining = {}; // public map from /api/stock; absent = untracked
+  var stockKnown = false;
+  function left(id) { return Object.prototype.hasOwnProperty.call(remaining, id) ? Number(remaining[id]) : null; }
+  function canIncrease(id, existingQty) {
+    var n=left(id);
+    if (n !== null && existingQty >= n) {
+      alert(n===0 ? "This coffee has sold out." : "Only " + n + " bag(s) left. Please reduce your quantity.");
+      return false;
+    }
+    return true;
+  }
 
   /* ---------- cart ops ---------- */
   function totalQty() {
@@ -55,6 +66,7 @@
   }
   function addItem(item) {
     var existing = find(item.id);
+    if (!canIncrease(item.id, existing ? existing.qty : 0)) return;
     if (existing) existing.qty += 1;
     else cart.push({ id: item.id, name: item.name, price: item.price, weight: item.weight, qty: 1 });
     save(cart);
@@ -77,6 +89,7 @@
   function setQty(id, qty) {
     var it = find(id);
     if (!it) return;
+    if (qty > it.qty && !canIncrease(id, it.qty)) return;
     it.qty = qty;
     if (it.qty < 1) cart = cart.filter(function (x) { return x.id !== id; });
     save(cart);
@@ -213,7 +226,7 @@
       "</div>" +
       '<p class="cart-tot__hint">' + hint + "</p>" +
       '<a href="/checkout.html" class="btn btn--solid btn--full">Checkout</a>' +
-      '<p class="cart-tot__note">Standard Delivery &middot; 1 to 3 working days. $3.50, waived on 2 bags or more.</p>';
+      '<p class="cart-tot__note">Standard Delivery &middot; 1 to 4 working days. $3.50, waived on 2 bags or more.</p>';
 
     // wire qty buttons
     Array.prototype.forEach.call(elItems.querySelectorAll("[data-inc]"), function (b) {
@@ -238,7 +251,7 @@
 
   /* ---------- wire "Add to Bag" buttons ---------- */
   var IG = "https://ig.me/m/pillars.sg";
-  var IN_STOCK_NOTE = "Ships fresh from Pillars. Standard delivery, 1 to 3 working days.";
+  var IN_STOCK_NOTE = "Ships fresh from Pillars. Standard delivery, 1 to 4 working days.";
   var OUT_OF_STOCK_NOTE = "This roast rotates in and out. DM us on @pillars.sg to check what is available now.";
 
   function wireAddButtons() {
@@ -280,7 +293,11 @@
   // beans are switched OFF. Never let an API failure default to "Add to Bag".
   function applyAvailability() {
     var buttons = document.querySelectorAll("[data-add-to-bag]");
-    if (!buttons.length) return;
+    if (!buttons.length) {
+      fetch("/api/stock", {cache:"no-store"}).then(function(r){if(!r.ok)throw new Error("stock");return r.json();})
+        .then(function(d){remaining=(d && d.remaining)||{};stockKnown=true;}).catch(function(){});
+      return;
+    }
     fetch("/api/stock", { cache: "no-store" })
       .then(function (r) {
         if (!r.ok) throw new Error("Stock lookup failed");
@@ -290,12 +307,15 @@
         if (!d || !Array.isArray(d.available)) throw new Error("Invalid stock response");
         var inStock = {};
         d.available.forEach(function (id) { inStock[id] = true; });
+        remaining = (d.remaining && typeof d.remaining === "object") ? d.remaining : {};
+        stockKnown = true;
         Array.prototype.forEach.call(buttons, function (b) {
           var id = b.getAttribute("data-id");
           if (inStock[id]) {
             b.disabled = false;
             b.textContent = "Add to Bag";
-            setStockNote(b, IN_STOCK_NOTE);
+            var n = left(id);
+            setStockNote(b, n!==null && n<=3 ? ("Only " + n + " bag(s) left. " + IN_STOCK_NOTE) : IN_STOCK_NOTE);
           } else {
             showCheckAvailability(b, OUT_OF_STOCK_NOTE);
           }
