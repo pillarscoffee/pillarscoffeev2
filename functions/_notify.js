@@ -114,7 +114,7 @@ export async function sendOrderConfirmation(env, order) {
       '<p>Hi ' + esc(order.customer_name) + ',</p>' +
       (isPickup(order)
         ? '<p>Thank you for your order. We have received your payment. Your beans will be packed fresh and ready for collection at our counter. We will let you know when they are ready.</p>'
-        : '<p>Thank you for your order. We have received your payment and your beans will be packed fresh and delivered in 1 to 3 working days.</p>') +
+        : '<p>Thank you for your order. We have received your payment and your beans will be packed fresh and delivered in 1 to 4 working days.</p>') +
       '<p style="color:#888;font-size:13px;">Order reference: <b>' + esc(order.order_no) + '</b></p>' +
       '<table style="width:100%;border-collapse:collapse;font-size:14px;margin:16px 0;">' + rows +
         '<tr><td style="padding:8px 0;">Subtotal</td><td style="padding:8px 0;text-align:right;">$' + dollars(order.subtotal_cents) + '</td></tr>' +
@@ -131,7 +131,7 @@ export async function sendOrderConfirmation(env, order) {
     "PILLARS COFFEE\n\nHi " + esc(order.customer_name) + ",\n\n" +
     (isPickup(order)
       ? "Thank you for your order. We have received your payment. Your beans will be ready for collection at our counter.\n\n"
-      : "Thank you for your order. We have received your payment and your beans will be delivered in 1 to 3 working days.\n\n") +
+      : "Thank you for your order. We have received your payment and your beans will be delivered in 1 to 4 working days.\n\n") +
     "Order reference: " + esc(order.order_no) + "\n\n" +
     itemsLines(items) + "\n" +
     "Subtotal: $" + dollars(order.subtotal_cents) + "\n" +
@@ -156,23 +156,34 @@ export async function sendShippedEmail(env, order) {
   const from = env.ORDER_FROM_EMAIL || DEFAULT_FROM;
   const replyTo = env.ORDER_REPLY_TO || DEFAULT_REPLY_TO;
 
-  const track = order.tracking_url
-    ? '<p><a href="' + esc(order.tracking_url) + '" style="display:inline-block;background:#1c1c1a;color:#fff;padding:12px 22px;border-radius:4px;text-decoration:none;">Track your delivery</a></p>' +
-      '<p style="font-size:12px;color:#888;">Or copy this link: ' + esc(order.tracking_url) + '</p>'
-    : "";
-  const trackText = order.tracking_url ? "Track your delivery: " + esc(order.tracking_url) + "\n" : "";
-
+  const carrierNames = { jt: "J&T Express", singpost: "SingPost", other: "Other courier" };
+  const carrier = carrierNames[order.tracking_carrier] || "Courier";
+  const number = String(order.tracking_number || "").trim();
+  const url = String(order.tracking_url || "").trim();
+  function htmlSafe(v) { return String(v == null ? "" : v).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+  const isSafeLink = /^https:\/\/[^\s]+$/i.test(url);
+  const trackingInfo = number
+    ? '<p>Courier: <b>' + htmlSafe(carrier) + '</b><br>Tracking number: <b>' + htmlSafe(number) + '</b></p>'
+    : '';
+  const trackButton = isSafeLink
+    ? '<p><a href="' + htmlSafe(url) + '" style="display:inline-block;background:#1c1c1a;color:#fff;padding:12px 22px;border-radius:4px;text-decoration:none;">Open courier tracking</a></p>'
+    : '';
+  const guidance = order.tracking_carrier === "jt" ? '<p style="font-size:12px;color:#888;">Enter the tracking number on J&T Express. You may also be asked for the last 4 digits of your phone number.</p>' :
+    (number ? '<p style="font-size:12px;color:#888;">Enter the tracking number on the courier website.</p>' : '');
   const html =
     '<div style="font-family:Arial,Helvetica,sans-serif;max-width:560px;margin:0 auto;color:#1c1c1a;">' +
       '<h1 style="font-size:22px;letter-spacing:2px;">PILLARS COFFEE</h1>' +
-      '<p>Hi ' + esc(order.customer_name) + ',</p>' +
-      '<p>Good news, your order <b>' + esc(order.order_no) + '</b> is on its way.</p>' +
-      track +
+      '<p>Hi ' + htmlSafe(order.customer_name) + ',</p>' +
+      '<p>Good news, your order <b>' + htmlSafe(order.order_no) + '</b> is on its way.</p>' +
+      trackingInfo + trackButton + guidance +
       '<p style="color:#888;font-size:12px;margin-top:28px;">Questions? Just reply to this email.</p>' +
     '</div>';
   const text =
     "PILLARS COFFEE\n\nHi " + esc(order.customer_name) + ",\n\n" +
-    "Your order " + esc(order.order_no) + " is on its way.\n" + trackText;
+    "Your order " + esc(order.order_no) + " is on its way.\n" +
+    (number ? "Courier: " + carrier + "\nTracking number: " + number + "\n" : "") +
+    (isSafeLink ? "Tracking page: " + url + "\n" : "") +
+    (order.tracking_carrier === "jt" ? "J&T may request the last four digits of your phone number.\n" : "");
 
   return resendSend(env, {
     from: from,
