@@ -298,7 +298,16 @@
               num_items: window.PillarsCart.totalQty()
             };
             if (res.d.order_no) {
-              localStorage.setItem("pillars_last_order_v1", JSON.stringify({ ref: res.d.order_no, data: stash }));
+              // For the thank-you page, remember whether this exact order was
+              // delivery or self-pickup. Checkout still uses the server as the
+              // source of truth for fulfilment, pricing and payment.
+              var pickupChoice = fulfilment === "pickup" ? currentLocation() : null;
+              localStorage.setItem("pillars_last_order_v1", JSON.stringify({
+                ref: res.d.order_no,
+                data: stash,
+                fulfilment: fulfilment,
+                pickup_label: pickupChoice ? String(pickupChoice.label || "") : ""
+              }));
             }
           } catch (e) {}
           window.location.href = res.d.url; // off to HitPay

@@ -37,7 +37,7 @@
     <div class="preorder__card">
       <div class="eyebrow eyebrow--center">Order Received</div>
       <h1 class="h-display" style="margin-bottom:16px;">Thank you.</h1>
-      <p class="lede" style="margin-inline:auto;">We have received your order and will send a confirmation to your email shortly. Your beans will be packed fresh and delivered in 1 to 4 working days.</p>
+      <p id="fulfilmentLine" class="lede" style="margin-inline:auto;">We have received your order and will send a confirmation to your email shortly.</p>
       <p id="refLine" class="preorder__sub" style="margin-top:28px;"></p>
       <a href="/beans.html" class="btn btn--line" style="margin-top:28px;">Back to Coffee</a>
     </div>
@@ -60,6 +60,26 @@
 <script>
 (function () {
   var ref = new URLSearchParams(window.location.search).get("ref");
+
+  // Use only fulfilment information saved for this exact checkout reference.
+  // If the customer returns on a different browser or storage is unavailable,
+  // leave the safe, neutral message rather than incorrectly promise delivery.
+  try {
+    var savedOrder = JSON.parse(localStorage.getItem("pillars_last_order_v1") || "null");
+    if (ref && savedOrder && savedOrder.ref === ref) {
+      var fulfilmentLine = document.getElementById("fulfilmentLine");
+      if (savedOrder.fulfilment === "pickup") {
+        var pickupLabel = typeof savedOrder.pickup_label === "string"
+          ? savedOrder.pickup_label.trim() : "";
+        fulfilmentLine.textContent = "We have received your self-pickup order and will email you a confirmation shortly. " +
+          (pickupLabel ? "Collection location: " + pickupLabel + ". " : "") +
+          "Please refer to your confirmation email for your collection details.";
+      } else if (savedOrder.fulfilment === "delivery") {
+        fulfilmentLine.textContent = "We have received your order and will email you a confirmation shortly. " +
+          "Your beans will be packed fresh and delivered in 1 to 4 working days.";
+      }
+    }
+  } catch (e) {}
 
   // Meta Purchase (browser side). The SERVER (webhook -> Conversions API) is the
   // source of truth and fires only on a verified-paid order; this browser event
