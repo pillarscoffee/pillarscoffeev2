@@ -35,9 +35,9 @@
 <section class="preorder">
   <div class="wrap">
     <div class="preorder__card">
-      <div class="eyebrow eyebrow--center">Order Received</div>
-      <h1 class="h-display" style="margin-bottom:16px;">Thank you.</h1>
-      <p id="fulfilmentLine" class="lede" style="margin-inline:auto;">We have received your order and will send a confirmation to your email shortly.</p>
+      <div class="eyebrow eyebrow--center" id="paymentEyebrow">Payment Verification</div>
+      <h1 class="h-display" id="paymentHeading" style="margin-bottom:16px;">Checking payment.</h1>
+      <p id="fulfilmentLine" class="lede" style="margin-inline:auto;">We are checking the payment status. Please do not place another order while this is processing.</p>
       <p id="refLine" class="preorder__sub" style="margin-top:28px;"></p>
       <a href="/beans.html" class="btn btn--line" style="margin-top:28px;">Back to Coffee</a>
     </div>
@@ -59,68 +59,76 @@
 <script src="cart.js"></script>
 <script>
 (function () {
-  var ref = new URLSearchParams(window.location.search).get("ref");
+  var ref = new URLSearchParams(window.location.search).get("ref") || "";
+  var refLine = document.getElementById("refLine");
+  var heading = document.getElementById("paymentHeading");
+  var eyebrow = document.getElementById("paymentEyebrow");
+  var line = document.getElementById("fulfilmentLine");
+  if (ref && /^PIL-[23456789ABCDEFGHJKMNPQRSTUVWXYZ]{6}$/.test(ref)) {
+    refLine.textContent = "Order reference: " + ref;
+  } else {
+    heading.textContent = "Please check your email.";
+    line.textContent = "We couldn't check this order reference. If you paid, contact us with your order details.";
+    return;
+  }
 
-  // Use only fulfilment information saved for this exact checkout reference.
-  // If the customer returns on a different browser or storage is unavailable,
-  // leave the safe, neutral message rather than incorrectly promise delivery.
+  var stashed = null;
   try {
-    var savedOrder = JSON.parse(localStorage.getItem("pillars_last_order_v1") || "null");
-    if (ref && savedOrder && savedOrder.ref === ref) {
-      var fulfilmentLine = document.getElementById("fulfilmentLine");
-      if (savedOrder.fulfilment === "pickup") {
-        var pickupLabel = typeof savedOrder.pickup_label === "string"
-          ? savedOrder.pickup_label.trim() : "";
-        fulfilmentLine.textContent = "We have received your self-pickup order and will email you a confirmation shortly. " +
-          (pickupLabel ? "Collection location: " + pickupLabel + ". " : "") +
-          "Please refer to your confirmation email for your collection details.";
-      } else if (savedOrder.fulfilment === "delivery") {
-        fulfilmentLine.textContent = "We have received your order and will email you a confirmation shortly. " +
-          "Your beans will be packed fresh and delivered in 1 to 4 working days.";
-      }
-    }
+    var saved = JSON.parse(localStorage.getItem("pillars_last_order_v1") || "null");
+    if (saved && saved.ref === ref) stashed = saved;
   } catch (e) {}
 
-  // Meta Purchase (browser side). The SERVER (webhook -> Conversions API) is the
-  // source of truth and fires only on a verified-paid order; this browser event
-  // adds coverage + better ad matching. Both use the SAME eventID (the order
-  // number) so Meta counts each sale ONCE (deduplication). Consent-gated, and
-  // fired at most once per order (guarded in localStorage).
-  try {
-    if (ref && window.PillarsTrack) {
+  function confirmed() {
+    eyebrow.textContent = "Payment Confirmed";
+    heading.textContent = "Thank you.";
+    if (stashed && stashed.fulfilment === "pickup") {
+      var loc = typeof stashed.pickup_label === "string" ? stashed.pickup_label.trim() : "";
+      line.textContent = "Your payment is confirmed. We'll email your order details shortly. " +
+        "We'll also let you know when your beans are ready for collection" + (loc ? " at " + loc : "") + ".";
+    } else if (stashed && stashed.fulfilment === "delivery") {
+      line.textContent = "Your payment is confirmed. We'll email your order details shortly. " +
+        "Your beans will be packed fresh and delivered in 1 to 4 working days.";
+    } else {
+      line.textContent = "Your payment is confirmed. We'll email your order details shortly.";
+    }
+    // Only a confirmed, server-verified payment may clear the bag or count as a Purchase.
+    try { window.PillarsCart && window.PillarsCart.clear(); } catch (e) {}
+    try {
+      if (!window.fbq || !window.PillarsConsent || window.PillarsConsent.isOptedOut()) return;
       var firedKey = "pillars_purchase_fired_v1";
-      var alreadyFired = (localStorage.getItem(firedKey) || "").split(",");
-      if (alreadyFired.indexOf(ref) === -1) {
-        var stashed = null;
-        try {
-          var s = JSON.parse(localStorage.getItem("pillars_last_order_v1") || "null");
-          if (s && s.ref === ref && s.data) stashed = s.data;
-        } catch (e) {}
-        var params = {
-          content_type: "product",
-          currency: (stashed && stashed.currency) || "SGD"
-        };
-        if (stashed) {
-          params.value = stashed.value;
-          params.content_ids = stashed.content_ids;
-          params.num_items = stashed.num_items;
-        }
-        // eventID = order number -> dedupes against the server Purchase.
-        if (window.fbq && !window.PillarsConsent.isOptedOut()) {
-          window.fbq("track", "Purchase", params, { eventID: ref });
-        }
-        // remember we fired for this order (cap the list so it can't grow forever)
-        alreadyFired.push(ref);
-        if (alreadyFired.length > 20) alreadyFired = alreadyFired.slice(-20);
-        localStorage.setItem(firedKey, alreadyFired.filter(Boolean).join(","));
+      var already = (localStorage.getItem(firedKey) || "").split(",");
+      if (already.indexOf(ref) !== -1) return;
+      var data = stashed && stashed.data;
+      var params = { currency: (data && data.currency) || "SGD", content_type: "product" };
+      if (data) {
+        params.value = data.value;
+        params.content_ids = data.content_ids;
+        params.num_items = data.num_items;
       }
-    }
-  } catch (e) {}
+      window.fbq("track", "Purchase", params, { eventID: ref });
+      already.push(ref);
+      localStorage.setItem(firedKey, already.filter(Boolean).slice(-20).join(","));
+    } catch (e) {}
+  }
 
-  // Clear the bag now that the order has been placed.
-  try { window.PillarsCart && window.PillarsCart.clear(); } catch (e) {}
-  // Show the order reference if HitPay passed it back.
-  if (ref) document.getElementById("refLine").textContent = "Order reference: " + ref;
+  var attempts = 0;
+  function checkPayment() {
+    attempts += 1;
+    fetch("/api/payment-status?ref=" + encodeURIComponent(ref), { cache: "no-store" })
+      .then(function(resp) { if (!resp.ok) throw new Error("status"); return resp.json(); })
+      .then(function(result) {
+        if (result && result.paid) { confirmed(); return; }
+        retryOrStop();
+      })
+      .catch(retryOrStop);
+  }
+  function retryOrStop() {
+    if (attempts < 10) { setTimeout(checkPayment, 2000); return; }
+    heading.textContent = "Payment confirmation pending.";
+    line.textContent = "We haven't verified your payment yet. If you have paid, please check your email shortly. " +
+      "If no confirmation arrives, contact us with your order reference before trying to pay again.";
+  }
+  checkPayment();
 })();
 </script>
 </body>
