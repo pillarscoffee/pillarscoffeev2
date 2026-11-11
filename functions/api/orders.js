@@ -34,7 +34,7 @@ export async function onRequestGet(context) {
     const res = await env.DB.prepare(
       `SELECT id, order_no, status, fulfilment, customer_name, email, phone, address,
               items_json, subtotal_cents, delivery_cents, total_cents, currency,
-              hitpay_fee_cents, tracking_url, created_at, paid_at, shipped_at, refunded_at
+              hitpay_fee_cents, tracking_url, tracking_carrier, tracking_number, created_at, paid_at, shipped_at, refunded_at
          FROM orders
         ORDER BY id DESC
         LIMIT 200`
@@ -55,7 +55,12 @@ export async function onRequestPost(context) {
 
   const orderNo = String(body.order_no || "").trim();
   const action = String(body.action || "").trim();
-  const trackingUrl = String(body.tracking_url || "").trim();
+  const carrierPages = {
+    jt: "https://www.jtexpress.sg/trackmyparcel",
+    singpost: "https://www.singpost.com/track-items",
+  };
+  const trackingCarrier = String(body.tracking_carrier || "").trim();
+  const trackingNumber = String(body.tracking_number || "").trim();
 
   // Bulk cleanup: remove every pending (unpaid) order in one go. Never touches
   // a paid/packed/shipped order.
@@ -109,18 +114,37 @@ export async function onRequestPost(context) {
     return json({ ok: true, deleted: orderNo });
   }
 
-  if (action === "shipped") {
-    if (trackingUrl.length < 5) return json({ error: "Please paste a tracking link first." }, 400);
-    await env.DB.prepare(
-      `UPDATE orders
-          SET status = 'shipped',
-              tracking_url = ?,
-              shipped_at = strftime('%Y-%m-%dT%H:%M:%SZ','now')
-        WHERE order_no = ?`
-    ).bind(trackingUrl, orderNo).run();
+  if (action === "resend_shipping") {
+    if (order.status !== "shipped") return json({ error: "Only shipped orders can resend their shipping email." }, 400);
+    const r = await sendShippedEmail(env, order);
+    return r.ok ? json({ ok: true, email: "sent" }) : json({ error: "Email could not be sent. Check Resend and retry." }, 502);
+  }
 
-    // email the customer with tracking
-    const updated = Object.assign({}, order, { status: "shipped", tracking_url: trackingUrl });
+  if (action === "shipped") {
+    if (order.status !== "packed") return json({ error: "Mark this order packed before shipping." }, 400);
+    if (!["jt", "singpost", "other"].includes(trackingCarrier)) return json({ error: "Select a courier." }, 400);
+    if (!/^[A-Za-z0-9][A-Za-z0-9 -]{3,49}$/.test(trackingNumber)) {
+      return json({ error: "Enter a valid tracking number (4–50 characters)." }, 400);
+    }
+    let trackingUrl = carrierPages[trackingCarrier] || "";
+    if (trackingCarrier === "other") {
+      try {
+        const u = new URL(String(body.tracking_url || "").trim());
+        if (u.protocol !== "https:" || !u.hostname || u.username || u.password) throw new Error("Unsafe link");
+        trackingUrl = u.href;
+      } catch (e) { return json({ error: "For other couriers, paste the official HTTPS tracking page." }, 400); }
+    }
+    const shipmentWrite = await env.DB.prepare(
+      `UPDATE orders SET status='shipped', tracking_carrier=?, tracking_number=?, tracking_url=?,
+         shipped_at=strftime('%Y-%m-%dT%H:%M:%SZ','now') WHERE order_no=? AND status='packed'`
+    ).bind(trackingCarrier, trackingNumber, trackingUrl, orderNo).run();
+    // If another request already shipped this order, do not email twice.
+    if (!shipmentWrite || !shipmentWrite.meta || shipmentWrite.meta.changes !== 1) {
+      return json({ error: "This order is no longer packed. Refresh the order list." }, 409);
+    }
+    const updated = Object.assign({}, order, {
+      status: "shipped", tracking_carrier: trackingCarrier, tracking_number: trackingNumber, tracking_url: trackingUrl
+    });
     const r = await sendShippedEmail(env, updated);
     return json({ ok: true, status: "shipped", email: r.ok ? "sent" : "failed" });
   }

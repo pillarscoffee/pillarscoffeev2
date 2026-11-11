@@ -12,15 +12,13 @@
 import { CATALOG, getProduct } from "../_catalog.js";
 import { getLocation } from "../_locations.js";
 
-// Returns the Set of bean ids currently switched ON in the Stock tab.
-async function availableSet(env) {
-  const set = new Set();
-  if (!env.DB) return set;
-  try {
-    const res = await env.DB.prepare(`SELECT bean_id FROM stock WHERE available = 1`).all();
-    for (const r of (res && res.results) || []) set.add(r.bean_id);
-  } catch (e) { /* no stock table yet -> empty set */ }
-  return set;
+// Fail closed if D1 stock cannot be read. Quantity NULL means not tracked.
+async function stockMap(env) {
+  if (!env.DB) throw new Error("No database connection");
+  const rows = await env.DB.prepare(`SELECT bean_id, available, quantity FROM stock`).all();
+  const map = new Map();
+  for (const row of (rows && rows.results) || []) map.set(row.bean_id, row);
+  return map;
 }
 
 const CURRENCY = "SGD";
@@ -73,8 +71,17 @@ export async function onRequestPost(context) {
     if (!name) return json({ error: "Please enter your name." }, 400);
     if (!looksLikeEmail(email)) return json({ error: "Please enter a valid email." }, 400);
     if (!phone) return json({ error: "Please enter a phone number." }, 400);
-    if (fulfilment === "delivery" && address.length < 10) {
-      return json({ error: "Please enter your full delivery address." }, 400);
+    if (fulfilment === "delivery") {
+      const country = clean(customer.country, 12).toUpperCase();
+      const postal = clean(customer.postal_code, 12);
+      if (country !== "SG") return json({ error: "We currently deliver only within Singapore." }, 400);
+      if (!/^\d{6}$/.test(postal)) return json({ error: "Enter a valid six-digit Singapore postal code." }, 400);
+      if (address.length < 10 || !new RegExp("Singapore\\s+" + postal + "$", "i").test(address)) {
+        return json({ error: "Please enter a full Singapore delivery address matching your postal code." }, 400);
+      }
+      if (/\b(malaysia|johor|johor bahru|kuala lumpur|batam|indonesia)\b/i.test(address)) {
+        return json({ error: "We currently deliver only within Singapore." }, 400);
+      }
     }
     // For pickup, store the collection point as the "address" so staff see where.
     if (fulfilment === "pickup") {
@@ -85,16 +92,27 @@ export async function onRequestPost(context) {
     if (!Array.isArray(cart) || cart.length === 0) {
       return json({ error: "Your bag is empty." }, 400);
     }
-    const inStock = await availableSet(env);
+    let currentStock;
+    try { currentStock = await stockMap(env); }
+    catch (e) { return json({ error: "Stock is temporarily unavailable. Please try again shortly." }, 503); }
+    const requested = new Map();
     let subtotalCents = 0, totalQty = 0;
     const items = [];
     for (const line of cart) {
       const p = getProduct(line && line.id);
       if (!p) return json({ error: "One of the items is no longer available." }, 400);
-      if (inStock.size > 0 && !inStock.has(line.id)) {
-        return json({ error: p.name + " just sold out. Please remove it and try again." }, 400);
+      const row = currentStock.get(line.id);
+      if (!row || !row.available || (row.quantity != null && row.quantity <= 0)) {
+        return json({ error: p.name + " is no longer available. Please remove it from your bag." }, 400);
       }
-      const qty = Math.max(1, Math.min(20, Math.floor(Number(line.qty)) || 1));
+      const rawQty = Number(line.qty);
+      if (!Number.isInteger(rawQty) || rawQty < 1 || rawQty > 20) return json({ error: "Please enter a valid bag quantity." }, 400);
+      const qty = rawQty;
+      const desired = (requested.get(line.id) || 0) + qty;
+      if (row.quantity != null && desired > row.quantity) {
+        return json({ error: "Only " + row.quantity + " bag(s) of " + p.name + " remain. Please adjust your bag." }, 400);
+      }
+      requested.set(line.id, desired);
       const unit = Math.round(p.price * 100);
       subtotalCents += unit * qty;
       totalQty += qty;

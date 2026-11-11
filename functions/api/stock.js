@@ -34,9 +34,9 @@ async function readStock(env) {
   const map = {};
   if (!env.DB) return map;
   try {
-    const res = await env.DB.prepare(`SELECT bean_id, available, position FROM stock`).all();
+    const res = await env.DB.prepare(`SELECT bean_id, available, position, quantity FROM stock`).all();
     for (const r of (res && res.results) || []) {
-      map[r.bean_id] = { available: !!r.available, position: r.position };
+      map[r.bean_id] = { available: !!r.available, position: r.position, quantity: r.quantity == null ? null : Number(r.quantity) };
     }
   } catch (e) { /* table may not exist yet -> empty */ }
   return map;
@@ -61,6 +61,7 @@ export async function onRequestGet(context) {
         weight: p.weight,
         available: !!s.available,
         position: s.position != null ? s.position : null,
+        quantity: s.quantity == null ? null : s.quantity,
       };
     });
     return json({ beans: beans });
@@ -68,13 +69,17 @@ export async function onRequestGet(context) {
 
   // Public view: just the available bean ids, in carousel order.
   const available = allIds()
-    .filter(function (id) { return stock[id] && stock[id].available; })
+    .filter(function (id) { return stock[id] && stock[id].available && (stock[id].quantity == null || stock[id].quantity > 0); })
     .sort(function (a, b) {
       const pa = stock[a].position == null ? 9999 : stock[a].position;
       const pb = stock[b].position == null ? 9999 : stock[b].position;
       return pa - pb;
     });
-  return json({ available: available });
+  const remaining = {};
+  available.forEach(function(id) {
+    if (stock[id].quantity != null) remaining[id] = stock[id].quantity;
+  });
+  return json({ available: available, remaining: remaining });
 }
 
 export async function onRequestPost(context) {
@@ -86,11 +91,30 @@ export async function onRequestPost(context) {
   try { body = await request.json(); } catch (e) { return json({ error: "Bad request" }, 400); }
 
   const beanId = String(body.bean_id || "").trim();
+  const updateToggle = Object.prototype.hasOwnProperty.call(body, "available");
   const makeAvailable = body.available === true || body.available === "true";
-
+  const updateQty = Object.prototype.hasOwnProperty.call(body, "quantity");
+  let quantity = null;
+  if (updateQty) {
+    if (body.quantity !== null && body.quantity !== "") {
+      quantity = Number(body.quantity);
+      if (!Number.isInteger(quantity) || quantity < 0 || quantity > 9999) return json({ error: "Quantity must be 0–9999 or blank for untracked." }, 400);
+    }
+  }
+  if (!updateToggle && !updateQty) return json({ error: "Nothing to update." }, 400);
   if (!getProduct(beanId)) return json({ error: "Unknown bean" }, 400);
 
   try {
+    if (updateQty) {
+      await env.DB.prepare(
+        `INSERT INTO stock (bean_id, available, position, quantity, updated_at)
+         VALUES (?, 0, NULL, ?, strftime('%Y-%m-%dT%H:%M:%SZ','now'))
+         ON CONFLICT(bean_id) DO UPDATE SET
+           quantity = excluded.quantity,
+           updated_at = strftime('%Y-%m-%dT%H:%M:%SZ','now')`
+      ).bind(beanId, quantity).run();
+    }
+    if (updateToggle) {
     if (makeAvailable) {
       // Next position = one past the current max among available beans.
       const row = await env.DB.prepare(
@@ -115,11 +139,12 @@ export async function onRequestPost(context) {
            updated_at = strftime('%Y-%m-%dT%H:%M:%SZ','now')`
       ).bind(beanId).run();
     }
+    }
   } catch (e) {
-    return json({ error: "Could not update stock. Did you run the stock table setup?" }, 500);
+    return json({ error: "Could not update stock. Check the quantity migration." }, 500);
   }
 
-  return json({ ok: true, bean_id: beanId, available: makeAvailable });
+  return json({ ok: true, bean_id: beanId });
 }
 
 export async function onRequest(context) {

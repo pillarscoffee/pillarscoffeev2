@@ -314,27 +314,35 @@ export async function onRequestPost(context) {
     }
   } catch (e) { /* ignore */ }
 
-  // 9. Mark paid ATOMICALLY: only flip a row that is still 'pending'. The result's
-  //    changes count tells us whether THIS call is the one that did it, so two
-  //    simultaneous webhooks can never both proceed to notify.
+  // 9. Paid transition and finite-stock decrement, atomically in D1.
+  // NULL quantities remain untracked. All mutations are gated on pending status,
+  // so a repeat HitPay webhook cannot deduct stock a second time.
   let didFlip = false;
   try {
-    const res = await env.DB.prepare(
-      `UPDATE orders
-         SET status = 'paid',
-             paid_at = strftime('%Y-%m-%dT%H:%M:%SZ','now'),
-             hitpay_payment_id = COALESCE(hitpay_payment_id, ?),
-             hitpay_fee_cents = ?
-       WHERE order_no = ? AND status = 'pending'`
-    ).bind(paymentId, feeCents, orderNo).run();
-    const changes = (res && res.meta && typeof res.meta.changes === "number")
-      ? res.meta.changes
-      : (res && typeof res.changes === "number" ? res.changes : 0);
+    let purchased = [];
+    try { purchased = JSON.parse(order.items_json || "[]"); } catch (e) { purchased = []; }
+    const updates = [];
+    for (const line of purchased) {
+      if (!line.id || !Number.isInteger(Number(line.qty)) || Number(line.qty) < 1) continue;
+      updates.push(env.DB.prepare(
+        `UPDATE stock SET quantity = MAX(0, quantity - ?),
+           updated_at = strftime('%Y-%m-%dT%H:%M:%SZ','now')
+         WHERE bean_id = ? AND quantity IS NOT NULL
+           AND EXISTS (SELECT 1 FROM orders WHERE order_no=? AND status='pending')`
+      ).bind(Number(line.qty), line.id, orderNo));
+    }
+    updates.push(env.DB.prepare(
+      `UPDATE orders SET status='paid', paid_at=strftime('%Y-%m-%dT%H:%M:%SZ','now'),
+         hitpay_payment_id=COALESCE(hitpay_payment_id, ?), hitpay_fee_cents=?
+         WHERE order_no=? AND status='pending'`
+    ).bind(paymentId, feeCents, orderNo));
+    const results = await env.DB.batch(updates);
+    const result = results[results.length-1];
+    const changes = result && result.meta && typeof result.meta.changes === "number" ? result.meta.changes : 0;
     didFlip = changes > 0;
   } catch (e) {
-    console.log("Webhook DB update error:", e && e.message);
-    // If we cannot confirm the write, do NOT fire notifications (avoid false ship).
-    return new Response("OK", { status: 200 });
+    console.log("Webhook atomic payment/stock update error:", e && e.message);
+    return new Response("Payment reconciliation needed", {status: 503});
   }
 
   if (!didFlip) {
