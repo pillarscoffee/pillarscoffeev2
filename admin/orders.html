@@ -195,19 +195,30 @@
       // After you refund in HitPay, this records it on the order.
       var refundBtn = ' <button class="btn btn--line small" data-act="refunded" data-no="'+esc(o.order_no)+'" style="color:#8A3B2C;border-color:#e3c9c2;">Mark refunded</button>';
       if(o.status==="paid"){
-        actions = '<button class="btn small" data-act="packed" data-no="'+esc(o.order_no)+'">Mark packed</button>' + refundBtn;
+        actions = '<button class="btn small" data-act="packed" data-no="'+esc(o.order_no)+'">'+(o.fulfilment==="pickup"?'Ready for collection + email':'Mark packed')+'</button>' +
+          ' <button class="btn btn--line small" data-act="resend_confirmation" data-no="'+esc(o.order_no)+'">Resend order email</button>' + refundBtn;
       } else if(o.status==="packed"){
-        actions =
-          '<select class="track" id="carrier_'+esc(o.order_no)+'" aria-label="Courier"><option value="jt">J&T Express</option><option value="singpost">SingPost</option><option value="other">Other courier</option></select>' +
-          '<input class="track" placeholder="Tracking number" id="t_'+esc(o.order_no)+'" autocomplete="off">' +
-          '<input class="track" placeholder="Other courier HTTPS tracking page" id="url_'+esc(o.order_no)+'" style="display:none;min-width:240px;">' +
-          '<button class="btn small" data-act="shipped" data-no="'+esc(o.order_no)+'">Mark shipped + email</button>' + refundBtn;
+        if(o.fulfilment==="pickup"){
+          actions = '<span class="muted">Ready for collection</span>' +
+            ' <button class="btn small" data-act="collected" data-no="'+esc(o.order_no)+'">Mark collected</button>' +
+            ' <button class="btn btn--line small" data-act="resend_pickup" data-no="'+esc(o.order_no)+'">Resend collection email</button>' + refundBtn;
+        } else {
+          actions =
+            '<select class="track" id="carrier_'+esc(o.order_no)+'" aria-label="Courier"><option value="jt">J&T Express</option><option value="singpost">SingPost</option><option value="other">Other courier</option></select>' +
+            '<input class="track" placeholder="Tracking number" id="t_'+esc(o.order_no)+'" autocomplete="off">' +
+            '<input class="track" placeholder="Other courier HTTPS tracking page" id="url_'+esc(o.order_no)+'" style="display:none;min-width:240px;">' +
+            '<button class="btn small" data-act="shipped" data-no="'+esc(o.order_no)+'">Mark shipped + email</button>' + refundBtn;
+        }
       } else if(o.status==="shipped"){
-        var carrierNames={jt:"J&T Express",singpost:"SingPost",other:"Other courier"};
-        var courierText=(o.tracking_number ? ' · '+esc(carrierNames[o.tracking_carrier]||'Courier')+' '+esc(o.tracking_number) : '');
-        var link=(o.tracking_url && /^https:\/\//i.test(o.tracking_url)) ? ' · <a href="'+esc(o.tracking_url)+'" target="_blank" rel="noopener">tracking page</a>' : '';
-        actions = '<span class="muted">Shipped '+when(o.shipped_at)+courierText+link+'</span>' +
-          ' <button class="btn btn--line small" data-act="resend_shipping" data-no="'+esc(o.order_no)+'">Resend shipping email</button>' + refundBtn;
+        if(o.fulfilment==="pickup"){
+          actions = '<span class="muted">Collected '+when(o.shipped_at)+'</span>' + refundBtn;
+        } else {
+          var carrierNames={jt:"J&T Express",singpost:"SingPost",other:"Other courier"};
+          var courierText=(o.tracking_number ? ' · '+esc(carrierNames[o.tracking_carrier]||'Courier')+' '+esc(o.tracking_number) : '');
+          var link=(o.tracking_url && /^https:\/\//i.test(o.tracking_url)) ? ' · <a href="'+esc(o.tracking_url)+'" target="_blank" rel="noopener">tracking page</a>' : '';
+          actions = '<span class="muted">Shipped '+when(o.shipped_at)+courierText+link+'</span>' +
+            ' <button class="btn btn--line small" data-act="resend_shipping" data-no="'+esc(o.order_no)+'">Resend shipping email</button>' + refundBtn;
+        }
       } else if(o.status==="refunded"){
         actions = '<span class="muted">Refunded '+when(o.refunded_at)+'.</span>';
       } else if(o.status==="pending"){
@@ -215,12 +226,13 @@
       }
       var pickup = o.fulfilment==="pickup";
       var fulTag = pickup ? '<span class="status s-pickup">pickup</span>' : '';
+      var statusLabel = pickup && o.status==="shipped" ? "collected" : (pickup && o.status==="packed" ? "ready" : o.status);
       var deliverLabel = pickup ? "Collect at counter" : "Deliver to";
       var feeLabel = pickup ? "Collection FREE" : ("Delivery "+(o.delivery_cents===0?"FREE":money(o.delivery_cents)));
       return '<div class="card">' +
         '<div class="card__top">' +
           '<div><div class="ono">'+esc(o.order_no)+'</div><div class="when">'+when(o.created_at)+'</div></div>' +
-          '<div style="display:flex;gap:6px;align-items:center;">'+fulTag+'<span class="status s-'+o.status+'">'+o.status+'</span></div>' +
+          '<div style="display:flex;gap:6px;align-items:center;">'+fulTag+'<span class="status s-'+o.status+'">'+statusLabel+'</span></div>' +
         '</div>' +
         '<div class="items">'+items+'</div>' +
         '<div class="money"><span>Subtotal '+money(o.subtotal_cents)+'</span><span>'+feeLabel+'</span><span><b>Total '+money(o.total_cents)+'</b></span>'+fee+'</div>' +
@@ -242,6 +254,7 @@
       b.addEventListener("click", function(){
         var no=b.getAttribute("data-no"), act=b.getAttribute("data-act");
         if(act==="delete" && !confirm("Remove unpaid order "+no+"? This cannot be undone.")){ return; }
+        if(act==="collected" && !confirm("Confirm order "+no+" has been collected by the customer?")){ return; }
         if(act==="paid" && !confirm("Confirm payment for "+no+" in HitPay FIRST. This will mark the order PAID and deduct tracked bean stock. It does NOT collect payment. Continue?")){ return; }
         if(act==="refunded" && !confirm("Mark "+no+" as REFUNDED? Do this only AFTER you have refunded it in HitPay.")){ return; }
         var payload={ order_no:no, action:act };
@@ -261,9 +274,10 @@
           .then(function(res){
             if(res.ok){
               var message=act==="shipped" ? ("Shipped. Email "+(res.d.email||"")) :
-                (act==="resend_shipping" ? "Shipping email sent." : "Marked "+res.d.status);
+                (act==="resend_shipping" || act==="resend_confirmation" || act==="resend_pickup" ? "Email sent." :
+                 (act==="collected" ? "Collected." : "Marked "+res.d.status+(res.d.email ? ". Email "+res.d.email : "")));
               setMsg(no,message);
-              if(act==="shipped" && res.d.email==="failed") alert("Order marked shipped, but email FAILED. Use Resend shipping email from the Shipped tab.");
+              if(res.d.email==="failed") alert("Status updated, but email FAILED. You can resend it from this order's actions.");
               load();
             }
             else { setMsg(no, (res.d&&res.d.error)||"Failed"); b.disabled=false; }
