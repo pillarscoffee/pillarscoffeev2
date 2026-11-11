@@ -81,10 +81,44 @@ export async function onRequestPost(context) {
   }
 
   if (action === "paid") {
-    // manual fallback to mark paid (rarely needed; webhook normally does this)
-    await env.DB.prepare(
-      `UPDATE orders SET status = 'paid', paid_at = COALESCE(paid_at, strftime('%Y-%m-%dT%H:%M:%SZ','now')) WHERE order_no = ?`
-    ).bind(orderNo).run();
+    // Manual fallback only. Staff must verify the real payment in HitPay first.
+    // Mirror the webhook's finite-stock deduction. D1 batch is transactional:
+    // the conditional stock updates and pending -> paid transition succeed together.
+    if (order.status !== "pending") {
+      return json({ error: "Only a pending order can be marked paid. Refresh the order list." }, 409);
+    }
+    let purchased;
+    try {
+      purchased = JSON.parse(order.items_json || "[]");
+      if (!Array.isArray(purchased)) throw new Error("Invalid order items");
+    } catch (e) {
+      return json({ error: "Order items could not be read. Do not mark this order paid yet." }, 500);
+    }
+    const updates = [];
+    for (const line of purchased) {
+      if (!line || !line.id || !Number.isInteger(Number(line.qty)) || Number(line.qty) < 1) continue;
+      updates.push(env.DB.prepare(
+        `UPDATE stock SET quantity = MAX(0, quantity - ?),
+           updated_at = strftime('%Y-%m-%dT%H:%M:%SZ','now')
+         WHERE bean_id = ? AND quantity IS NOT NULL
+           AND EXISTS (SELECT 1 FROM orders WHERE order_no = ? AND status = 'pending')`
+      ).bind(Number(line.qty), line.id, orderNo));
+    }
+    updates.push(env.DB.prepare(
+      `UPDATE orders SET status = 'paid',
+         paid_at = COALESCE(paid_at, strftime('%Y-%m-%dT%H:%M:%SZ','now'))
+       WHERE order_no = ? AND status = 'pending'`
+    ).bind(orderNo));
+    try {
+      const results = await env.DB.batch(updates);
+      const last = results[results.length - 1];
+      if (!last || !last.meta || last.meta.changes !== 1) {
+        return json({ error: "Order status changed. Refresh the order list." }, 409);
+      }
+    } catch (e) {
+      console.log("Manual paid/stock reconciliation error:", e && e.message);
+      return json({ error: "Could not update payment and stock. Please retry after checking the order." }, 503);
+    }
     return json({ ok: true, status: "paid" });
   }
 
