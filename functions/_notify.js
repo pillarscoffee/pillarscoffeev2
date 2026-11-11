@@ -27,6 +27,12 @@ function itemsLines(items) {
 function esc(s) {
   return String(s == null ? "" : s);
 }
+// Escape untrusted customer and product text before placing it in HTML emails.
+function htmlSafe(s) {
+  return esc(s).replace(/[&<>"']/g, function(c) {
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+  });
+}
 
 function isPickup(order) {
   return order && order.fulfilment === "pickup";
@@ -100,8 +106,8 @@ export async function sendOrderConfirmation(env, order) {
     .map(function (i) {
       return (
         '<tr>' +
-        '<td style="padding:8px 0;border-bottom:1px solid #eee;">' + esc(i.name) +
-        ' <span style="color:#888;">(' + esc(i.weight) + ') x ' + i.qty + '</span></td>' +
+        '<td style="padding:8px 0;border-bottom:1px solid #eee;">' + htmlSafe(i.name) +
+        ' <span style="color:#888;">(' + htmlSafe(i.weight) + ') x ' + i.qty + '</span></td>' +
         '<td style="padding:8px 0;border-bottom:1px solid #eee;text-align:right;">$' + dollars(i.line_cents) + '</td>' +
         '</tr>'
       );
@@ -111,7 +117,7 @@ export async function sendOrderConfirmation(env, order) {
   const html =
     '<div style="font-family:Arial,Helvetica,sans-serif;max-width:560px;margin:0 auto;color:#1c1c1a;">' +
       '<h1 style="font-size:22px;letter-spacing:2px;">PILLARS COFFEE</h1>' +
-      '<p>Hi ' + esc(order.customer_name) + ',</p>' +
+      '<p>Hi ' + htmlSafe(order.customer_name) + ',</p>' +
       (isPickup(order)
         ? '<p>Thank you for your order. We have received your payment. Your beans will be packed fresh and ready for collection at our counter. We will let you know when they are ready.</p>'
         : '<p>Thank you for your order. We have received your payment and your beans will be packed fresh and delivered in 1 to 4 working days.</p>') +
@@ -123,7 +129,7 @@ export async function sendOrderConfirmation(env, order) {
           : '<tr><td style="padding:4px 0;">Delivery</td><td style="padding:4px 0;text-align:right;">' + (order.delivery_cents === 0 ? "FREE" : "$" + dollars(order.delivery_cents)) + '</td></tr>') +
         '<tr><td style="padding:8px 0;font-weight:bold;border-top:2px solid #1c1c1a;">Total</td><td style="padding:8px 0;text-align:right;font-weight:bold;border-top:2px solid #1c1c1a;">$' + dollars(order.total_cents) + ' ' + order.currency + '</td></tr>' +
       '</table>' +
-      '<p style="font-size:14px;"><b>' + (isPickup(order) ? "Collect at" : "Delivery to") + '</b><br>' + esc(order.address).replace(/\n/g, "<br>") + '</p>' +
+      '<p style="font-size:14px;"><b>' + (isPickup(order) ? "Collect at" : "Delivery to") + '</b><br>' + htmlSafe(order.address).replace(/\n/g, "<br>") + '</p>' +
       '<p style="color:#888;font-size:12px;margin-top:28px;">Every Pillars bag ships blank. Draw on it, keep it, or gift it. Questions? Just reply to this email.</p>' +
     '</div>';
 
