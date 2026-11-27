@@ -7,6 +7,8 @@
 // is added to the portfolio (keep it in sync with functions/_catalog.js).
 
 window.PILLARS_BEANS = {
+  "gargari-guitity": { name: "Gargari Guitity", type: "Espresso", origin: "Yirgacheffe, Ethiopia", notes: "White Floral · Bergamot · Red Apple", price: 26, weight: "200g", drawn: "images/drawn-gargari-guitity.jpg", photo: "images/beans/gargari-guitity.jpg" },
+  "arsi-dew": { name: "Arsi Dew", type: "Espresso", origin: "Mewa, Nensebo, Ethiopia", notes: "White Floral · Tangerine · Bright Citrus", price: 26, weight: "200g", drawn: "images/drawn-arsi-dew.jpg", photo: "images/beans/arsi-dew.jpg" },
   "sitio-yamava":       { name: "Sitio Yamava",       type: "Espresso", origin: "Alta Mogiana, Brazil",         notes: "Hazelnut · Milk Chocolate · Brown Sugar",   price: 19, weight: "200g", drawn: "images/drawn-sitio-yamava.jpg",       photo: "images/beans/sitio-yamava.jpg" },
   "fazenda-sertao":     { name: "Fazenda Sertao",     type: "Espresso", origin: "Carmo de Minas, Brazil",       notes: "Hazelnut · Red Plums · Molasses",           price: 19, weight: "200g", drawn: "images/drawn-fazenda-sertao.jpg",     photo: "images/beans/fazenda-sertao.jpg" },
   "planadas-espresso":  { name: "Planadas Orquidea",  type: "Espresso", origin: "Planadas, Tolima, Colombia",   notes: "Red Dates · Raisins · Honey",               price: 22, weight: "200g", drawn: "images/drawn-planadas-espresso.jpg", photo: "images/beans/planadas-espresso.jpg" },
@@ -15,6 +17,8 @@ window.PILLARS_BEANS = {
   "ruli-cws":           { name: "Ruli CWS",           type: "Espresso", origin: "Gakenke District, Rwanda",     notes: "Violet Florals · Mixed Berries · Rum",      price: 26, weight: "200g", drawn: "images/drawn-ruli-cws.jpg",           photo: "images/beans/ruli-cws.jpg" },
   "chinga-aa":          { name: "Chinga AA",          type: "Espresso", origin: "Nyeri County, Kenya",          notes: "Kefir Lime · Blackcurrants · Roselle",      price: 25, weight: "200g", drawn: "images/drawn-chinga-aa.jpg",          photo: "images/beans/chinga-aa.jpg" },
 
+  "osmanthus-breeze": { name: "Osmanthus Breeze", type: "Filter", origin: "Yunnan, China", notes: "Peach · Osmanthus Honey · Oolong Tea", price: 32, weight: "150g", drawn: "images/drawn-osmanthus-breeze.jpg", photo: "images/beans/osmanthus-breeze.jpg" },
+  "quebraditas-pink-bourbon": { name: "Quebraditas (Pink Bourbon)", type: "Filter", origin: "Oporapa, Huila, Colombia", notes: "Bubblegum · Red Grape · Lollipop", price: 34, weight: "150g", drawn: "images/drawn-quebraditas-pink-bourbon.jpg", photo: "images/beans/quebraditas-pink-bourbon.jpg" },
   "alo-village":        { name: "Alo Village",        type: "Filter",   origin: "Bensa, Sidama, Ethiopia",      notes: "Blueberry · Bergamot · Lavender",           price: 28, weight: "200g", drawn: "images/drawn-alo-village.jpg",        photo: "images/beans/alo-village.jpg" },
   "quebraditas":        { name: "Quebraditas",        type: "Filter · Limited", origin: "Huila, Colombia",      notes: "Watermelon · Lychee · Roselle",             price: 38, weight: "150g", drawn: "images/drawn-quebraditas.jpg",        photo: "images/beans/quebraditas.jpg" },
   "el-alcanfor":        { name: "El Alcanfor",        type: "Filter",   origin: "San Ignacio, Cajamarca, Peru", notes: "Yellow Plums · Dried Fig · Red Tea",        price: 28, weight: "200g", drawn: "images/drawn-el-alcanfor.jpg",        photo: "images/beans/el-alcanfor.jpg" },
