@@ -25,7 +25,12 @@ export const CATALOG = {
   "ruli-cws":           { name: "Ruli CWS",            price: 26, weight: "200g", type: "Espresso", origin: "Gakenke District, Rwanda",         notes: "Violet Florals · Mixed Berries · Rum",    drawn: "images/drawn-ruli-cws.jpg" },
   "chinga-aa":          { name: "Chinga AA",           price: 25, weight: "200g", type: "Espresso", origin: "Nyeri County, Kenya",              notes: "Kefir Lime · Blackcurrants · Roselle",    drawn: "images/drawn-chinga-aa.jpg" },
 
+  "gargari-guitity": { name: "Gargari Guitity", price: 26, weight: "200g", type: "Espresso", origin: "Yirgacheffe, Ethiopia", notes: "White Floral · Bergamot · Red Apple", drawn: "images/drawn-gargari-guitity.jpg" },
+  "arsi-dew": { name: "Arsi Dew", price: 26, weight: "200g", type: "Espresso", origin: "Mewa, Nensebo, Ethiopia", notes: "White Floral · Tangerine · Bright Citrus", drawn: "images/drawn-arsi-dew.jpg" },
+
   // --- Filter ---
+  "osmanthus-breeze": { name: "Osmanthus Breeze", price: 32, weight: "150g", type: "Filter", origin: "Yunnan, China", notes: "Peach · Osmanthus Honey · Oolong Tea", drawn: "images/drawn-osmanthus-breeze.jpg" },
+  "quebraditas-pink-bourbon": { name: "Quebraditas (Pink Bourbon)", price: 34, weight: "150g", type: "Filter", origin: "Oporapa, Huila, Colombia", notes: "Bubblegum · Red Grape · Lollipop", drawn: "images/drawn-quebraditas-pink-bourbon.jpg" },
   "alo-village":        { name: "Alo Village",         price: 28, weight: "200g", type: "Filter",   origin: "Bensa, Sidama, Ethiopia",          notes: "Blueberry · Bergamot · Lavender",         drawn: "images/drawn-alo-village.jpg" },
   "quebraditas":        { name: "Quebraditas",         price: 38, weight: "150g", type: "Filter",   origin: "Huila, Colombia",                  notes: "Watermelon · Lychee · Roselle",           drawn: "images/drawn-quebraditas.jpg" },
   "el-alcanfor":        { name: "El Alcanfor",         price: 28, weight: "200g", type: "Filter",   origin: "San Ignacio, Cajamarca, Peru",     notes: "Yellow Plums · Dried Fig · Red Tea",      drawn: "images/drawn-el-alcanfor.jpg" },
